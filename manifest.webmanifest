@@ -1,0 +1,16 @@
+{
+  "name": "水滸英雄傳：梁山風雲",
+  "short_name": "梁山風雲",
+  "description": "水墨章回式單機網頁 RPG：景陽岡打虎、拳打鎮關西、雙主角切換與羈絆成長。",
+  "lang": "zh-Hant-TW",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#d8c8a7",
+  "theme_color": "#6f1d1b",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
