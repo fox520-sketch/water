@@ -495,7 +495,7 @@ body[data-theme="paper"] .title-art { background: #fff; border: 2px solid #000; 
 @media (max-width: 620px) { .hero-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 
-/* v1.9～v2.0 連環馬、曾頭市、軍械坊、瞭望臺與遠征 */
+/* v1.9～v2.1 連環馬、曾頭市、招安議事、軍械坊、瞭望臺與遠征 */
 .scene-visual[data-scene="ridge"] {
   background:
     radial-gradient(circle at 78% 18%, rgba(242,225,164,.7), transparent 11%),
