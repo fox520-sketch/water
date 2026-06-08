@@ -495,7 +495,7 @@ body[data-theme="paper"] .title-art { background: #fff; border: 2px solid #000; 
 @media (max-width: 620px) { .hero-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 
-/* v1.8 三打祝家莊、扈三娘與糧倉 */
+/* v1.9 大破連環馬、呼延灼、軍械坊與遠征 */
 .scene-visual[data-scene="ridge"] {
   background:
     radial-gradient(circle at 78% 18%, rgba(242,225,164,.7), transparent 11%),
