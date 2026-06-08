@@ -1,4 +1,4 @@
-const CACHE_NAME = 'liangshan-rpg-v1.9.0';
+const CACHE_NAME = 'liangshan-rpg-v2.0.0';
 const ASSETS = [
   './',
   './index.html',
