@@ -493,3 +493,34 @@ body[data-theme="paper"] .title-art { background: #fff; border: 2px solid #000; 
 [data-scene="tower"] { background: linear-gradient(180deg, rgba(50,88,112,.2), transparent), radial-gradient(circle at 70% 25%, rgba(255,238,181,.35), transparent 26%), var(--scene-bg, #d8c7a3); }
 [data-scene="river"] { background: linear-gradient(180deg, rgba(45,91,117,.25), rgba(68,98,99,.08)), var(--scene-bg, #d8c7a3); }
 @media (max-width: 620px) { .hero-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+
+/* v1.8 三打祝家莊、扈三娘與糧倉 */
+.scene-visual[data-scene="ridge"] {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(242,225,164,.7), transparent 11%),
+    repeating-linear-gradient(102deg, transparent 0 42px, rgba(47,63,37,.2) 43px 49px),
+    linear-gradient(165deg, #a9b18a 0 42%, #5f6f50 43% 68%, #2f4032 69%);
+}
+.scene-visual[data-scene="fortress"] {
+  background:
+    linear-gradient(90deg, transparent 0 13%, rgba(51,33,23,.72) 14% 23%, transparent 24% 76%, rgba(51,33,23,.72) 77% 86%, transparent 87%),
+    repeating-linear-gradient(0deg, rgba(93,44,31,.18) 0 8px, transparent 9px 28px),
+    linear-gradient(155deg, #bea97f, #685043 58%, #34322e);
+}
+.scene-visual[data-scene="courtyard"] {
+  background:
+    radial-gradient(circle at 72% 22%, rgba(205,57,47,.5), transparent 9%),
+    repeating-linear-gradient(90deg, transparent 0 54px, rgba(74,37,29,.18) 55px 61px),
+    linear-gradient(160deg, #ceb98e 0 55%, #796452 56% 76%, #4a3e36 77%);
+}
+.scene-visual[data-scene="granary"] {
+  background:
+    repeating-linear-gradient(90deg, rgba(98,62,30,.5) 0 20px, rgba(151,109,54,.36) 21px 42px),
+    radial-gradient(circle at 24% 60%, rgba(224,182,84,.72), transparent 18%),
+    linear-gradient(180deg, #806247, #3f3028);
+}
+[data-base-rest] { width: 100%; margin-top: .55rem; }
+@media (max-width: 620px) {
+  .scene-visual[data-scene="fortress"] { min-height: 190px; }
+}
