@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'liangshan-rpg-save-v1';
   const PREF_KEY = 'liangshan-rpg-prefs-v1';
-  const VERSION = '2.1.0';
+  const VERSION = '2.2.0';
   const THEMES = ['ink', 'dark', 'paper'];
   const THEME_NAMES = { ink: '水墨宣紙', dark: '夜行深色', paper: '黑白電子紙' };
 
@@ -91,6 +91,12 @@
       hp: 166, maxHp: 166, sp: 58, maxSp: 66,
       baseAttack: 25, baseDefense: 18, morality: 76, silver: 28, drunk: 0,
       guarding: false, unlocked: false
+    },
+    zhangqing: {
+      id: 'zhangqing', name: '張清', avatar: '張', title: '沒羽箭・東昌府虎騎都監', level: 10, xp: 0, nextXp: 460,
+      hp: 178, maxHp: 178, sp: 54, maxSp: 64,
+      baseAttack: 28, baseDefense: 17, morality: 68, silver: 34, drunk: 0,
+      guarding: false, unlocked: false
     }
   };
 
@@ -134,6 +140,10 @@
     gongsunsheng: [
       { id: 'fiveThunder', name: '五雷正法', cost: 9, description: '引雷破敵，並有機會震懾敵手一回合。' },
       { id: 'eightGates', name: '八門遁甲', cost: 13, description: '布下護身陣勢、恢復豪氣並看破下一擊。' }
+    ],
+    zhangqing: [
+      { id: 'featherStone', name: '沒羽飛石', cost: 8, description: '飛石直取敵將穴位，削弱武力並可能震懾。' },
+      { id: 'meteorVolley', name: '飛蝗連珠', cost: 13, description: '三石連發，最後一擊較容易造成重創。' }
     ]
   };
 
@@ -187,7 +197,13 @@
     baguaRobe: { name: '八卦雲紋道袍', type: 'armor', hero: 'gongsunsheng', description: '羅真人門下道袍，輕靈護體，筋骨 +11。', defense: 11 },
     chrysanthemumPact: { name: '菊花會盟帖', type: 'key', description: '忠義堂菊花會留下的盟帖，記錄招安、自立與護民三派的公開辯論。' },
     amnestyTerms: { name: '梁山受詔三約', type: 'key', description: '梁山向朝廷提出的三項底線：赦免舊罪、不得拆散頭領、先安百姓再談出征。' },
-    luoTalisman: { name: '羅真人雷符', type: 'key', description: '二仙山羅真人所授雷符，象徵公孫勝以道法護民而非炫技。' }
+    luoTalisman: { name: '羅真人雷符', type: 'key', description: '二仙山羅真人所授雷符，象徵公孫勝以道法護民而非炫技。' },
+    flyingStonePouch: { name: '沒羽飛石囊', type: 'weapon', hero: 'zhangqing', description: '張清精選石子與牛皮石囊，武力 +12、筋骨 +2。', attack: 12, defense: 2 },
+    cloudLightArmor: { name: '雲紋輕騎甲', type: 'armor', hero: 'zhangqing', description: '適合騎射與登船的輕甲，筋骨 +11。', defense: 11 },
+    dongchangToken: { name: '東昌飛石令', type: 'key', description: '張清交出的東昌府軍令，見證他拒絕以飛石助長屠戮。' },
+    navalChart: { name: '梁山水陸陣圖', type: 'key', description: '李俊、阮氏兄弟與吳用共同繪製的水陸聯合作戰圖。' },
+    gaoCaptureSeal: { name: '高俅帥船牙牌', type: 'key', description: '高俅旗艦上的殿帥府牙牌，記錄梁山以停戰條件換取全軍退兵。' },
+    waterFleetBanner: { name: '梁山水軍戰旗', type: 'key', description: '水寨船塢整備完成後立起的戰旗，象徵水軍、步軍與馬軍協同。' }
   };
 
   const COMPANIONS = {
@@ -245,6 +261,11 @@
       name: '蕭讓', title: '聖手書生・梁山文案', avatar: '蕭', role: '文書識偽', skillName: '聖手校書',
       description: '每場戰鬥可使用一次，辨出敵方號令破綻、削弱武力與筋骨，並恢復英雄豪氣。',
       unlockHint: '第十回查驗朝廷詔書，完成忠義堂招安議事。'
+    },
+    lijun: {
+      name: '李俊', title: '混江龍・梁山水軍頭領', avatar: '俊', role: '水戰救援', skillName: '混江龍水援',
+      description: '每場戰鬥可使用一次，以水軍奇襲造成傷害、看破下一擊並恢復豪氣。',
+      unlockHint: '第十一回整備水寨船塢，與李俊共同制定水陸陣圖。'
     }
   };
 
@@ -413,6 +434,31 @@
       name: '忠義堂議武教頭', title: '文武並用的山寨演練', avatar: '議', maxHp: 374, attack: 40, defense: 19,
       xp: 88, silver: 26, canFlee: true,
       moves: ['以旗語變換陣勢', '短兵突入文案席前', '故布疑令試探反應']
+    },
+    tongguanVanguard: {
+      name: '童貫十節度前鋒', title: '奉命逼梁山卸甲的官軍', avatar: '童', maxHp: 408, attack: 43, defense: 20,
+      xp: 108, silver: 30, canFlee: false,
+      moves: ['十節度旗號輪番壓進', '弓弩遮住步軍前列', '督戰騎兵自兩翼包抄']
+    },
+    zhangqingTrial: {
+      name: '東昌飛石騎隊', title: '沒羽箭張清所領虎騎', avatar: '石', maxHp: 424, attack: 44, defense: 20,
+      xp: 114, silver: 32, canFlee: false,
+      moves: ['飛石直取眉心', '虎騎掠陣回旋', '石子連珠打向持兵之手']
+    },
+    imperialEnforcer: {
+      name: '殿前司督戰牙將', title: '逼東昌軍焚村邀功的監軍', avatar: '監', maxHp: 398, attack: 42, defense: 20,
+      xp: 106, silver: 28, canFlee: false,
+      moves: ['持令旗喝令放火', '親兵刀盾齊進', '弩手封住村民退路']
+    },
+    gaoFlagship: {
+      name: '高俅旗艦親軍', title: '殿帥府水陸精銳', avatar: '帥', maxHp: 456, attack: 46, defense: 22,
+      xp: 176, silver: 52, canFlee: false,
+      moves: ['船樓強弩俯射', '鉤拒手攔住登船', '親軍護著帥旗反衝']
+    },
+    navalArena: {
+      name: '梁山水陸協同教頭', title: '船塢新編演武隊', avatar: '舟', maxHp: 414, attack: 43, defense: 20,
+      xp: 96, silver: 28, canFlee: true,
+      moves: ['短槳擋開兵刃', '鉤索扯亂腳步', '水手與步軍交替壓進']
     }
   };
 
@@ -445,7 +491,10 @@
     { id: 'lumanor', name: '盧俊義宅', region: '河北大名府', x: 6, y: 30, unlock: s => s.flags.chapter9Started },
     { id: 'zengtou', name: '曾頭市', region: '凌州西南', x: 42, y: 10, unlock: s => s.flags.zengtouReached || s.flags.chapter9Complete },
     { id: 'erxian', name: '二仙山', region: '薊州九宮縣', x: 68, y: 12, unlock: s => s.flags.chapter10Started },
-    { id: 'imperialcamp', name: '護詔使營', region: '濟州梁山北岸', x: 54, y: 24, unlock: s => s.flags.edictArrived || s.flags.chapter10Complete }
+    { id: 'imperialcamp', name: '護詔使營', region: '濟州梁山北岸', x: 54, y: 24, unlock: s => s.flags.edictArrived || s.flags.chapter10Complete },
+    { id: 'dongchang', name: '東昌府', region: '山東東昌', x: 84, y: 18, unlock: s => s.flags.dongchangReached || s.flags.chapter11Complete },
+    { id: 'shipyard', name: '梁山水寨船塢', region: '濟州水泊南汊', x: 38, y: 94, unlock: s => s.flags.fleetPrepared || s.flags.chapter11Complete },
+    { id: 'gaofleet', name: '高俅水軍大營', region: '梁山泊外湖', x: 67, y: 94, unlock: s => s.flags.imperialFleetArrived || s.flags.chapter11Complete }
   ];
 
   function createHero(id) {
@@ -463,6 +512,7 @@
     const huyanzhuo = createHero('huyanzhuo');
     const lujunyi = createHero('lujunyi');
     const gongsunsheng = createHero('gongsunsheng');
+    const zhangqing = createHero('zhangqing');
     return {
       version: VERSION,
       createdAt: new Date().toISOString(),
@@ -472,8 +522,8 @@
       chapter: 1,
       activeHeroId: 'wusong',
       hero: cloneData(wusong),
-      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng },
-      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1 },
+      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng, zhangqing },
+      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1, flyingStonePouch: 1, cloudLightArmor: 1 },
       equipment: { weapon: 'staff', armor: 'robe' },
       equipments: {
         wusong: { weapon: 'staff', armor: 'robe' },
@@ -485,7 +535,8 @@
         husanniang: { weapon: 'sunMoonSabers', armor: 'redBrocadeArmor' },
         huyanzhuo: { weapon: 'steelTwinWhips', armor: 'chainCavalryArmor' },
         lujunyi: { weapon: 'qilinStaff', armor: 'jadeArmor' },
-        gongsunsheng: { weapon: 'pineSword', armor: 'baguaRobe' }
+        gongsunsheng: { weapon: 'pineSword', armor: 'baguaRobe' },
+        zhangqing: { weapon: 'flyingStonePouch', armor: 'cloudLightArmor' }
       },
       companions: {
         songjiang: { unlocked: false, bond: 1, wins: 0 },
@@ -498,7 +549,8 @@
         sunli: { unlocked: false, bond: 1, wins: 0 },
         xuning: { unlocked: false, bond: 1, wins: 0 },
         yanqing: { unlocked: false, bond: 1, wins: 0 },
-        xiaorang: { unlocked: false, bond: 1, wins: 0 }
+        xiaorang: { unlocked: false, bond: 1, wins: 0 },
+        lijun: { unlocked: false, bond: 1, wins: 0 }
       },
       team: { active: null },
       quests: {
@@ -512,7 +564,8 @@
         main_zhujia: { title: '三打祝家莊', description: '梁山三次進攻獨龍岡，以盤陀路情報、三莊聯盟與孫立臥底攻破祝家莊。', status: 'hidden', progress: '尚未開篇' },
         main_chainhorse: { title: '大破連環馬', description: '呼延灼奉命征討梁山，徐寧傳授鉤鐮槍法；梁山以步騎協同破解鐵甲連環馬。', status: 'hidden', progress: '尚未開篇' },
         main_zengtou: { title: '曾頭市與梁山大聚義', description: '晁蓋中箭後，吳用智賺盧俊義；梁山整合九軍職司，攻破曾頭市並擒史文恭。', status: 'hidden', progress: '尚未開篇' },
-        main_amnesty: { title: '菊花會與招安之議', description: '梁山公開辯論招安、自立與護民三條道路，查驗朝廷詔書並提出山寨底線。', status: 'hidden', progress: '尚未開篇' }
+        main_amnesty: { title: '菊花會與招安之議', description: '梁山公開辯論招安、自立與護民三條道路，查驗朝廷詔書並提出山寨底線。', status: 'hidden', progress: '尚未開篇' },
+        main_tonggao: { title: '兩贏童貫・三敗高俅', description: '梁山先破童貫陸軍，再以東昌飛石與水陸聯合作戰擊退高俅水軍。', status: 'hidden', progress: '尚未開篇' }
       },
       flags: {
         metSongJiang: false, leftManor: false, roadBanditCleared: false, reachedInn: false,
@@ -563,7 +616,13 @@
         gongsunSought: false, erxianTrialWon: false, gongsunReturned: false,
         edictArrived: false, edictPaperChecked: false, edictSealChecked: false, edictTermsChecked: false,
         edictInsight: 0, councilWon: false, councilOutcome: '', imperialGuardDefeated: false,
-        metXiaoRang: false, diplomacyArenaWins: 0
+        metXiaoRang: false, diplomacyArenaWins: 0,
+        chapter11Started: false, chapter11Complete: false, courtWarPressure: 0,
+        tongguanDefeated: false, dongchangReached: false, zhangqingTrialWon: false,
+        zhangqingJoined: false, imperialEnforcerDefeated: false, metLiJun: false,
+        fleetPrepared: false, imperialFleetArrived: false, navalPlanScore: 0,
+        fleetFormationBroken: false, gaoFlagshipDefeated: false, gaoCaptured: false,
+        navalArenaWins: 0
       },
       log: ['第一回開篇：武松客居柴進莊。'],
       battle: null,
@@ -573,7 +632,8 @@
       chainBattle: null,
       zengtouBattle: null,
       councilBattle: null,
-      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1 },
+      navalBattle: null,
+      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1, shipyard: 1 },
       playMinutes: 0,
       lastTickAt: Date.now()
     };
@@ -593,6 +653,7 @@
   let chainLocked = false;
   let zengtouLocked = false;
   let councilLocked = false;
+  let navalLocked = false;
   let availableVoices = [];
   let lastNarratedSceneId = '';
   let lastNarratedBattleKey = '';
@@ -676,10 +737,10 @@
 
   function migrateState(saved) {
     const base = defaultState();
-    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : 'wusong');
+    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : /^張/.test(saved.hero?.name || '') ? 'zhangqing' : 'wusong');
     const savedHeroes = saved.heroes || {};
     const savedEquipments = saved.equipments || {};
-    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng'].includes(guessedActive) ? guessedActive : 'wusong';
+    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing'].includes(guessedActive) ? guessedActive : 'wusong';
     const heroes = {
       wusong: { ...base.heroes.wusong, ...(savedHeroes.wusong || (oldHeroTarget === 'wusong' ? saved.hero : {})) },
       luzhishen: { ...base.heroes.luzhishen, ...(savedHeroes.luzhishen || (oldHeroTarget === 'luzhishen' ? saved.hero : {})) },
@@ -690,7 +751,8 @@
       husanniang: { ...base.heroes.husanniang, ...(savedHeroes.husanniang || (oldHeroTarget === 'husanniang' ? saved.hero : {})) },
       huyanzhuo: { ...base.heroes.huyanzhuo, ...(savedHeroes.huyanzhuo || (oldHeroTarget === 'huyanzhuo' ? saved.hero : {})) },
       lujunyi: { ...base.heroes.lujunyi, ...(savedHeroes.lujunyi || (oldHeroTarget === 'lujunyi' ? saved.hero : {})) },
-      gongsunsheng: { ...base.heroes.gongsunsheng, ...(savedHeroes.gongsunsheng || (oldHeroTarget === 'gongsunsheng' ? saved.hero : {})) }
+      gongsunsheng: { ...base.heroes.gongsunsheng, ...(savedHeroes.gongsunsheng || (oldHeroTarget === 'gongsunsheng' ? saved.hero : {})) },
+      zhangqing: { ...base.heroes.zhangqing, ...(savedHeroes.zhangqing || (oldHeroTarget === 'zhangqing' ? saved.hero : {})) }
     };
     const equipments = {
       wusong: { ...base.equipments.wusong, ...(savedEquipments.wusong || (oldHeroTarget === 'wusong' ? saved.equipment : {})) },
@@ -702,7 +764,8 @@
       husanniang: { ...base.equipments.husanniang, ...(savedEquipments.husanniang || (oldHeroTarget === 'husanniang' ? saved.equipment : {})) },
       huyanzhuo: { ...base.equipments.huyanzhuo, ...(savedEquipments.huyanzhuo || (oldHeroTarget === 'huyanzhuo' ? saved.equipment : {})) },
       lujunyi: { ...base.equipments.lujunyi, ...(savedEquipments.lujunyi || (oldHeroTarget === 'lujunyi' ? saved.equipment : {})) },
-      gongsunsheng: { ...base.equipments.gongsunsheng, ...(savedEquipments.gongsunsheng || (oldHeroTarget === 'gongsunsheng' ? saved.equipment : {})) }
+      gongsunsheng: { ...base.equipments.gongsunsheng, ...(savedEquipments.gongsunsheng || (oldHeroTarget === 'gongsunsheng' ? saved.equipment : {})) },
+      zhangqing: { ...base.equipments.zhangqing, ...(savedEquipments.zhangqing || (oldHeroTarget === 'zhangqing' ? saved.equipment : {})) }
     };
     const merged = {
       ...base,
@@ -722,7 +785,8 @@
         sunli: { ...base.companions.sunli, ...(saved.companions?.sunli || {}) },
         xuning: { ...base.companions.xuning, ...(saved.companions?.xuning || {}) },
         yanqing: { ...base.companions.yanqing, ...(saved.companions?.yanqing || {}) },
-        xiaorang: { ...base.companions.xiaorang, ...(saved.companions?.xiaorang || {}) }
+        xiaorang: { ...base.companions.xiaorang, ...(saved.companions?.xiaorang || {}) },
+        lijun: { ...base.companions.lijun, ...(saved.companions?.lijun || {}) }
       },
       team: { ...base.team, ...(saved.team || {}) },
       quests: { ...base.quests, ...saved.quests },
@@ -736,6 +800,7 @@
       chainBattle: null,
       zengtouBattle: null,
       councilBattle: null,
+      navalBattle: null,
       lastTickAt: Date.now()
     };
     if (merged.flags.metSongJiang) merged.companions.songjiang.unlocked = true;
@@ -749,6 +814,7 @@
     if (merged.flags.metXuNing || merged.flags.chapter8Complete) merged.companions.xuning.unlocked = true;
     if (merged.flags.metYanQing || merged.flags.chapter9Complete) merged.companions.yanqing.unlocked = true;
     if (merged.flags.metXiaoRang || merged.flags.chapter10Complete) merged.companions.xiaorang.unlocked = true;
+    if (merged.flags.metLiJun || merged.flags.chapter11Complete) merged.companions.lijun.unlocked = true;
     if (merged.flags.chapter2Started || merged.flags.chapter2Complete || guessedActive === 'luzhishen') merged.heroes.luzhishen.unlocked = true;
     if (merged.flags.chapter3Started || merged.flags.chapter3Complete || guessedActive === 'linchong') merged.heroes.linchong.unlocked = true;
     if (merged.flags.chapter4Started || merged.flags.chapter4Complete || guessedActive === 'yangzhi') merged.heroes.yangzhi.unlocked = true;
@@ -758,11 +824,12 @@
     if (merged.flags.chapter8Started || merged.flags.chapter8Complete || guessedActive === 'huyanzhuo') merged.heroes.huyanzhuo.unlocked = true;
     if (merged.flags.luProphecySeen || merged.flags.chapter9Complete || guessedActive === 'lujunyi') merged.heroes.lujunyi.unlocked = true;
     if (merged.flags.gongsunSought || merged.flags.chapter10Complete || guessedActive === 'gongsunsheng') merged.heroes.gongsunsheng.unlocked = true;
+    if (merged.flags.zhangqingTrialWon || merged.flags.chapter11Complete || guessedActive === 'zhangqing') merged.heroes.zhangqing.unlocked = true;
     if (!merged.heroes[merged.activeHeroId]?.unlocked) merged.activeHeroId = 'wusong';
     merged.hero = cloneData(merged.heroes[merged.activeHeroId]);
     merged.equipment = { ...merged.equipments[merged.activeHeroId] };
     if (!merged.team.active || !merged.companions[merged.team.active]?.unlocked) {
-      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : null;
+      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : merged.companions.lijun.unlocked ? 'lijun' : null;
     }
     return merged;
   }
@@ -850,11 +917,15 @@
       toast('完成第十回後，公孫勝才會正式加入英雄譜。');
       return;
     }
+    if (id === 'zhangqing' && !state.flags.chapter11Complete) {
+      toast('完成第十一回後，張清才會正式加入英雄譜。');
+      return;
+    }
     if (!setActiveHero(id)) return;
-    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10 }[id] || 1;
+    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11 }[id] || 1;
     closeModal();
     addLog(`目前操控英雄切換為「${state.hero.name}」。`);
-    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free' };
+    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free', zhangqing: 'naval_free' };
     goScene(homes[id]);
   }
 
@@ -1273,6 +1344,63 @@
       syncActiveHero();
     }
     goScene('chapter10_end');
+    saveGame(false);
+  }
+
+
+  function startChapterEleven() {
+    if (!state?.flags?.chapter10Complete) {
+      toast('須先完成第十回「菊花會與招安之議」。');
+      return;
+    }
+    if (state.flags.chapter11Complete) {
+      switchHero('zhangqing');
+      return;
+    }
+    state.flags.chapter11Started = true;
+    state.quests.main_tonggao.status = 'active';
+    if (state.quests.main_tonggao.progress === '尚未開篇') state.quests.main_tonggao.progress = '童貫以十節度大軍壓境，要求梁山無條件卸甲';
+    state.chapter = 11;
+    if (!state.flags.zhangqingTrialWon) setActiveHero('songjiang');
+    const resumeScene = state.flags.gaoFlagshipDefeated ? 'gao_captured'
+      : state.flags.fleetFormationBroken ? 'naval_breached'
+        : state.flags.imperialFleetArrived ? 'naval_strategy'
+          : state.flags.fleetPrepared ? 'imperial_fleet_arrives'
+            : state.flags.imperialEnforcerDefeated ? 'water_council'
+              : state.flags.zhangqingTrialWon ? 'zhangqing_choice'
+                : state.flags.tongguanDefeated ? 'dongchang_gate' : 'chapter11_court_response';
+    if (!state.log.some(entry => entry.includes('第十一回開篇'))) addLog('第十一回開篇：朝廷未回應梁山底線，童貫與高俅先後以大軍壓境。');
+    goScene(resumeScene);
+    tone('start');
+  }
+
+  function finishChapterEleven() {
+    if (!state.flags.chapter11Complete) {
+      state.flags.chapter11Complete = true;
+      state.flags.gaoCaptured = true;
+      state.flags.zhangqingJoined = true;
+      state.flags.fleetFormationBroken = true;
+      state.quests.main_tonggao.status = 'completed';
+      state.quests.main_tonggao.progress = '兩破童貫陸軍、三挫高俅水軍，梁山以停戰條款送還俘虜';
+      state.heroes.zhangqing.unlocked = true;
+      state.heroes.zhangqing.title = '沒羽箭・梁山飛石先鋒';
+      unlockCompanion('lijun');
+      addItem('dongchangToken', 1);
+      addItem('navalChart', 1);
+      addItem('gaoCaptureSeal', 1);
+      addItem('waterFleetBanner', 1);
+      state.base.timber += 5;
+      state.base.stone += 4;
+      state.base.grain += 6;
+      state.base.shipyard = Math.max(1, state.base.shipyard || 1);
+      state.flags.courtTrust = Math.max(0, state.flags.courtTrust + (state.flags.councilOutcome === 'terms' ? 6 : 2));
+      state.flags.peopleSupport += 10;
+      if (state.activeHeroId !== 'zhangqing') setActiveHero('zhangqing');
+      state.hero.title = '沒羽箭・梁山飛石先鋒';
+      gainXp(180);
+      syncActiveHero();
+    }
+    goScene('chapter11_end');
     saveGame(false);
   }
 
@@ -2188,15 +2316,15 @@
     liangshan_free: {
       location: 'liangshan', scene: 'mountain', region: '濟州水泊', name: '梁山泊聚義廳', caption: '水寨・旌旗迎風', speaker: '旁白',
       title: '山寨初成，百廢待舉',
-      text: () => `梁山泊已成眾好漢共同據點。聚義廳影響山寨士氣，醫館提高休息恢復，鐵匠鋪強化演武整備，糧倉則支援全寨休養與遠征。<p>目前木材 ${state.base.timber}、石料 ${state.base.stone}、糧草 ${state.base.grain}；聚義廳 Lv.${state.base.hall}、醫館 Lv.${state.base.infirmary}、鐵匠鋪 Lv.${state.base.forge}、糧倉 Lv.${state.base.granary}、軍械坊 Lv.${state.base.armory || 1}、文書院 Lv.${state.base.academy || 1}。</p>`,
+      text: () => `梁山泊已成眾好漢共同據點。聚義廳影響山寨士氣，醫館提高休息恢復，鐵匠鋪強化演武整備，糧倉則支援全寨休養與遠征。<p>目前木材 ${state.base.timber}、石料 ${state.base.stone}、糧草 ${state.base.grain}；聚義廳 Lv.${state.base.hall}、醫館 Lv.${state.base.infirmary}、鐵匠鋪 Lv.${state.base.forge}、糧倉 Lv.${state.base.granary}、軍械坊 Lv.${state.base.armory || 1}、文書院 Lv.${state.base.academy || 1}、船塢 Lv.${state.base.shipyard || 1}。</p>`,
       choices: () => [
         { label: '管理梁山建設', action: () => openBase() },
         { label: '與梁山水軍頭目切磋', action: () => startBattle('liangshanArena', 'liangshan_arena_win') },
         { label: '在醫館休息整備', action: () => { const boost = 12 * state.base.infirmary; state.hero.hp = clamp(state.hero.hp + boost, 0, state.hero.maxHp); state.hero.sp = clamp(state.hero.sp + 6 * state.base.infirmary, 0, state.hero.maxSp); addLog(`在梁山醫館休息，恢復 ${boost} 點氣血。`); renderGame(); } },
         { label: '調整江湖同伴編成', action: () => openTeam() },
-        { label: state.flags.chapter10Complete ? '切換十名英雄' : state.flags.chapter9Complete ? '切換九名英雄' : state.flags.chapter8Complete ? '切換八名英雄' : state.flags.chapter7Complete ? '切換七名英雄' : '切換六名英雄', action: () => openRoster() },
-        { label: state.flags.chapter10Started ? '返回第十回進度' : state.flags.chapter9Complete ? '開啟第十回：菊花會與招安之議' : state.flags.chapter9Started ? '返回第九回進度' : state.flags.chapter8Complete ? '開啟第九回：曾頭市與梁山大聚義' : '開啟第八回：大破連環馬', action: () => state.flags.chapter9Complete ? startChapterTen() : state.flags.chapter8Complete ? startChapterNine() : startChapterEight() },
-        { label: state.flags.chapter10Complete ? '查看十回總成果' : state.flags.chapter9Complete ? '查看九回總成果' : state.flags.chapter8Complete ? '查看八回總成果' : '查看七回總成果', action: () => openSummary() },
+        { label: state.flags.chapter11Complete ? '切換十一名英雄' : state.flags.chapter10Complete ? '切換十名英雄' : state.flags.chapter9Complete ? '切換九名英雄' : state.flags.chapter8Complete ? '切換八名英雄' : state.flags.chapter7Complete ? '切換七名英雄' : '切換六名英雄', action: () => openRoster() },
+        { label: state.flags.chapter11Started ? '返回第十一回進度' : state.flags.chapter10Complete ? '開啟第十一回：兩贏童貫・三敗高俅' : state.flags.chapter10Started ? '返回第十回進度' : state.flags.chapter9Complete ? '開啟第十回：菊花會與招安之議' : state.flags.chapter9Started ? '返回第九回進度' : state.flags.chapter8Complete ? '開啟第九回：曾頭市與梁山大聚義' : '開啟第八回：大破連環馬', action: () => state.flags.chapter10Complete ? startChapterEleven() : state.flags.chapter9Complete ? startChapterTen() : state.flags.chapter8Complete ? startChapterNine() : startChapterEight() },
+        { label: state.flags.chapter11Complete ? '查看十一回總成果' : state.flags.chapter10Complete ? '查看十回總成果' : state.flags.chapter9Complete ? '查看九回總成果' : state.flags.chapter8Complete ? '查看八回總成果' : '查看七回總成果', action: () => openSummary() },
         { label: '查看梁山聚義座次', action: () => openAssembly() }
       ]
     },
@@ -2585,6 +2713,7 @@
       title: '第十回完：菊花會論路，入雲龍歸山',
       text: () => `本回不把招安寫成單一正解。宋江的理想、武松與李逵的不信任、盧俊義的名分考量、林沖對官府的傷痕與護民派的底線，都被保留在公開議事中。<p>公孫勝成為第十名主角，蕭讓加入同伴；梁山開放文書院與派系聲望。</p>`,
       choices: () => [
+        { label: state.flags.chapter11Started ? '返回第十一回進度' : '開啟第十一回：兩贏童貫・三敗高俅', action: () => startChapterEleven() },
         { label: '查看梁山派系與本回抉擇', action: () => openFactionCouncil() },
         { label: '開啟十英雄譜', action: () => openRoster() },
         { label: '管理梁山建設', action: () => openBase() },
@@ -2600,10 +2729,95 @@
       choices: () => [
         { label: '與忠義堂議武教頭切磋', action: () => startBattle('diplomacyArena', 'diplomacy_arena_win') },
         { label: '重演招安議事', action: () => startCouncilDuel(true) },
+        { label: state.flags.chapter11Started ? '返回第十一回進度' : '開啟第十一回：兩贏童貫・三敗高俅', action: () => startChapterEleven() },
         { label: '查看梁山派系與本回抉擇', action: () => openFactionCouncil() },
         { label: '返回梁山山寨', action: () => goScene('liangshan_free') },
         { label: '調整江湖同伴編成', action: () => openTeam() },
-        { label: '切換十名英雄', action: () => openRoster() },
+        { label: state.flags.chapter11Complete ? '切換十一名英雄' : '切換十名英雄', action: () => openRoster() },
+        { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
+      ]
+    },
+
+    chapter11_court_response: {
+      location: 'liangshan', scene: 'mountain', region: '濟州水泊', name: '梁山泊忠義堂', caption: '朝廷再議・軍令先至', speaker: '蕭讓',
+      title: '梁山送出的三約尚無回文，童貫的十節度大軍卻先到水泊之外',
+      text: () => `朝廷把梁山的路線選擇解讀為不同程度的抗命。童貫奉旨壓境，要求交出兵器、拆散水寨，再談赦罪。<p>本回承接路線：${state.flags.councilOutcome === 'terms' ? '已立三約' : state.flags.councilOutcome === 'selfrule' ? '守寨自立' : '先護民再議'}。梁山決定只破軍陣，不追殺敗兵。</p>`,
+      choices: () => [{ label: '由宋江、盧俊義整軍，迎擊童貫十節度前鋒', action: () => { state.flags.courtWarPressure = state.flags.councilOutcome === 'selfrule' ? 3 : state.flags.councilOutcome === 'delay' ? 2 : 1; startBattle('tongguanVanguard', 'tongguan_vanguard_win'); } }]
+    },
+    tongguan_after: {
+      location: 'liangshan', scene: 'courtyard', region: '濟州水泊', name: '金沙灘前寨', caption: '十節度退・飛石來援', speaker: '吳用',
+      title: '童貫前軍兩度受挫，卻調東昌府飛石騎隊封住梁山東路',
+      text: () => `梁山以輪換軍陣逼退童貫，並放還受傷官軍。東昌府張清奉調而來，以飛石連傷數名頭領；吳用主張先看清此人是嗜殺還是只守軍令。`,
+      choices: () => [{ label: '前往東昌府外，正面試破張清飛石陣', action: () => { state.flags.dongchangReached = true; setActiveHero('linchong'); startBattle('zhangqingTrial', 'zhangqing_trial_win'); } }]
+    },
+    dongchang_gate: {
+      location: 'dongchang', scene: 'city', region: '山東東昌', name: '東昌府東門', caption: '石無虛發・只取兵刃', speaker: '林沖',
+      title: '張清飛石狠準，卻刻意避開無甲鄉民與倒地傷兵',
+      text: () => `梁山眾將看出張清只打持兵之手與馬具，不向逃散百姓補石。此時殿前司監軍傳令焚毀附近村落，逼梁山失去糧道。`,
+      choices: () => [{ label: '再戰飛石騎隊，逼張清表明立場', action: () => startBattle('zhangqingTrial', 'zhangqing_trial_win') }]
+    },
+    zhangqing_choice: {
+      location: 'dongchang', scene: 'courtyard', region: '山東東昌', name: '東昌府外校場', caption: '飛石落地・軍令相逼', speaker: '張清',
+      title: '飛石可以打落兵刃，不能替監軍把焚村說成軍功',
+      text: () => `張清敗而不服武藝，卻服梁山先救傷兵、後談勝負。他交出監軍令旗，要求親手阻止放火；玩家自此改操控張清。`,
+      choices: () => [{ label: '操控張清，以飛石制止殿前司督戰牙將', action: () => { state.heroes.zhangqing.unlocked = true; setActiveHero('zhangqing'); startBattle('imperialEnforcer', 'imperial_enforcer_win'); } }]
+    },
+    water_council: {
+      location: 'shipyard', scene: 'river', region: '濟州水泊南汊', name: '梁山水寨船塢', caption: '陸軍退・水軍至', speaker: '李俊',
+      title: '童貫敗退後，高俅改造海鰍大船，打算從水面壓平梁山',
+      text: () => `張清隨梁山回寨，混江龍李俊提出：官船高大卻吃水深，只要誘入蘆葦窄汊、斷纜、遮目，再由飛石壓住船樓，便可少傷水手而奪旗艦。<p>船塢 Lv.${state.base.shipyard || 1}｜木材 ${state.base.timber}｜石料 ${state.base.stone}。</p>`,
+      choices: () => [
+        { label: '撥木材與石料整備戰船、鉤索與救生小舟', action: () => { state.flags.metLiJun = true; unlockCompanion('lijun'); state.flags.fleetPrepared = true; state.base.shipyard = Math.max(1, state.base.shipyard || 1); state.flags.navalPlanScore = Math.min(5, 2 + (state.base.shipyard || 1)); addItem('navalChart', 1); goScene('imperial_fleet_arrives'); } },
+        { label: '先管理山寨，升級船塢後再出戰', action: () => openBase() }
+      ]
+    },
+    imperial_fleet_arrives: {
+      location: 'gaofleet', scene: 'river', region: '梁山泊外湖', name: '高俅水軍大營', caption: '海鰍巨艦・旌旗蔽水', speaker: '宋江',
+      title: '高俅命巨艦直入水泊，梁山不得把被逼登船的水手一概視為死敵',
+      text: () => `梁山下令：只破舵、纜、帆與旗號，落水者一律救起。李俊、阮氏兄弟、公孫勝與張清各負一環，準備發動水陸聯合作戰。`,
+      choices: () => [{ label: '開始「水泊鎖艦」五階段軍略', action: () => { state.flags.imperialFleetArrived = true; startNavalDuel(false); } }]
+    },
+    naval_strategy: {
+      location: 'gaofleet', scene: 'river', region: '梁山泊外湖', name: '蘆葦水道', caption: '水陸軍略・重整再戰', speaker: '吳用',
+      title: '高船怕窄水，強弩怕霧，帥旗怕飛石；次序錯一環，船隊便會重新靠攏',
+      text: () => `李俊重新核對水深與風向。<p>軍略 ${state.flags.navalPlanScore}/5｜船塢 Lv.${state.base.shipyard || 1}。</p>`,
+      choices: () => [{ label: '重新發動水泊鎖艦軍略', action: () => startNavalDuel(false) }]
+    },
+    naval_breached: {
+      location: 'gaofleet', scene: 'river', region: '梁山泊外湖', name: '高俅中軍旗艦', caption: '艦隊離散・飛石登樓', speaker: '張清',
+      title: '高俅旗艦已失去護船，必須奪帥旗、止亂箭並保住俘虜性命',
+      text: () => `水寨小舟靠上旗艦。張清把石囊纏在腕上，準備打落船樓弩手與號令旗，不向落水水兵追擊。`,
+      choices: () => [{ label: '操控張清，迎戰高俅旗艦親軍', action: () => { if (state.activeHeroId !== 'zhangqing') setActiveHero('zhangqing'); startBattle('gaoFlagship', 'gao_flagship_win'); } }]
+    },
+    gao_captured: {
+      location: 'liangshan', scene: 'mountain', region: '濟州水泊', name: '梁山泊忠義堂', caption: '殿帥被擒・停戰有約', speaker: '宋江',
+      title: '梁山第三次放高俅回京，但把救治俘虜、停兵與回覆三約寫成公開文書',
+      text: () => `高俅被擒後，李逵主張一斧了結，林沖也想追問舊恨。宋江讓受害者先說完，再由蕭讓記下高俅承諾：退水軍、交換傷俘、把梁山三約送交中樞。<p>放還不等於信任，而是讓全寨與百姓知道停戰條件。</p>`,
+      choices: () => [{ label: '完成第十一回，舉行水陸軍整編', action: () => finishChapterEleven() }]
+    },
+    chapter11_end: {
+      location: 'liangshan', scene: 'river', region: '濟州水泊', name: '梁山水寨船塢', caption: '第十一回終・水陸協同', speaker: '章回評語',
+      title: '第十一回完：童貫兵退，高俅艦破，沒羽箭入山',
+      text: () => `本回把「兩贏童貫、三敗高俅」改寫為軍令、俘虜與停戰條件的考驗。張清成為第十一名主角，李俊加入同伴；梁山開放船塢與水陸軍略。<p>勝利不只看擒住誰，也看是否救起落水者、停止焚村與把承諾寫成可追責的文書。</p>`,
+      choices: () => [
+        { label: '開啟十一英雄譜', action: () => openRoster() },
+        { label: '管理梁山船塢與建設', action: () => openBase() },
+        { label: '重演水泊鎖艦軍略', action: () => startNavalDuel(true) },
+        { label: '前往水陸協同演武場', action: () => goScene('naval_free') },
+        { label: '查看十一回總成果', action: () => openSummary() },
+        { label: '回到遊戲標題', action: () => { saveGame(); showTitle(); } }
+      ]
+    },
+    naval_free: {
+      location: 'shipyard', scene: 'river', region: '濟州水泊南汊', name: '水陸協同演武場', caption: '戰後・船陣常備', speaker: '旁白',
+      title: '張清與李俊把飛石、鉤索、小舟救援與岸上弩陣編成常備操典',
+      text: () => `此處可挑戰水陸協同教頭、重演鎖艦軍略、升級船塢與培養李俊羈絆。<p>船塢 Lv.${state.base.shipyard || 1}｜演武 ${state.flags.navalArenaWins || 0} 勝。</p>`,
+      choices: () => [
+        { label: '與水陸協同教頭切磋', action: () => startBattle('navalArena', 'naval_arena_win') },
+        { label: '重演水泊鎖艦軍略', action: () => startNavalDuel(true) },
+        { label: '管理梁山建設', action: () => openBase() },
+        { label: '調整江湖同伴編成', action: () => openTeam() },
+        { label: '切換十一名英雄', action: () => openRoster() },
         { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
       ]
     }
@@ -2666,7 +2880,7 @@
     const hpPercent = state.hero.maxHp ? (state.hero.hp / state.hero.maxHp) * 100 : 0;
     const spPercent = state.hero.maxSp ? (state.hero.sp / state.hero.maxSp) * 100 : 0;
     const xpPercent = state.hero.nextXp ? (state.hero.xp / state.hero.nextXp) * 100 : 0;
-    $('[data-role="portrait"]').textContent = state.hero.avatar || ({ luzhishen: '魯', linchong: '林', yangzhi: '楊', songjiang: '宋', likui: '李', husanniang: '扈', huyanzhuo: '呼', lujunyi: '盧', gongsunsheng: '公', wusong: '武' }[state.activeHeroId] || '俠');
+    $('[data-role="portrait"]').textContent = state.hero.avatar || ({ luzhishen: '魯', linchong: '林', yangzhi: '楊', songjiang: '宋', likui: '李', husanniang: '扈', huyanzhuo: '呼', lujunyi: '盧', gongsunsheng: '公', zhangqing: '張', wusong: '武' }[state.activeHeroId] || '俠');
     $('[data-role="hero-name"]').textContent = state.hero.name;
     $('[data-role="hero-title"]').textContent = state.hero.title;
     $('[data-role="chapter-label"]').textContent = `第 ${state.chapter} 回`;
@@ -2819,7 +3033,12 @@
 
     const actions = $('[data-role="battle-actions"]', overlay);
     actions.replaceChildren();
-    const heroSkillButtons = state.activeHeroId === 'gongsunsheng'
+    const heroSkillButtons = state.activeHeroId === 'zhangqing'
+      ? [
+          { label: '沒羽飛石－8 豪氣', disabled: state.hero.sp < 8, action: () => heroBattleAction('featherStone') },
+          { label: '飛蝗連珠－13 豪氣', disabled: state.hero.sp < 13, action: () => heroBattleAction('meteorVolley') }
+        ]
+      : state.activeHeroId === 'gongsunsheng'
       ? [
           { label: '五雷正法－9 豪氣', disabled: state.hero.sp < 9, action: () => heroBattleAction('fiveThunder') },
           { label: '八門遁甲－13 豪氣', disabled: state.hero.sp < 13, action: () => heroBattleAction('eightGates') }
@@ -3116,6 +3335,24 @@
       tone('skill');
     }
 
+    if (type === 'featherStone') {
+      state.hero.sp -= 8;
+      const damage = Math.max(15, Math.round((stats.attack + randomInt(9, 17)) * 1.08 - b.defense * 0.22));
+      b.hp -= damage; b.attack = Math.max(8, b.attack - 3);
+      const stunned = Math.random() < 0.48; if (stunned) b.stunned = 1;
+      message = `張清抖腕一石直取持兵之手，造成 ${damage} 點傷害並削弱武力。${stunned ? '敵手穴位受制，下一回合無法出手。' : ''}`;
+      tone(stunned ? 'critical' : 'skill');
+    }
+
+    if (type === 'meteorVolley') {
+      state.hero.sp -= 13;
+      let total = 0;
+      for (let i = 0; i < 3; i += 1) total += Math.max(7, Math.round(stats.attack * (i === 2 ? 0.72 : 0.52) + randomInt(3, 9) - b.defense * 0.2));
+      b.hp -= total; b.defense = Math.max(0, b.defense - 2); b.critBoost = Math.max(b.critBoost || 0, 0.2);
+      message = `飛蝗石三發連珠，總計造成 ${total} 點傷害，並打亂敵方筋骨與號令。`;
+      tone('critical');
+    }
+
     if (type === 'guard') {
       state.hero.guarding = true;
       state.hero.sp = clamp(state.hero.sp + 7, 0, state.hero.maxSp);
@@ -3195,6 +3432,12 @@
         b.defense = Math.max(0, b.defense - weaken);
         state.hero.sp = clamp(state.hero.sp + spirit, 0, state.hero.maxSp);
         message = `蕭讓逐字拆解敵方號令，武力與筋骨各降 ${weaken}，你恢復 ${spirit} 點豪氣。`;
+      } else if (companion.id === 'lijun') {
+        const damage = 36 + companion.bond * 10 + randomInt(5, 14);
+        const spirit = 10 + companion.bond * 2;
+        b.hp -= damage; b.informedDodge = 1;
+        state.hero.sp = clamp(state.hero.sp + spirit, 0, state.hero.maxSp);
+        message = `李俊自水路奇襲敵後，造成 ${damage} 點傷害；你恢復 ${spirit} 點豪氣並看破下一擊。`;
       }
       tone('level');
     }
@@ -3490,6 +3733,41 @@
       addLog(`完成第 ${state.flags.diplomacyArenaWins} 次忠義堂議武，取得文書院建材。`);
       goScene('diplomacy_free');
     }
+    if (result.afterWin === 'tongguan_vanguard_win') {
+      state.flags.tongguanDefeated = true;
+      state.quests.main_tonggao.progress = '童貫十節度前鋒已退，東昌飛石騎隊封住東路';
+      changeMorality(5, '擊退官軍後救治傷兵、放還俘虜');
+      goScene('tongguan_after');
+    }
+    if (result.afterWin === 'zhangqing_trial_win') {
+      state.flags.zhangqingTrialWon = true;
+      state.flags.dongchangReached = true;
+      state.heroes.zhangqing.unlocked = true;
+      state.quests.main_tonggao.progress = '識破張清只打兵刃的飛石分寸，殿前司監軍下令焚村';
+      goScene('zhangqing_choice');
+    }
+    if (result.afterWin === 'imperial_enforcer_win') {
+      state.flags.imperialEnforcerDefeated = true;
+      state.flags.zhangqingJoined = true;
+      changeMorality(9, '拒絕焚村軍令，以飛石制止監軍');
+      state.quests.main_tonggao.progress = '張清拒絕焚村，隨梁山回寨整備水戰';
+      goScene('water_council');
+    }
+    if (result.afterWin === 'gao_flagship_win') {
+      state.flags.gaoFlagshipDefeated = true;
+      state.flags.gaoCaptured = true;
+      state.quests.main_tonggao.progress = '高俅旗艦已奪，準備在忠義堂提出停戰條件';
+      changeMorality(8, '奪帥旗而不追殺落水水兵');
+      goScene('gao_captured');
+    }
+    if (result.afterWin === 'naval_arena_win') {
+      state.flags.navalArenaWins = (state.flags.navalArenaWins || 0) + 1;
+      state.base.timber += 1;
+      if (state.flags.navalArenaWins % 2 === 0) state.base.stone += 1;
+      state.hero.hp = clamp(state.hero.hp + 28, 0, state.hero.maxHp);
+      addLog(`完成第 ${state.flags.navalArenaWins} 次水陸協同演武，取得船塢建材。`);
+      goScene('naval_free');
+    }
     if (result.afterWin === 'liangshan_arena_win') {
       state.flags.liangshanArenaWins = (state.flags.liangshanArenaWins || 0) + 1;
       state.base.timber += 1;
@@ -3548,7 +3826,7 @@
       zengtouArena: 'zengtou_free',
       erxianTrial: 'erxian_trial',
       imperialGuard: 'edict_clash',
-      diplomacyArena: 'diplomacy_free'
+      diplomacyArena: 'diplomacy_free', tongguanVanguard: 'chapter11_court_response', zhangqingTrial: 'dongchang_gate', imperialEnforcer: 'zhangqing_choice', gaoFlagship: 'naval_breached', navalArena: 'naval_free'
     };
     goScene(recoveryScenes[enemyId] || state.sceneId);
   }
@@ -3559,7 +3837,7 @@
     state.battle = null;
     battleLocked = false;
     addLog('暫時退出戰鬥。');
-    const fleeScenes = { bandit: 'road_first', escortThugs: 'boar_forest', cangzhouArena: 'cangzhou_free', pursuitSoldiers: 'yangzhi_awake', damingArena: 'daming_free', yunchengArena: 'yuncheng_free', jiangzhouRuffians: 'likui_meet', liangshanArena: 'liangshan_free', zhujiaArena: 'zhujia_free', chainArena: 'chainhorse_free', zengtouArena: 'zengtou_free', diplomacyArena: 'diplomacy_free' };
+    const fleeScenes = { bandit: 'road_first', escortThugs: 'boar_forest', cangzhouArena: 'cangzhou_free', pursuitSoldiers: 'yangzhi_awake', damingArena: 'daming_free', yunchengArena: 'yuncheng_free', jiangzhouRuffians: 'likui_meet', liangshanArena: 'liangshan_free', zhujiaArena: 'zhujia_free', chainArena: 'chainhorse_free', zengtouArena: 'zengtou_free', diplomacyArena: 'diplomacy_free', navalArena: 'naval_free' };
     goScene(fleeScenes[enemyId] || state.sceneId);
   }
 
@@ -4441,6 +4719,97 @@
     goScene('edict_clash');
   }
 
+
+  function startNavalDuel(replay = false) {
+    closeBattleOverlay();
+    const shipyard = clamp(state.base.shipyard || 1, 1, 5);
+    const plan = clamp(state.flags.navalPlanScore || 0, 0, 5);
+    state.navalBattle = {
+      defense: Math.max(112, 160 - plan * 5),
+      maxDefense: Math.max(112, 160 - plan * 5),
+      momentum: 118 + shipyard * 10,
+      maxMomentum: 118 + shipyard * 10,
+      alarm: Math.max(10, 34 - shipyard * 3 - plan * 2),
+      turn: 1,
+      used: [], replay,
+      message: '高俅巨艦彼此以纜索照應。須先測水道、誘入窄汊，再斷纜、借霧與飛石奪旗。'
+    };
+    navalLocked = false;
+    renderNavalDuel();
+    tone('battle');
+  }
+
+  function renderNavalDuel() {
+    const n = state.navalBattle;
+    if (!n) return;
+    let overlay = $('.battle-overlay');
+    if (!overlay) { document.body.append($('#battleTemplate').content.cloneNode(true)); overlay = $('.battle-overlay'); }
+    $('[data-role="enemy-avatar"]', overlay).textContent = '艦';
+    $('[data-role="enemy-name"]', overlay).textContent = '高俅海鰍巨艦陣';
+    $('[data-role="enemy-title"]', overlay).textContent = `船隊警報｜${Math.round(n.alarm)}%`;
+    $('[data-role="enemy-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.defense))} / ${n.maxDefense}`;
+    $('[data-role="enemy-hp-bar"]', overlay).style.width = `${clamp((n.defense / n.maxDefense) * 100, 0, 100)}%`;
+    $('[data-role="battle-hero-avatar"]', overlay).textContent = '水';
+    $('[data-role="battle-hero-name"]', overlay).textContent = '梁山水陸聯軍';
+    $('[data-role="battle-hero-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.momentum))} / ${n.maxMomentum}`;
+    $('[data-role="battle-hero-hp-bar"]', overlay).style.width = `${clamp((n.momentum / n.maxMomentum) * 100, 0, 100)}%`;
+    const support = $('[data-role="battle-companion"]', overlay);
+    support.classList.remove('hidden');
+    $('[data-role="battle-companion-avatar"]', overlay).textContent = '俊';
+    $('[data-role="battle-companion-name"]', overlay).textContent = `軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}`;
+    $('[data-role="battle-message"]', overlay).innerHTML = `<strong>第 ${n.turn} 潮</strong>｜${n.message}`;
+    const actions = $('[data-role="battle-actions"]', overlay); actions.replaceChildren();
+    const specs = [
+      ['sound', '李俊測水深、辨回流', false],
+      ['lure', '阮氏小舟誘巨艦入窄汊', !n.used.includes('sound')],
+      ['cut', '張橫、張順潛水斷纜', !n.used.includes('lure')],
+      ['fog', '公孫勝借霧遮住強弩', !n.used.includes('cut')],
+      ['stone', '張清飛石擊落帥旗號手', n.used.length < 4 || n.defense > 54]
+    ];
+    for (const [id,label,unavailable] of specs) {
+      const button=document.createElement('button'); button.type='button';
+      button.textContent=`${label}${n.used.includes(id)?'（已用）':''}`;
+      button.disabled=navalLocked||unavailable||n.used.includes(id);
+      button.addEventListener('click',()=>navalAction(id)); actions.append(button);
+    }
+    if (prefs.narration && prefs.narrateBattle) speakText(`第 ${n.turn} 潮。${n.message}`, { interrupt: true });
+  }
+
+  function navalAction(type) {
+    const n=state.navalBattle; if(!n||navalLocked||n.used.includes(type)) return;
+    navalLocked=true; n.used.push(type);
+    const plan=clamp(state.flags.navalPlanScore||0,0,5); const ship=clamp(state.base.shipyard||1,1,5);
+    if(type==='sound'){ n.defense-=20+plan; n.alarm=Math.max(0,n.alarm-10); n.message='李俊以竹篙與浮標標出深槽、回流和蘆葦暗汊，梁山小舟不再盲目迎撞。'; }
+    else if(type==='lure'){ n.defense-=27+plan*2; n.alarm=Math.max(0,n.alarm-7); n.message='阮氏小舟佯敗後撤，把吃水深的海鰍船引進不能並行的窄汊。'; }
+    else if(type==='cut'){ n.defense-=34+plan*2; n.alarm+=4; n.message='張橫、張順潛到船腹，以水刀割斷護船纜索，巨艦彼此失去照應。'; }
+    else if(type==='fog'){ n.defense-=37+ship*2; n.momentum=Math.min(n.maxMomentum,n.momentum+10); n.message='公孫勝借晨霧遮住船樓視線，梁山救生小舟趁勢接走落水軍士。'; }
+    else if(type==='stone'){ n.defense=0; n.message='張清三石連發，先落號旗、再碎鼓槌、最後打飛帥船舵令；高俅旗艦完全孤立。'; }
+    if (type !== 'stone') n.defense = Math.max(1, n.defense);
+    tone(type==='stone'?'critical':'skill'); renderNavalDuel();
+    if(n.defense<=0){ setTimeout(finishNavalDuel,650); return; }
+    setTimeout(navalOpponentTurn,650);
+  }
+
+  function navalOpponentTurn(){
+    const n=state.navalBattle; if(!n) return;
+    const pressure=randomInt(10,16)+Math.floor(n.alarm/28); n.momentum-=pressure; n.alarm=Math.min(100,n.alarm+randomInt(6,11)); n.turn+=1;
+    n.message=`官軍強弩與鉤拒船重新靠攏，梁山水陸軍消耗 ${pressure} 點軍勢；帥船號鼓正在恢復。`;
+    if(n.momentum<=0||n.alarm>=100){ renderNavalDuel(); setTimeout(loseNavalDuel,650); return; }
+    navalLocked=false; renderNavalDuel();
+  }
+
+  function finishNavalDuel(){
+    const replay=Boolean(state.navalBattle?.replay); state.navalBattle=null; navalLocked=false; closeBattleOverlay();
+    addLog('水泊鎖艦成功：測水、誘敵、斷纜、借霧與飛石形成完整水陸軍略。'); tone('victory');
+    if(replay) goScene('naval_free'); else { state.flags.fleetFormationBroken=true; state.flags.navalPlanScore=Math.max(4,state.flags.navalPlanScore||0); state.quests.main_tonggao.progress='高俅艦隊已散，張清準備登上中軍旗艦'; goScene('naval_breached'); }
+  }
+
+  function loseNavalDuel(){
+    const replay=Boolean(state.navalBattle?.replay); state.navalBattle=null; navalLocked=false; closeBattleOverlay();
+    addLog('巨艦重新連纜，梁山小舟退入蘆葦汊重新整隊。'); toast('軍勢耗盡或警報過高，請依測水、誘敵、斷纜、借霧、飛石的順序重試。');
+    goScene(replay?'naval_free':'naval_strategy');
+  }
+
   function openFactionCouncil() {
     const outcome = state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒絕苛詔、守寨自立' : state.flags.councilOutcome === 'delay' ? '暫緩受詔、先行護民' : '尚未表決';
     openModal({
@@ -4479,17 +4848,17 @@
       subtitle: '不需安裝、不需登入，進度保存在目前瀏覽器。',
       content: `
         <div class="modal-grid">
-          <article class="info-card"><h3>十章回探索</h3><p>依序操控武松、魯智深、林沖、楊志、宋江、李逵、扈三娘、呼延灼、盧俊義與公孫勝。第十回加入菊花會、詔書查驗、招安議事與三條路線分歧。</p></article>
+          <article class="info-card"><h3>十一章回探索</h3><p>依序操控武松、魯智深、林沖、楊志、宋江、李逵、扈三娘、呼延灼、盧俊義、公孫勝與張清。第十一回加入童貫高俅戰役、水陸軍略與船塢。</p></article>
           <article class="info-card"><h3>黃泥岡智策</h3><p>第四回先從楊志護送視角維持軍紀與士氣，再切換吳用視角，以計策順序瓦解護綱警戒。</p></article>
           <article class="info-card"><h3>鄆城案牘推演</h3><p>第五回以宋江押司身分核對口供、安排查訪次序，在官府疑心升滿前替晁蓋爭取逃離時間。</p></article>
           <article class="info-card"><h3>祝家莊攻略</h3><p>第七回結合盤陀路偵察、扈三娘決鬥、孫立臥底與五階段軍略。前兩次進攻取得的情報，會直接影響第三次總攻難度。</p></article>
           <article class="info-card"><h3>連環馬陣型戰</h3><p>第八回要以藤牌護陣、箭斷皮索、鉤鐮倒馬與兩翼截擊依序破解鐵甲騎陣；軍械坊與訓練分數會提高步軍陣勢。</p></article>
           <article class="info-card"><h3>曾頭市五寨合圍</h3><p>第九回以燕青偵察、戴宗斷信、呼延灼分騎、林沖與扈三娘壓寨、盧俊義封退路，依序瓦解五寨聯防。瞭望臺與前置軍略會改變初始軍勢。</p></article>
-          <article class="info-card"><h3>招安議事</h3><p>第十回先查驗詔書，再依「聽取反對、確立護民底線、文書核驗、提出三約」的順序完成忠義堂公開議事。</p></article>
-          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺及文書院；完成第八回後可派出山寨遠征。</p></article>
+          <article class="info-card"><h3>水陸軍略</h3><p>第十一回依「測水、誘敵、斷纜、借霧、飛石」順序拆解高俅巨艦，並救起落水軍士。</p></article>
+          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺、文書院及船塢；完成第八回後可派出山寨遠征。</p></article>
           <article class="info-card"><h3>回合戰鬥</h3><p>普通攻擊可累積豪氣；技能傷害較高。防禦能大幅降低下一次受傷。</p></article>
           <article class="info-card"><h3>酒意</h3><p>酒意越高，普通攻擊暴擊率越高，但命中稍微下降；醉拳技能也會更強。</p></article>
-          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青與蕭讓。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
+          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青、蕭讓與李俊。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
           <article class="info-card"><h3>陽谷擂臺</h3><p>完成第一回後可在陽谷縣重複挑戰，用來測試編成、累積閱歷及同伴羈絆。</p></article>
           <article class="info-card"><h3>本機存檔</h3><p>按「存檔」可立即保存。清除瀏覽器網站資料會一併移除進度。</p></article>
           <article class="info-card"><h3>顯示模式</h3><p>右上角「◐」可循環切換水墨宣紙、深色與黑白電子紙模式。</p></article>
@@ -4502,11 +4871,11 @@
   function openAbout() {
     openModal({
       title: `梁山風雲 v${VERSION}`,
-      subtitle: '十章回版：新增菊花會、招安議事、公孫勝主角與梁山派系聲望',
+      subtitle: '十一章回版：新增童貫高俅戰役、張清主角、水陸軍略與船塢建設',
       content: `
         <div class="modal-grid">
-          <article class="info-card"><h3>已收錄</h3><p>十回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝十主角、專屬技能、十一名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
-          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市與菊花會招安之議為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
+          <article class="info-card"><h3>已收錄</h3><p>十一回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝／張清十一主角、專屬技能、十二名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
+          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市、菊花會招安之議與兩贏童貫三敗高俅為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
           <article class="info-card"><h3>技術</h3><p>純 HTML、CSS、JavaScript 製作，不使用外部套件，也不需要伺服器或資料庫。</p></article>
           <article class="info-card"><h3>存檔位置</h3><p>使用瀏覽器 LocalStorage。版本更新通常不影響存檔，但更換裝置不會自動同步。</p></article>
         </div>`
@@ -4533,8 +4902,8 @@
 
   function openRoster() {
     syncActiveHero();
-    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝' };
-    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場' };
+    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清' };
+    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場', zhangqing: '水陸協同演武場' };
     const unlockHints = {
       wusong: '第一回初始英雄。',
       luzhishen: '完成第一回後，開啟「魯提轄拳打鎮關西」。',
@@ -4545,7 +4914,8 @@
       husanniang: '完成第六回後，開啟「三打祝家莊」。',
       huyanzhuo: '完成第七回後，開啟「大破連環馬」。',
       lujunyi: '完成第八回後，開啟「曾頭市與梁山大聚義」。',
-      gongsunsheng: '完成第九回後，開啟「菊花會與招安之議」。'
+      gongsunsheng: '完成第九回後，開啟「菊花會與招安之議」。',
+      zhangqing: '完成第十回後，開啟「兩贏童貫・三敗高俅」。'
     };
     const cards = Object.keys(HERO_BLUEPRINTS).map(id => {
       const hero = state.heroes[id];
@@ -4553,9 +4923,9 @@
       if (!unlocked) return `<article class="hero-roster-card locked"><span class="hero-roster-avatar">？</span><div><h3>尚未開篇</h3><p>${escapeHtml(unlockHints[id])}</p></div></article>`;
       const stats = getStatsForHero(id);
       const active = id === state.activeHeroId;
-      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : true;
+      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : id === 'zhangqing' ? state.flags.chapter11Complete : true;
       const switchDisabled = active || !state.flags.chapter2Complete || !storyComplete;
-      const chapterLabel = id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
+      const chapterLabel = id === 'zhangqing' ? '十一' : id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
       const buttonText = active ? '目前主角' : !storyComplete ? `完成第${chapterLabel}回後開放` : `切換為${heroNames[id]}`;
       return `<article class="hero-roster-card ${active ? 'active' : ''}">
         <span class="hero-roster-avatar">${escapeHtml(hero.avatar || hero.name.slice(0, 1))}</span>
@@ -4563,7 +4933,9 @@
         <button type="button" data-switch-hero="${id}" ${switchDisabled ? 'disabled' : ''}>${buttonText}</button>
       </article>`;
     }).join('');
-    const subtitle = state.flags.chapter10Complete ? '十位英雄均可自由切換；派系聲望、文書院與招安議事已開放。'
+    const subtitle = state.flags.chapter11Complete ? '十一位英雄均可自由切換；船塢、水陸軍略與李俊助陣已開放。'
+      : state.flags.chapter11Started ? '第十一回進行中；完成高俅水軍戰後，張清將正式加入英雄譜。'
+      : state.flags.chapter10Complete ? '十位英雄均可自由切換；可開啟童貫、高俅水陸戰役。'
       : state.flags.chapter10Started ? '第十回進行中；完成招安議事後，公孫勝將正式加入英雄譜。'
       : state.flags.chapter9Complete ? '九位英雄均可自由切換；可由梁山開啟菊花會與招安之議。'
       : state.flags.chapter9Started ? '第九回進行中；完成曾頭市攻略後，盧俊義將正式加入英雄譜。'
@@ -4652,7 +5024,7 @@
       jiangzhou: [18, 82], xunyang: [48, 88], execution: [77, 82], liangshan: [55, 70],
       dulong: [16, 62], zhujia: [48, 57], hujia: [80, 51],
       chaincamp: [18, 44], hookrange: [50, 40], qingzhou: [82, 35],
-      lumanor: [10, 31], zengtou: [40, 12], erxian: [72, 10], imperialcamp: [78, 27]
+      lumanor: [10, 31], zengtou: [40, 12], erxian: [72, 10], imperialcamp: [78, 27], dongchang: [92, 15], shipyard: [42, 94], gaofleet: [74, 92]
     };
     const nodes = MAP_NODES.map(node => {
       const unlocked = node.unlock(state);
@@ -4684,8 +5056,9 @@
     const seventhChapterLocations = ['dulong', 'zhujia', 'hujia'];
     const ninthChapterLocations = ['lumanor', 'zengtou'];
     const tenthChapterLocations = ['erxian'];
+    const eleventhChapterLocations = ['dongchang', 'shipyard', 'gaofleet'];
     const eighthChapterLocations = ['chaincamp', 'hookrange', 'qingzhou'];
-    const requiredHero = tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
+    const requiredHero = eleventhChapterLocations.includes(locationId) ? 'zhangqing' : tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
     if (state.activeHeroId !== requiredHero) {
       if (!state.flags.chapter2Complete) { toast('目前正處於另一位英雄的關鍵章回，尚不能跨線旅行。'); return; }
       if (requiredHero === 'linchong' && !state.flags.chapter3Complete) { closeModal(); startChapterThree(); return; }
@@ -4696,8 +5069,9 @@
       if (requiredHero === 'huyanzhuo' && !state.flags.chapter8Complete) { closeModal(); startChapterEight(); return; }
       if (requiredHero === 'lujunyi' && !state.flags.chapter9Complete) { closeModal(); startChapterNine(); return; }
       if (requiredHero === 'gongsunsheng' && !state.flags.chapter10Complete) { closeModal(); startChapterTen(); return; }
+      if (requiredHero === 'zhangqing' && !state.flags.chapter11Complete) { closeModal(); startChapterEleven(); return; }
       setActiveHero(requiredHero);
-      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10 }[requiredHero];
+      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11 }[requiredHero];
     }
     const destinations = {
       manor: 'manor_depart', road: state.flags.roadBanditCleared ? 'road_after_bandit' : 'road_first', inn: 'inn_arrive',
@@ -4724,7 +5098,10 @@
       lumanor: state.flags.chapter9Complete ? 'zengtou_free' : state.flags.yanqingRescue ? 'zengtou_strategy' : state.flags.luBetrayed ? 'lu_betrayal' : 'lu_manor',
       zengtou: state.flags.chapter9Complete ? 'zengtou_free' : state.flags.zengtouFormationBroken ? 'zengtou_breached' : state.flags.yanqingRescue ? 'zengtou_strategy' : 'zengtou_first_march',
       erxian: state.flags.chapter10Complete ? 'diplomacy_free' : state.flags.erxianTrialWon ? 'gongsun_return' : 'erxian_trial',
-      imperialcamp: state.flags.chapter10Complete ? 'diplomacy_free' : state.flags.edictArrived ? 'edict_examine' : 'edict_arrival'
+      imperialcamp: state.flags.chapter10Complete ? 'diplomacy_free' : state.flags.edictArrived ? 'edict_examine' : 'edict_arrival',
+      dongchang: state.flags.chapter11Complete ? 'naval_free' : state.flags.zhangqingTrialWon ? 'zhangqing_choice' : 'dongchang_gate',
+      shipyard: state.flags.chapter11Complete ? 'naval_free' : state.flags.fleetPrepared ? 'imperial_fleet_arrives' : 'water_council',
+      gaofleet: state.flags.chapter11Complete ? 'naval_free' : state.flags.fleetFormationBroken ? 'naval_breached' : 'naval_strategy'
     };
     closeModal();
     goScene(destinations[locationId]);
@@ -4733,25 +5110,25 @@
   function openSummary() {
     syncActiveHero();
     const completed = Object.values(state.quests).filter(q => q.status === 'completed').length;
-    const ids = ['wusong', 'luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng'];
+    const ids = ['wusong', 'luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing'];
     const unlockedHeroes = ids.map(id => state.heroes[id]).filter(hero => hero?.unlocked);
     const averageMorality = unlockedHeroes.reduce((sum, hero) => sum + hero.morality, 0) / Math.max(1, unlockedHeroes.length);
     const ending = averageMorality >= 75 ? '義薄雲天' : averageMorality >= 58 ? '群星聚義' : '豪傑本色';
-    const fallbacks = { wusong: '武松', luzhishen: '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝' };
+    const fallbacks = { wusong: '武松', luzhishen: '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清' };
     const heroCards = ids.map(id => {
       const hero = state.heroes[id];
       const unlocked = Boolean(hero?.unlocked);
       const stats = unlocked ? getStatsForHero(id) : { attack: '－', defense: '－' };
       return `<article class="info-card"><h3>${unlocked ? escapeHtml(hero.name) : fallbacks[id]}</h3><p>${unlocked ? escapeHtml(hero.title) : '章回尚未開啟'}</p><p>等級 ${unlocked ? hero.level : '－'}</p><p>武力 ${stats.attack}｜筋骨 ${stats.defense}</p><p>義氣 ${unlocked ? hero.morality : '－'}</p></article>`;
     }).join('');
-    const title = state.flags.chapter10Complete ? '十回章回成果' : state.flags.chapter9Complete ? '九回章回成果' : state.flags.chapter8Complete ? '八回章回成果' : state.flags.chapter7Complete ? '七回章回成果' : state.flags.chapter6Complete ? '六回章回成果' : state.flags.chapter5Complete ? '五回章回成果' : state.flags.chapter4Complete ? '四回章回成果' : state.flags.chapter3Complete ? '三回章回成果' : state.flags.chapter2Complete ? '兩回章回成果' : '第一回成果';
+    const title = state.flags.chapter11Complete ? '十一回章回成果' : state.flags.chapter10Complete ? '十回章回成果' : state.flags.chapter9Complete ? '九回章回成果' : state.flags.chapter8Complete ? '八回章回成果' : state.flags.chapter7Complete ? '七回章回成果' : state.flags.chapter6Complete ? '六回章回成果' : state.flags.chapter5Complete ? '五回章回成果' : state.flags.chapter4Complete ? '四回章回成果' : state.flags.chapter3Complete ? '三回章回成果' : state.flags.chapter2Complete ? '兩回章回成果' : '第一回成果';
     openModal({
       title, subtitle: `章回評等：${ending}`,
       content: `<div class="modal-grid">
         ${heroCards}
-        <article class="info-card"><h3>歷程</h3><p>完成任務：${completed}</p><p>景陽岡猛虎：${state.flags.tigerDefeated ? '已擊破' : '未擊破'}</p><p>鎮關西鄭屠：${state.flags.zhengDefeated ? '已伏誅' : '尚未交鋒'}</p><p>山神廟陸謙：${state.flags.luqianDefeated ? '已伏誅' : '尚未交鋒'}</p><p>生辰綱：${state.flags.birthdayCargoLost ? '黃泥岡智取成功' : '章回尚未完成'}</p><p>鄆城結局：${state.flags.chapter5Complete ? (state.flags.yanOutcome === 'mercy' ? '義全人未傷' : state.flags.yanOutcome === 'exile' ? '忍辱遠走' : '原著悲劇線') : '章回尚未完成'}</p><p>江州法場：${state.flags.executionRescued ? '兩階段救援成功' : '章回尚未完成'}</p><p>祝家莊：${state.flags.chapter7Complete ? `三打破莊｜聯盟聲望 ${state.flags.allianceReputation}` : '章回尚未完成'}</p><p>連環馬：${state.flags.chapter8Complete ? `鉤鐮破陣｜訓練 ${state.flags.hookTrainingScore}/5` : '章回尚未完成'}</p><p>曾頭市：${state.flags.chapter9Complete ? `五寨已破｜聚義聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '章回尚未完成'}</p><p>招安議事：${state.flags.chapter10Complete ? (state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒苛詔、守寨自立' : '暫緩受詔、先行護民') : '章回尚未完成'}</p><p>演武勝場：${(state.flags.arenaWins || 0) + (state.flags.weizhouArenaWins || 0) + (state.flags.cangzhouArenaWins || 0) + (state.flags.damingArenaWins || 0) + (state.flags.yunchengArenaWins || 0) + (state.flags.liangshanArenaWins || 0) + (state.flags.zhujiaArenaWins || 0) + (state.flags.chainArenaWins || 0) + (state.flags.zengtouArenaWins || 0) + (state.flags.diplomacyArenaWins || 0)}</p></article>
-        <article class="info-card"><h3>同伴與收藏</h3><p>已結識同伴：${Object.values(state.companions).filter(entry => entry.unlocked).length} / ${Object.keys(COMPANIONS).length}</p><p>打虎英雄牌：${state.inventory.tigerToken ? '已取得' : '未取得'}</p><p>五臺度牒：${state.inventory.monkCertificate ? '已取得' : '未取得'}</p><p>草料場銅印：${state.inventory.grassYardSeal ? '已取得' : '未取得'}</p><p>棗瓢暗記：${state.inventory.dateScoop ? '已取得' : '未取得'}</p><p>鄆城押司印記：${state.inventory.yunchengSeal ? '已取得' : '未取得'}</p><p>梁山聚義旗：${state.inventory.liangshanBanner ? '已取得' : '未取得'}</p><p>獨龍岡盟誓牌：${state.inventory.allianceToken ? '已取得' : '未取得'}</p><p>鉤鐮槍譜：${state.inventory.hookLanceManual ? '已取得' : '未取得'}</p><p>聚義座次卷：${state.inventory.assemblyScroll ? '已取得' : '未取得'}</p><p>菊花會盟帖：${state.inventory.chrysanthemumPact ? '已取得' : '未取得'}</p><p>受詔三約：${state.inventory.amnestyTerms ? '已取得' : '依路線未立'}</p><p>山寨：聚義廳 Lv.${state.base.hall}｜醫館 Lv.${state.base.infirmary}｜鐵匠鋪 Lv.${state.base.forge}｜糧倉 Lv.${state.base.granary}｜軍械坊 Lv.${state.base.armory || 1}｜瞭望臺 Lv.${state.base.watchtower || 1}｜文書院 Lv.${state.base.academy || 1}</p><p>糧草：${state.base.grain}｜遠征 ${state.flags.expeditionCount || 0} 次</p></article>
-        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter10Complete ? '十英雄已完成招安議事。後續可擴充東平東昌攻略、朝廷再詔與征遼前的路線後果。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
+        <article class="info-card"><h3>歷程</h3><p>完成任務：${completed}</p><p>景陽岡猛虎：${state.flags.tigerDefeated ? '已擊破' : '未擊破'}</p><p>鎮關西鄭屠：${state.flags.zhengDefeated ? '已伏誅' : '尚未交鋒'}</p><p>山神廟陸謙：${state.flags.luqianDefeated ? '已伏誅' : '尚未交鋒'}</p><p>生辰綱：${state.flags.birthdayCargoLost ? '黃泥岡智取成功' : '章回尚未完成'}</p><p>鄆城結局：${state.flags.chapter5Complete ? (state.flags.yanOutcome === 'mercy' ? '義全人未傷' : state.flags.yanOutcome === 'exile' ? '忍辱遠走' : '原著悲劇線') : '章回尚未完成'}</p><p>江州法場：${state.flags.executionRescued ? '兩階段救援成功' : '章回尚未完成'}</p><p>祝家莊：${state.flags.chapter7Complete ? `三打破莊｜聯盟聲望 ${state.flags.allianceReputation}` : '章回尚未完成'}</p><p>連環馬：${state.flags.chapter8Complete ? `鉤鐮破陣｜訓練 ${state.flags.hookTrainingScore}/5` : '章回尚未完成'}</p><p>曾頭市：${state.flags.chapter9Complete ? `五寨已破｜聚義聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '章回尚未完成'}</p><p>招安議事：${state.flags.chapter10Complete ? (state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒苛詔、守寨自立' : '暫緩受詔、先行護民') : '章回尚未完成'}</p><p>童貫高俅：${state.flags.chapter11Complete ? '水陸聯軍破艦、公開停戰條件' : '章回尚未完成'}</p><p>演武勝場：${(state.flags.arenaWins || 0) + (state.flags.weizhouArenaWins || 0) + (state.flags.cangzhouArenaWins || 0) + (state.flags.damingArenaWins || 0) + (state.flags.yunchengArenaWins || 0) + (state.flags.liangshanArenaWins || 0) + (state.flags.zhujiaArenaWins || 0) + (state.flags.chainArenaWins || 0) + (state.flags.zengtouArenaWins || 0) + (state.flags.diplomacyArenaWins || 0) + (state.flags.navalArenaWins || 0)}</p></article>
+        <article class="info-card"><h3>同伴與收藏</h3><p>已結識同伴：${Object.values(state.companions).filter(entry => entry.unlocked).length} / ${Object.keys(COMPANIONS).length}</p><p>打虎英雄牌：${state.inventory.tigerToken ? '已取得' : '未取得'}</p><p>五臺度牒：${state.inventory.monkCertificate ? '已取得' : '未取得'}</p><p>草料場銅印：${state.inventory.grassYardSeal ? '已取得' : '未取得'}</p><p>棗瓢暗記：${state.inventory.dateScoop ? '已取得' : '未取得'}</p><p>鄆城押司印記：${state.inventory.yunchengSeal ? '已取得' : '未取得'}</p><p>梁山聚義旗：${state.inventory.liangshanBanner ? '已取得' : '未取得'}</p><p>獨龍岡盟誓牌：${state.inventory.allianceToken ? '已取得' : '未取得'}</p><p>鉤鐮槍譜：${state.inventory.hookLanceManual ? '已取得' : '未取得'}</p><p>聚義座次卷：${state.inventory.assemblyScroll ? '已取得' : '未取得'}</p><p>菊花會盟帖：${state.inventory.chrysanthemumPact ? '已取得' : '未取得'}</p><p>受詔三約：${state.inventory.amnestyTerms ? '已取得' : '依路線未立'}</p><p>山寨：聚義廳 Lv.${state.base.hall}｜醫館 Lv.${state.base.infirmary}｜鐵匠鋪 Lv.${state.base.forge}｜糧倉 Lv.${state.base.granary}｜軍械坊 Lv.${state.base.armory || 1}｜瞭望臺 Lv.${state.base.watchtower || 1}｜文書院 Lv.${state.base.academy || 1}｜船塢 Lv.${state.base.shipyard || 1}</p><p>糧草：${state.base.grain}｜遠征 ${state.flags.expeditionCount || 0} 次</p></article>
+        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter11Complete ? '十一英雄已完成水陸整編。後續可擴充正式招安、征遼與路線代價。' : state.flags.chapter10Complete ? '可開啟兩贏童貫、三敗高俅，體驗張清、李俊、水陸軍略與船塢建設。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
       </div>`, wide: true
     });
   }
@@ -4763,11 +5140,11 @@
       ['宋江', '總領山寨・協調軍政', '宋'], ['盧俊義', '副寨主・統領前軍', '盧'],
       ['林沖', '馬軍先鋒', '林'], ['呼延灼', '馬軍統領', '呼'], ['魯智深', '步軍猛將', '魯'],
       ['武松', '步軍頭領', '武'], ['楊志', '馬步軍制使', '楊'], ['李逵', '衝陣頭領', '李'], ['扈三娘', '女軍騎將', '扈'],
-      ['公孫勝', '掌法道者・觀天護寨', '公']
+      ['公孫勝', '掌法道者・觀天護寨', '公'], ['張清', '飛石先鋒・水陸策應', '張']
     ];
     const cards = order.map(([name, duty, avatar], index) => `<article class="hero-roster-card ${index < 2 ? 'active' : ''}"><span class="hero-roster-avatar">${avatar}</span><div class="hero-roster-copy"><h3>第 ${index + 1} 席・${name}</h3><p>${duty}</p></div></article>`).join('');
-    const status = state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
-    openModal({ title: '梁山聚義座次', subtitle: status, content: `<div class="hero-roster-grid">${cards}</div><article class="info-card assembly-note"><h3>軍師職司・吳用</h3><p>吳用掌機密軍略與軍團攻略，列為軍師職司，不占九名可操控英雄的席次。</p></article><article class="info-card assembly-note"><h3>座次設計原則</h3><p>本遊戲不照搬原著一百零八將完整排名，而以目前十位可操控英雄的章回職司排列。座次代表責任分工，不等於人物品格高低。</p></article>`, wide: true });
+    const status = state?.flags?.chapter11Complete ? `十一英雄同堂｜水陸軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}` : state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
+    openModal({ title: '梁山聚義座次', subtitle: status, content: `<div class="hero-roster-grid">${cards}</div><article class="info-card assembly-note"><h3>軍師職司・吳用</h3><p>吳用掌機密軍略與軍團攻略，列為軍師職司，不占十一名可操控英雄的席次。</p></article><article class="info-card assembly-note"><h3>座次設計原則</h3><p>本遊戲不照搬原著一百零八將完整排名，而以目前十一位可操控英雄的章回職司排列。座次代表責任分工，不等於人物品格高低。</p></article>`, wide: true });
   }
 
   function openBase() {
@@ -4788,6 +5165,7 @@
         <article class="info-card"><h3>軍械坊 Lv.${b.armory || 1}</h3><p>提高鉤鐮槍陣型戰的初始陣勢，並改善遠征取得軍械建材的效率。</p><button type="button" data-base-upgrade="armory">升級：${costText(b.armory || 1)}</button><button type="button" data-base-expedition ${state.flags.chapter8Complete ? '' : 'disabled'}>山寨遠征</button></article>
         <article class="info-card"><h3>瞭望臺 Lv.${b.watchtower || 1}</h3><p>提高曾頭市軍團攻略的初始軍勢，降低五寨烽火警報。</p><button type="button" data-base-upgrade="watchtower">升級：${costText(b.watchtower || 1)}</button><button type="button" data-open-assembly ${state.flags.chapter9Complete ? '' : 'disabled'}>查看聚義座次</button></article>
         <article class="info-card"><h3>文書院 Lv.${b.academy || 1}</h3><p>提高招安議事的山寨凝聚、降低使節施壓，並強化詔書查驗與外交文案。</p><button type="button" data-base-upgrade="academy" ${state.flags.chapter10Started ? '' : 'disabled'}>升級：${costText(b.academy || 1)}</button><button type="button" data-open-factions ${state.flags.chapter10Started ? '' : 'disabled'}>查看派系聲望</button></article>
+        <article class="info-card"><h3>水寨船塢 Lv.${b.shipyard || 1}</h3><p>提高水陸軍略初始軍勢、降低巨艦警報，並強化水路遠征。</p><button type="button" data-base-upgrade="shipyard" ${state.flags.chapter11Started ? '' : 'disabled'}>升級：${costText(b.shipyard || 1)}</button><button type="button" data-start-naval ${state.flags.chapter11Complete ? '' : 'disabled'}>重演水泊鎖艦</button></article>
       </div>`, wide: true
     });
     $$('[data-base-upgrade]', modalRoot).forEach(button => button.addEventListener('click', () => upgradeBase(button.dataset.baseUpgrade)));
@@ -4795,6 +5173,7 @@
     $('[data-base-expedition]', modalRoot)?.addEventListener('click', openExpedition);
     $('[data-open-assembly]', modalRoot)?.addEventListener('click', openAssembly);
     $('[data-open-factions]', modalRoot)?.addEventListener('click', openFactionCouncil);
+    $('[data-start-naval]', modalRoot)?.addEventListener('click', () => startNavalDuel(true));
   }
 
   function upgradeBase(type) {
@@ -4809,7 +5188,7 @@
       return;
     }
     b.timber -= timber; b.stone -= stone; state.hero.silver -= silver; b[type] += 1;
-    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院' };
+    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院', shipyard: '水寨船塢' };
     addLog(`${names[type]}升至 Lv.${b[type]}。`);
     tone('level'); saveGame(false); openBase(); renderHeroPanel();
   }
@@ -4842,6 +5221,7 @@
         <article class="info-card"><h3>濟州糧道護送</h3><p>消耗 2 份糧草，護送商旅並交換木材。穩定取得木材與銀兩。</p><button type="button" data-expedition="grainroad">派隊護送</button></article>
         <article class="info-card"><h3>青州廢馬場搜索</h3><p>消耗 2 份糧草，回收馬具、鐵料與皮索。軍械坊越高，石料回收越多。</p><button type="button" data-expedition="horseyard">派隊搜索</button></article>
         <article class="info-card"><h3>滄州鐵礦交涉</h3><p>消耗 2 份糧草，以銀兩與護衛換取軍械材料；可同時提升目前同伴羈絆。</p><button type="button" data-expedition="ironmine">派隊交涉</button></article>
+        <article class="info-card"><h3>濟州水路巡護</h3><p>完成第十一回後開放。消耗 2 份糧草，以救生小舟護送漁戶與渡船。</p><button type="button" data-expedition="waterpatrol" ${state.flags.chapter11Complete ? '' : 'disabled'}>派水軍巡護</button></article>
       </div>`, wide: true
     });
     $$('[data-expedition]', modalRoot).forEach(button => button.addEventListener('click', () => runExpedition(button.dataset.expedition)));
@@ -4863,6 +5243,13 @@
       state.base.stone += stone;
       state.base.timber += 1;
       addLog(`青州廢馬場搜索完成：取得石料 ${stone}、木材 1。`);
+    } else if (type === 'waterpatrol') {
+      const shipyard = state.base.shipyard || 1;
+      const timber = 1 + Math.floor(shipyard / 2);
+      const silver = 8 + shipyard * 3;
+      state.base.timber += timber; state.hero.silver += silver; state.flags.peopleSupport += 2;
+      if (activeCompanion()) gainCompanionBond();
+      addLog(`濟州水路巡護完成：取得木材 ${timber}、銀兩 ${silver}，護民共識提高。`);
     } else {
       const stone = 1 + Math.floor(armory / 2);
       const silver = 5 + armory * 2;
