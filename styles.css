@@ -570,3 +570,24 @@ body[data-theme="paper"] .title-art { background: #fff; border: 2px solid #000; 
   }
   .map-node span { font-size: .68rem; }
 }
+
+
+/* v2.9 忠義安業與梁山新生 */
+.scene-lake .story-visual,
+.scene-village .story-visual {
+  background:
+    radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 33%),
+    linear-gradient(155deg, color-mix(in srgb, var(--paper) 90%, #bfd5c7 10%), var(--paper));
+}
+.scene-village .scene-illustration::before {
+  content: "田契歸戶　義糧公開";
+  letter-spacing: .18em;
+}
+body[data-theme="dark"] .scene-lake .story-visual,
+body[data-theme="dark"] .scene-village .story-visual {
+  background: linear-gradient(155deg, #101b18, #080d0c);
+}
+body[data-theme="paper"] .scene-lake .story-visual,
+body[data-theme="paper"] .scene-village .story-visual {
+  background: #fff;
+}
