@@ -1,14 +1,14 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v2.3",
-  "short_name": "梁山風雲 v2.3",
-  "description": "十二章回水墨網頁 RPG：受詔招安、雁門征遼、花榮、關勝、北境軍略、語音播報與梁山馬廄建設。",
-  "lang": "zh-Hant-TW",
+  "name": "水滸英雄傳：梁山風雲",
+  "short_name": "梁山風雲",
+  "description": "章回式單機網頁 RPG：十三英雄、河北征田虎、幻霧軍略與梁山建設。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#d8c8a7",
+  "background_color": "#efe4c4",
   "theme_color": "#6f1d1b",
+  "lang": "zh-Hant-TW",
+  "orientation": "any",
   "icons": [
     {
       "src": "assets/icon-192.png",
