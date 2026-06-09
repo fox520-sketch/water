@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'liangshan-rpg-save-v1';
   const PREF_KEY = 'liangshan-rpg-prefs-v1';
-  const VERSION = '2.7.0';
+  const VERSION = '2.8.0';
   const THEMES = ['ink', 'dark', 'paper'];
   const THEME_NAMES = { ink: '水墨宣紙', dark: '夜行深色', paper: '黑白電子紙' };
 
@@ -127,6 +127,12 @@
       hp: 212, maxHp: 212, sp: 82, maxSp: 90,
       baseAttack: 36, baseDefense: 23, morality: 84, silver: 40, drunk: 0,
       guarding: false, unlocked: false
+    },
+    zhuwu: {
+      id: 'zhuwu', name: '朱武', avatar: '朱', title: '神機軍師・梁山參贊軍務頭領', level: 16, xp: 0, nextXp: 895,
+      hp: 218, maxHp: 218, sp: 88, maxSp: 96,
+      baseAttack: 37, baseDefense: 24, morality: 86, silver: 44, drunk: 0,
+      guarding: false, unlocked: false
     }
   };
 
@@ -194,6 +200,10 @@
     daizong: [
       { id: 'swiftTalisman', name: '神行甲馬', cost: 9, description: '踏符疾行突入敵陣，造成傷害、恢復豪氣並看破下一擊。' },
       { id: 'urgentRescue', name: '飛符急救', cost: 15, description: '以神行傳令接通救護線，恢復氣血、架起守勢並削弱敵勢。' }
+    ],
+    zhuwu: [
+      { id: 'strategyDisc', name: '神機陣盤', cost: 10, description: '以陣盤辨出號令破綻，造成傷害、削弱筋骨並提高下一擊重創機會。' },
+      { id: 'fourGateLock', name: '四門鎖陣', cost: 16, description: '封住四門傳令線，造成重擊、架起守勢，並可能使敵手停一回合。' }
     ]
   };
 
@@ -278,7 +288,12 @@
     swiftCloudRobe: { name: '疾雲甲馬袍', type: 'armor', hero: 'daizong', description: '縫有甲馬符袋與急救繃帶的輕袍，筋骨 +16。', defense: 16 },
     muzhouRouteMap: { name: '睦州軍民急援圖', type: 'key', description: '戴宗、安道全與山民共同標記的驛道、傷兵站、民船與退兵烽號。' },
     casualtyLedger: { name: '江南傷兵軍民簿', type: 'key', description: '將梁山傷兵、官軍俘虜、方臘降卒與避戰百姓分開登記的救護名冊。' },
-    returnPact: { name: '忠義班師護送約', type: 'key', description: '睦州終戰後立下的約定：先救傷者、護送百姓、分籍降卒，再整隊班師。' }
+    returnPact: { name: '忠義班師護送約', type: 'key', description: '睦州終戰後立下的約定：先救傷者、護送百姓、分籍降卒，再整隊班師。' },
+    strategyFan: { name: '神機四門扇', type: 'weapon', hero: 'zhuwu', description: '朱武標記陣門、拆解軍令所用羽扇，武力 +18、筋骨 +3。', attack: 18, defense: 3 },
+    archiveRobe: { name: '忠義功冊袍', type: 'armor', hero: 'zhuwu', description: '內藏功冊副本、印樣與護封夾層的長袍，筋骨 +17。', defense: 17 },
+    meritRoll: { name: '梁山忠義功冊', type: 'key', description: '朱武、蕭讓與裴宣共同校定的班師功冊，記載出征、救護、傷亡與應得撫卹。' },
+    pensionLedger: { name: '軍民撫卹交割簿', type: 'key', description: '逐戶核對傷者、陣亡者家眷、降卒安置與百姓損失的交割簿。' },
+    capitalPact: { name: '東京公開封賞約', type: 'key', description: '班師入京後立下的公開約定：功冊不得抽換、撫卹不得截留、離隊者亦保留姓名與應得賞給。' }
   };
 
   const COMPANIONS = {
@@ -361,6 +376,11 @@
       name: '安道全', title: '神醫・梁山軍醫頭領', avatar: '醫', role: '戰地救護', skillName: '神醫救護',
       description: '每場戰鬥可使用一次，恢復大量氣血、清除部分危急狀態，並提供兩回合防護。',
       unlockHint: '第十六回於睦州傷兵營完成軍民分診與急援路線。'
+    },
+    peixuan: {
+      name: '裴宣', title: '鐵面孔目・梁山定功賞罰頭領', avatar: '裴', role: '法度勘驗', skillName: '鐵面勘驗',
+      description: '每場戰鬥可使用一次，勘破敵方假令、削弱攻防、恢復豪氣並提供一回合防護。',
+      unlockHint: '第十七回於東京功冊司核驗撫卹、印信與封賞交割。'
     }
   };
 
@@ -649,6 +669,26 @@
       name: '睦州神行救護教頭', title: '班師急援演武隊', avatar: '援', maxHp: 586, attack: 55, defense: 27,
       xp: 130, silver: 38, canFlee: true,
       moves: ['疾步傳令後突襲', '短杖護住傷兵撤退', '假旗調動側翼包抄']
+    },
+    recordEscort: {
+      name: '截冊禁軍校尉', title: '奉密令收走班師名冊與傷亡簿', avatar: '冊', maxHp: 632, attack: 59, defense: 29,
+      xp: 178, silver: 52, canFlee: false,
+      moves: ['禁軍長槍封住驛車', '差役搶奪功冊木匣', '密令校尉喝令全隊停步']
+    },
+    archiveGuard: {
+      name: '樞密院功冊司親隨', title: '看守印庫與封賞交割房的武吏', avatar: '印', maxHp: 658, attack: 61, defense: 30,
+      xp: 186, silver: 54, canFlee: false,
+      moves: ['鐵尺擊落證據', '盾手封住印庫廊道', '假公文調來外院弩手']
+    },
+    corruptEnvoy: {
+      name: '高俅餘黨與密詔使', title: '企圖抽換功冊、截留撫卹的最後阻力', avatar: '詔', maxHp: 724, attack: 64, defense: 33,
+      xp: 292, silver: 88, canFlee: false,
+      moves: ['密詔使持金牌壓陣', '親隨焚毀功冊副本', '禁軍封鎖宣德門外公示臺']
+    },
+    capitalArena: {
+      name: '東京神機護冊教頭', title: '忠義功冊演武隊', avatar: '京', maxHp: 616, attack: 58, defense: 28,
+      xp: 138, silver: 40, canFlee: true,
+      moves: ['四門步陣輪番逼近', '木匣盾護住文書', '假令與真令交錯惑敵']
     }
   };
 
@@ -703,7 +743,11 @@
     { id: 'returnroad', name: '江南傷兵道', region: '杭州至睦州驛路', x: 94, y: 14, unlock: s => s.flags.chapter16Started },
     { id: 'muzhou', name: '睦州城', region: '方臘江南西線', x: 82, y: 18, unlock: s => s.flags.returnReached || s.flags.chapter16Complete },
     { id: 'bangyuan', name: '幫源洞', region: '睦州西南山谷', x: 68, y: 20, unlock: s => s.flags.daizongPerspective || s.flags.chapter16Complete },
-    { id: 'returnrange', name: '睦州神行演武場', region: '班師急援營', x: 52, y: 18, unlock: s => s.flags.daizongJoined || s.flags.chapter16Complete }
+    { id: 'returnrange', name: '睦州神行演武場', region: '班師急援營', x: 52, y: 18, unlock: s => s.flags.daizongJoined || s.flags.chapter16Complete },
+    { id: 'capitalroad', name: '東京班師驛道', region: '汴京南郊', x: 40, y: 16, unlock: s => s.flags.chapter17Started },
+    { id: 'capitalgate', name: '宣德門外', region: '東京皇城南門', x: 30, y: 24, unlock: s => s.flags.capitalReached || s.flags.chapter17Complete },
+    { id: 'archivehall', name: '忠義功冊司', region: '樞密院外署', x: 18, y: 30, unlock: s => s.flags.zhuwuPerspective || s.flags.chapter17Complete },
+    { id: 'capitalrange', name: '東京神機演武場', region: '班師公示臺', x: 8, y: 38, unlock: s => s.flags.zhuwuJoined || s.flags.chapter17Complete }
   ];
 
   function createHero(id) {
@@ -727,6 +771,7 @@
     const yanqing = createHero('yanqing');
     const zhangshun = createHero('zhangshun');
     const daizong = createHero('daizong');
+    const zhuwu = createHero('zhuwu');
     return {
       version: VERSION,
       createdAt: new Date().toISOString(),
@@ -736,8 +781,8 @@
       chapter: 1,
       activeHeroId: 'wusong',
       hero: cloneData(wusong),
-      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng, zhangqing, huarong, qiongying, yanqing, zhangshun, daizong },
-      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1, flyingStonePouch: 1, cloudLightArmor: 1, cloudPiercingBow: 1, yanmenLightArmor: 1, starStoneBag: 1, pearArmor: 1, yanCrossbow: 1, wandererArmor: 1, waterBlade: 1, whiteWaveSuit: 1, divineTalismanBlade: 1, swiftCloudRobe: 1 },
+      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng, zhangqing, huarong, qiongying, yanqing, zhangshun, daizong, zhuwu },
+      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1, flyingStonePouch: 1, cloudLightArmor: 1, cloudPiercingBow: 1, yanmenLightArmor: 1, starStoneBag: 1, pearArmor: 1, yanCrossbow: 1, wandererArmor: 1, waterBlade: 1, whiteWaveSuit: 1, divineTalismanBlade: 1, swiftCloudRobe: 1, strategyFan: 1, archiveRobe: 1 },
       equipment: { weapon: 'staff', armor: 'robe' },
       equipments: {
         wusong: { weapon: 'staff', armor: 'robe' },
@@ -755,7 +800,8 @@
         qiongying: { weapon: 'starStoneBag', armor: 'pearArmor' },
         yanqing: { weapon: 'yanCrossbow', armor: 'wandererArmor' },
         zhangshun: { weapon: 'waterBlade', armor: 'whiteWaveSuit' },
-        daizong: { weapon: 'divineTalismanBlade', armor: 'swiftCloudRobe' }
+        daizong: { weapon: 'divineTalismanBlade', armor: 'swiftCloudRobe' },
+        zhuwu: { weapon: 'strategyFan', armor: 'archiveRobe' }
       },
       companions: {
         songjiang: { unlocked: false, bond: 1, wins: 0 },
@@ -773,7 +819,8 @@
         guansheng: { unlocked: false, bond: 1, wins: 0 },
         qiaodaoqing: { unlocked: false, bond: 1, wins: 0 },
         ruanxiaoqi: { unlocked: false, bond: 1, wins: 0 },
-        andaquan: { unlocked: false, bond: 1, wins: 0 }
+        andaquan: { unlocked: false, bond: 1, wins: 0 },
+        peixuan: { unlocked: false, bond: 1, wins: 0 }
       },
       team: { active: null },
       quests: {
@@ -793,7 +840,8 @@
         main_tianhu: { title: '河北征田虎・幻魔破陣', description: '梁山轉戰河北，先保糧道與村落，再由瓊英、公孫勝破解襄垣幻霧，攻入昭德制止田虎親軍。', status: 'hidden', progress: '尚未開篇' },
         main_wangqing: { title: '征王慶・宛州潛行', description: '梁山轉入淮西，以燕青潛行、李俊水軍與軍民分籍破解王慶水陸封鎖，攻入宛州而不焚民船。', status: 'hidden', progress: '尚未開篇' },
         main_fangla: { title: '征方臘・湧金門夜襲', description: '梁山南下江南，以張順測潮、阮小七斷柵與水陸協同夜襲湧金門，先疏散船戶再攻杭州。', status: 'hidden', progress: '尚未開篇' },
-        main_return: { title: '睦州決戰・忠義歸途', description: '杭州破門後，戴宗與安道全建立傷兵急援線，梁山攻入睦州、平定方臘中軍並護送軍民班師。', status: 'hidden', progress: '尚未開篇' }
+        main_return: { title: '睦州決戰・忠義歸途', description: '杭州破門後，戴宗與安道全建立傷兵急援線，梁山攻入睦州、平定方臘中軍並護送軍民班師。', status: 'hidden', progress: '尚未開篇' },
+        main_capital: { title: '東京功冊・忠義封賞', description: '梁山班師入京，朱武、蕭讓與裴宣保全功冊、核驗撫卹，阻止密詔抽換名冊與截留封賞。', status: 'hidden', progress: '尚未開篇' }
       },
       flags: {
         metSongJiang: false, leftManor: false, roadBanditCleared: false, reachedInn: false,
@@ -882,7 +930,14 @@
         mountainMarkersChecked: false, grainRouteChecked: false, retreatSignalChecked: false,
         muzhouGuardDefeated: false, metAnDaoquan: false, returnPlanScore: 0,
         muzhouFormationBroken: false, fanglaFinalDefeated: false, daizongJoined: false,
-        woundedProtected: false, retreatRescued: false, returnOutcome: '', returnArenaWins: 0
+        woundedProtected: false, retreatRescued: false, returnOutcome: '', returnArenaWins: 0,
+        chapter17Started: false, chapter17Complete: false, capitalReached: false,
+        courtSupply: 3, courtDiscipline: 1, zhuwuPerspective: false,
+        recordEscortDefeated: false, archiveClues: 0, meritRollChecked: false,
+        pensionLedgerChecked: false, sealSampleChecked: false, rewardTransferChecked: false,
+        archiveGuardDefeated: false, metPeiXuan: false, courtPlanScore: 0,
+        archiveFormationBroken: false, corruptEnvoyDefeated: false, zhuwuJoined: false,
+        meritsProtected: false, rewardsSecured: false, courtOutcome: '', capitalArenaWins: 0
       },
       log: ['第一回開篇：武松客居柴進莊。'],
       battle: null,
@@ -898,7 +953,8 @@
       huaiBattle: null,
       southBattle: null,
       returnBattle: null,
-      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1, shipyard: 1, stable: 1, relay: 1, scoutcamp: 1, harbor: 1, mediccamp: 1 },
+      courtBattle: null,
+      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1, shipyard: 1, stable: 1, relay: 1, scoutcamp: 1, harbor: 1, mediccamp: 1, archive: 1 },
       playMinutes: 0,
       lastTickAt: Date.now()
     };
@@ -924,6 +980,7 @@
   let huaiLocked = false;
   let southLocked = false;
   let returnLocked = false;
+  let courtLocked = false;
   let availableVoices = [];
   let lastNarratedSceneId = '';
   let lastNarratedBattleKey = '';
@@ -1007,10 +1064,10 @@
 
   function migrateState(saved) {
     const base = defaultState();
-    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : /^戴/.test(saved.hero?.name || '') ? 'daizong' : /^張順/.test(saved.hero?.name || '') ? 'zhangshun' : /^張/.test(saved.hero?.name || '') ? 'zhangqing' : /^花/.test(saved.hero?.name || '') ? 'huarong' : /^瓊/.test(saved.hero?.name || '') ? 'qiongying' : /^燕/.test(saved.hero?.name || '') ? 'yanqing' : 'wusong');
+    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : /^朱/.test(saved.hero?.name || '') ? 'zhuwu' : /^戴/.test(saved.hero?.name || '') ? 'daizong' : /^張順/.test(saved.hero?.name || '') ? 'zhangshun' : /^張/.test(saved.hero?.name || '') ? 'zhangqing' : /^花/.test(saved.hero?.name || '') ? 'huarong' : /^瓊/.test(saved.hero?.name || '') ? 'qiongying' : /^燕/.test(saved.hero?.name || '') ? 'yanqing' : 'wusong');
     const savedHeroes = saved.heroes || {};
     const savedEquipments = saved.equipments || {};
-    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong'].includes(guessedActive) ? guessedActive : 'wusong';
+    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong', 'zhuwu'].includes(guessedActive) ? guessedActive : 'wusong';
     const heroes = {
       wusong: { ...base.heroes.wusong, ...(savedHeroes.wusong || (oldHeroTarget === 'wusong' ? saved.hero : {})) },
       luzhishen: { ...base.heroes.luzhishen, ...(savedHeroes.luzhishen || (oldHeroTarget === 'luzhishen' ? saved.hero : {})) },
@@ -1027,7 +1084,8 @@
       qiongying: { ...base.heroes.qiongying, ...(savedHeroes.qiongying || (oldHeroTarget === 'qiongying' ? saved.hero : {})) },
       yanqing: { ...base.heroes.yanqing, ...(savedHeroes.yanqing || (oldHeroTarget === 'yanqing' ? saved.hero : {})) },
       zhangshun: { ...base.heroes.zhangshun, ...(savedHeroes.zhangshun || (oldHeroTarget === 'zhangshun' ? saved.hero : {})) },
-      daizong: { ...base.heroes.daizong, ...(savedHeroes.daizong || (oldHeroTarget === 'daizong' ? saved.hero : {})) }
+      daizong: { ...base.heroes.daizong, ...(savedHeroes.daizong || (oldHeroTarget === 'daizong' ? saved.hero : {})) },
+      zhuwu: { ...base.heroes.zhuwu, ...(savedHeroes.zhuwu || (oldHeroTarget === 'zhuwu' ? saved.hero : {})) }
     };
     const equipments = {
       wusong: { ...base.equipments.wusong, ...(savedEquipments.wusong || (oldHeroTarget === 'wusong' ? saved.equipment : {})) },
@@ -1045,7 +1103,8 @@
       qiongying: { ...base.equipments.qiongying, ...(savedEquipments.qiongying || (oldHeroTarget === 'qiongying' ? saved.equipment : {})) },
       yanqing: { ...base.equipments.yanqing, ...(savedEquipments.yanqing || (oldHeroTarget === 'yanqing' ? saved.equipment : {})) },
       zhangshun: { ...base.equipments.zhangshun, ...(savedEquipments.zhangshun || (oldHeroTarget === 'zhangshun' ? saved.equipment : {})) },
-      daizong: { ...base.equipments.daizong, ...(savedEquipments.daizong || (oldHeroTarget === 'daizong' ? saved.equipment : {})) }
+      daizong: { ...base.equipments.daizong, ...(savedEquipments.daizong || (oldHeroTarget === 'daizong' ? saved.equipment : {})) },
+      zhuwu: { ...base.equipments.zhuwu, ...(savedEquipments.zhuwu || (oldHeroTarget === 'zhuwu' ? saved.equipment : {})) }
     };
     const merged = {
       ...base,
@@ -1070,7 +1129,8 @@
         guansheng: { ...base.companions.guansheng, ...(saved.companions?.guansheng || {}) },
         qiaodaoqing: { ...base.companions.qiaodaoqing, ...(saved.companions?.qiaodaoqing || {}) },
         ruanxiaoqi: { ...base.companions.ruanxiaoqi, ...(saved.companions?.ruanxiaoqi || {}) },
-        andaquan: { ...base.companions.andaquan, ...(saved.companions?.andaquan || {}) }
+        andaquan: { ...base.companions.andaquan, ...(saved.companions?.andaquan || {}) },
+        peixuan: { ...base.companions.peixuan, ...(saved.companions?.peixuan || {}) }
       },
       team: { ...base.team, ...(saved.team || {}) },
       quests: { ...base.quests, ...saved.quests },
@@ -1090,6 +1150,7 @@
       huaiBattle: null,
       southBattle: null,
       returnBattle: null,
+      courtBattle: null,
       lastTickAt: Date.now()
     };
     if (merged.flags.metSongJiang) merged.companions.songjiang.unlocked = true;
@@ -1108,6 +1169,7 @@
     if (merged.flags.metQiaoDaoqing || merged.flags.chapter13Complete) merged.companions.qiaodaoqing.unlocked = true;
     if (merged.flags.metRuanXiaoqi || merged.flags.chapter15Complete) merged.companions.ruanxiaoqi.unlocked = true;
     if (merged.flags.metAnDaoquan || merged.flags.chapter16Complete) merged.companions.andaquan.unlocked = true;
+    if (merged.flags.metPeiXuan || merged.flags.chapter17Complete) merged.companions.peixuan.unlocked = true;
     if (merged.flags.chapter2Started || merged.flags.chapter2Complete || guessedActive === 'luzhishen') merged.heroes.luzhishen.unlocked = true;
     if (merged.flags.chapter3Started || merged.flags.chapter3Complete || guessedActive === 'linchong') merged.heroes.linchong.unlocked = true;
     if (merged.flags.chapter4Started || merged.flags.chapter4Complete || guessedActive === 'yangzhi') merged.heroes.yangzhi.unlocked = true;
@@ -1123,11 +1185,12 @@
     if (merged.flags.yanqingPerspective || merged.flags.chapter14Complete || guessedActive === 'yanqing') merged.heroes.yanqing.unlocked = true;
     if (merged.flags.zhangshunPerspective || merged.flags.chapter15Complete || guessedActive === 'zhangshun') merged.heroes.zhangshun.unlocked = true;
     if (merged.flags.daizongPerspective || merged.flags.chapter16Complete || guessedActive === 'daizong') merged.heroes.daizong.unlocked = true;
+    if (merged.flags.zhuwuPerspective || merged.flags.chapter17Complete || guessedActive === 'zhuwu') merged.heroes.zhuwu.unlocked = true;
     if (!merged.heroes[merged.activeHeroId]?.unlocked) merged.activeHeroId = 'wusong';
     merged.hero = cloneData(merged.heroes[merged.activeHeroId]);
     merged.equipment = { ...merged.equipments[merged.activeHeroId] };
     if (!merged.team.active || !merged.companions[merged.team.active]?.unlocked) {
-      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : merged.companions.lijun.unlocked ? 'lijun' : merged.companions.qiaodaoqing.unlocked ? 'qiaodaoqing' : merged.companions.guansheng.unlocked ? 'guansheng' : merged.companions.ruanxiaoqi.unlocked ? 'ruanxiaoqi' : merged.companions.andaquan.unlocked ? 'andaquan' : null;
+      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : merged.companions.lijun.unlocked ? 'lijun' : merged.companions.qiaodaoqing.unlocked ? 'qiaodaoqing' : merged.companions.guansheng.unlocked ? 'guansheng' : merged.companions.ruanxiaoqi.unlocked ? 'ruanxiaoqi' : merged.companions.andaquan.unlocked ? 'andaquan' : merged.companions.peixuan.unlocked ? 'peixuan' : null;
     }
     return merged;
   }
@@ -1239,11 +1302,15 @@
       toast('完成第十六回後，戴宗才會正式加入英雄譜。');
       return;
     }
+    if (id === 'zhuwu' && !state.flags.chapter17Complete) {
+      toast('完成第十七回後，朱武才會正式加入英雄譜。');
+      return;
+    }
     if (!setActiveHero(id)) return;
-    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16 }[id] || 1;
+    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17 }[id] || 1;
     closeModal();
     addLog(`目前操控英雄切換為「${state.hero.name}」。`);
-    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free', zhangqing: 'naval_free', huarong: 'yanmen_free', qiongying: 'hebei_free', yanqing: 'huaixi_free', zhangshun: 'jiangnan_free', daizong: 'return_free' };
+    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free', zhangqing: 'naval_free', huarong: 'yanmen_free', qiongying: 'hebei_free', yanqing: 'huaixi_free', zhangshun: 'jiangnan_free', daizong: 'return_free', zhuwu: 'capital_free' };
     goScene(homes[id]);
   }
 
@@ -1995,6 +2062,62 @@
       syncActiveHero();
     }
     goScene('chapter16_end');
+    saveGame(false);
+  }
+
+
+  function startChapterSeventeen() {
+    if (!state?.flags?.chapter16Complete) {
+      toast('須先完成第十六回「睦州決戰・忠義歸途」。');
+      return;
+    }
+    if (state.flags.chapter17Complete) {
+      switchHero('zhuwu');
+      return;
+    }
+    state.flags.chapter17Started = true;
+    state.quests.main_capital.status = 'active';
+    if (state.quests.main_capital.progress === '尚未開篇') state.quests.main_capital.progress = '梁山班師抵達東京南郊，先保全功冊、傷亡簿與撫卹交割';
+    state.chapter = 17;
+    if (!state.flags.zhuwuPerspective) setActiveHero('songjiang');
+    const resumeScene = state.flags.corruptEnvoyDefeated ? (state.flags.meritsProtected ? 'capital_victory' : 'capital_crisis')
+      : state.flags.archiveFormationBroken ? 'archive_breached'
+        : state.flags.archiveGuardDefeated ? 'capital_council'
+          : state.flags.recordEscortDefeated ? 'capital_archive'
+            : state.flags.zhuwuPerspective ? 'capital_gate_blocked'
+              : state.flags.capitalReached ? 'capital_supply' : 'chapter17_orders';
+    if (!state.log.some(entry => entry.includes('第十七回開篇'))) addLog('第十七回開篇：梁山班師東京，朱武、蕭讓與裴宣護住功冊與撫卹名簿。');
+    goScene(resumeScene);
+    tone('start');
+  }
+
+  function finishChapterSeventeen() {
+    if (!state.flags.chapter17Complete) {
+      state.flags.chapter17Complete = true;
+      state.flags.zhuwuJoined = true;
+      state.flags.meritsProtected = true;
+      state.flags.rewardsSecured = true;
+      state.flags.courtOutcome = 'public_roll';
+      state.quests.main_capital.status = 'completed';
+      state.quests.main_capital.progress = '保全功冊、核驗印信與撫卹，公開封賞名錄並讓離隊者保留姓名';
+      state.heroes.zhuwu.unlocked = true;
+      state.heroes.zhuwu.title = '神機軍師・忠義功冊護持使';
+      unlockCompanion('peixuan');
+      addItem('meritRoll', 1);
+      addItem('pensionLedger', 1);
+      addItem('capitalPact', 1);
+      state.base.timber += 8;
+      state.base.stone += 7;
+      state.base.grain += 10;
+      state.base.archive = Math.max(1, state.base.archive || 1);
+      state.flags.peopleSupport += 18;
+      state.flags.courtTrust += 6;
+      if (state.activeHeroId !== 'zhuwu') setActiveHero('zhuwu');
+      state.hero.title = '神機軍師・忠義功冊護持使';
+      gainXp(285);
+      syncActiveHero();
+    }
+    goScene('chapter17_end');
     saveGame(false);
   }
 
@@ -3870,7 +3993,8 @@
         { label: '重演睦州忠義急援', action: () => startReturnDuel(true) },
         { label: '管理軍醫營與梁山建設', action: () => openBase() },
         { label: '前往睦州神行演武場', action: () => goScene('return_free') },
-        { label: '查看十六回總成果', action: () => openSummary() },
+        { label: '開啟第十七回：東京功冊・忠義封賞', action: () => startChapterSeventeen() },
+        { label: '查看十七回總成果', action: () => openSummary() },
         { label: '回到遊戲標題', action: () => { saveGame(); showTitle(); } }
       ]
     },
@@ -3884,7 +4008,111 @@
         { label: '快速整備目前英雄或全寨', action: () => openPreparation() },
         { label: '管理梁山建設', action: () => openBase() },
         { label: '調整江湖同伴編成', action: () => openTeam() },
-        { label: '切換十六名英雄', action: () => openRoster() },
+        { label: state.flags.chapter17Complete ? '切換十七名英雄' : '切換十六名英雄', action: () => openRoster() },
+        { label: state.flags.chapter17Started ? '返回第十七回進度' : '開啟第十七回：東京功冊・忠義封賞', action: () => startChapterSeventeen() },
+        { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
+      ]
+    }
+,
+    chapter17_orders: {
+      location: 'capitalroad', scene: 'road', region: '汴京南郊', name: '東京班師驛道', caption: '功冊入京・密令先到', speaker: '宋江',
+      title: '梁山班師尚未入城，樞密院已派人要求先交出功冊、傷亡簿與封賞名單',
+      text: () => `朱武主張製作三份副本分路送達，蕭讓核印，裴宣按軍法逐戶核對撫卹，不讓任何人的姓名在入城前消失。<p>護冊物資 ${state.flags.courtSupply}｜公示紀律 ${state.flags.courtDiscipline}｜忠義文案閣 Lv.${state.base.archive || 1}。</p>`,
+      choices: () => [
+        ...(state.base.grain >= 2 ? [{ label: '撥兩份糧草護送傷者家眷與功冊車', action: () => { state.base.grain -= 2; state.flags.courtSupply += 2; state.flags.courtDiscipline += 2; state.flags.capitalReached = true; state.flags.peopleSupport += 6; goScene('capital_supply'); } }] : []),
+        { label: '由朱武分抄三份功冊，戴宗分路送達', action: () => { state.flags.courtSupply += 1; state.flags.courtDiscipline += 2; state.flags.capitalReached = true; goScene('capital_supply'); } },
+        { label: '依密令先交正本，隊伍直接入城', action: () => { state.flags.courtSupply = Math.max(1, state.flags.courtSupply - 1); state.flags.courtDiscipline = Math.max(0, state.flags.courtDiscipline - 1); state.flags.capitalReached = true; goScene('capital_supply'); } }
+      ]
+    },
+    capital_supply: {
+      location: 'capitalgate', scene: 'capital', region: '東京皇城南門', name: '宣德門外功冊車陣', caption: '禁軍截冊・密令無副署', speaker: '朱武',
+      title: '截冊禁軍只持一紙密令，卻要連傷亡簿與撫卹名冊一併收走',
+      text: () => `朱武看出密令缺少中書副署與騎縫印，決定先護住木匣，再把可公開查驗的副本送往城門公示臺。`,
+      choices: () => [{ label: '切換朱武，擊退截冊禁軍校尉', action: () => { state.flags.zhuwuPerspective = true; state.heroes.zhuwu.unlocked = true; setActiveHero('zhuwu'); startBattle('recordEscort', 'record_escort_win'); } }]
+    },
+    capital_gate_blocked: {
+      location: 'capitalgate', scene: 'capital', region: '東京皇城南門', name: '宣德門外功冊車陣', caption: '木匣再封・禁軍復至', speaker: '朱武',
+      title: '禁軍重新堵住公示臺，朱武必須保住功冊副本與印樣',
+      text: () => `朱武以四門方位護住文書車，只取兵器與密令，不傷被迫執勤的軍卒。`,
+      choices: () => [{ label: '迎戰截冊禁軍校尉', action: () => { if (state.activeHeroId !== 'zhuwu') setActiveHero('zhuwu'); startBattle('recordEscort', 'record_escort_win'); } }]
+    },
+    capital_archive: {
+      location: 'archivehall', scene: 'capital', region: '樞密院外署', name: '忠義功冊司', caption: '真冊假冊・印信交錯', speaker: '朱武',
+      title: '功冊司內有四項關鍵：班師點名、軍民撫卹、勅書印樣與封賞交割',
+      text: () => `先查明四項線索，可降低假令親隨與密詔使的攻防，也能提高公開封賞成功率。<p>功冊線索 ${state.flags.archiveClues}/4。</p>`,
+      choices: () => [
+        ...(!state.flags.meritRollChecked ? [{ label: '核對出征、救護與班師三份點名冊', action: () => { state.flags.meritRollChecked = true; state.flags.archiveClues += 1; goScene('capital_archive'); } }] : []),
+        ...(!state.flags.pensionLedgerChecked ? [{ label: '逐戶核驗傷亡、家眷與撫卹交割', action: () => { state.flags.pensionLedgerChecked = true; state.flags.archiveClues += 1; goScene('capital_archive'); } }] : []),
+        ...(!state.flags.sealSampleChecked ? [{ label: '由蕭讓比對勅書紙色、騎縫印與副署', action: () => { state.flags.sealSampleChecked = true; state.flags.archiveClues += 1; goScene('capital_archive'); } }] : []),
+        ...(!state.flags.rewardTransferChecked ? [{ label: '追查封賞銀、田契與驛券的轉運去向', action: () => { state.flags.rewardTransferChecked = true; state.flags.archiveClues += 1; goScene('capital_archive'); } }] : []),
+        { label: '突破功冊司親隨，接通公開查驗臺', action: () => startBattle('archiveGuard', 'archive_guard_win') }
+      ]
+    },
+    capital_council: {
+      location: 'archivehall', scene: 'night', region: '樞密院外署', name: '忠義功冊軍議臺', caption: '副本分路・封賞公開', speaker: '裴宣',
+      title: '朱武布陣護冊，蕭讓校印，裴宣核賞；戴宗與宋江則把結果送往四門公示',
+      text: () => `五步必須相連：分送副本、校驗印信、核對撫卹、四門護冊、公開封賞。<p>護冊準備 ${state.flags.courtPlanScore}/5｜線索 ${state.flags.archiveClues}/4｜忠義文案閣 Lv.${state.base.archive || 1}。</p>`,
+      choices: () => [
+        { label: '發動「東京忠義護冊」五階段軍略', action: () => { state.flags.courtPlanScore = Math.min(5, 1 + Math.floor((state.flags.archiveClues || 0) / 2) + Math.min(2, state.flags.courtDiscipline || 0)); startCourtDuel(false); } },
+        { label: '先管理忠義文案閣與梁山建設', action: () => openBase() }
+      ]
+    },
+    capital_strategy: {
+      location: 'archivehall', scene: 'night', region: '樞密院外署', name: '忠義功冊軍議臺', caption: '軍略重整・副本待校', speaker: '朱武',
+      title: '上一次護冊受阻，須重新核對點名、撫卹、印信與交割流向',
+      text: () => `功冊線索 ${state.flags.archiveClues}/4｜公示紀律 ${state.flags.courtDiscipline}｜忠義文案閣 Lv.${state.base.archive || 1}。`,
+      choices: () => [
+        { label: '返回功冊司補查線索', action: () => goScene('capital_archive') },
+        { label: '重新發動東京忠義護冊', action: () => startCourtDuel(false) },
+        { label: '管理忠義文案閣與糧倉', action: () => openBase() }
+      ]
+    },
+    archive_breached: {
+      location: 'archivehall', scene: 'capital', region: '東京宣德門外', name: '公開封賞臺', caption: '功冊已驗・密詔現形', speaker: '朱武',
+      title: '高俅餘黨持密詔封鎖公示臺，準備焚毀副本並截留撫卹銀',
+      text: () => `四門副本與裴宣勘驗已接通；朱武可集中力量擊破最後密詔使，讓封賞與撫卹接受公開查驗。`,
+      choices: () => [{ label: '操控朱武，迎戰高俅餘黨與密詔使', action: () => { if (state.activeHeroId !== 'zhuwu') setActiveHero('zhuwu'); startBattle('corruptEnvoy', 'corrupt_envoy_win'); } }]
+    },
+    capital_crisis: {
+      location: 'capitalrange', scene: 'night', region: '東京班師公示臺', name: '功冊抽換缺口', caption: '密詔已破・交割尚可補正', speaker: '裴宣',
+      title: '密詔使雖敗，準備不足使部分撫卹與離隊頭領姓名仍被抽離正冊',
+      text: () => `原著終局中眾多頭領功名分散、離隊或遭權臣擺布；本遊戲保留其歷史陰影，但讓副本、法度與公開查驗能追回可挽救的權益。`,
+      choices: () => [
+        ...(state.hero.silver >= 20 ? [{ label: '補印公示副本並先墊撫卹（消耗 20 兩）', action: () => { state.hero.silver -= 20; state.flags.corruptEnvoyDefeated = true; state.flags.meritsProtected = true; state.flags.rewardsSecured = true; state.flags.courtOutcome = 'public_roll'; state.flags.peopleSupport += 6; goScene('capital_victory'); } }] : []),
+        { label: '閱讀原著功名散失線，再返回軍議改寫', action: () => { state.flags.courtOutcome = 'tragic_seen'; state.flags.corruptEnvoyDefeated = false; state.flags.archiveFormationBroken = false; addLog('原著功名散失線：班師後眾頭領功名與命運被權力分割；本回未結算，可強化文案閣與查驗後重試。'); goScene('capital_strategy'); } },
+        { label: '退回功冊司，重新核對印信與撫卹', action: () => { state.flags.corruptEnvoyDefeated = false; state.flags.archiveFormationBroken = false; state.flags.archiveGuardDefeated = true; goScene('capital_council'); } }
+      ]
+    },
+    capital_victory: {
+      location: 'capitalrange', scene: 'courtyard', region: '東京班師公示臺', name: '忠義功冊公開場', caption: '姓名不刪・撫卹不缺', speaker: '宋江',
+      title: '功冊、印信、撫卹與封賞交割同時公開，離隊者、傷者與陣亡者家眷皆保留姓名與應得份額',
+      text: () => `真正的班師不是一紙官職，而是讓每一位出征者、救護者與受戰事牽連的百姓都能在名冊中被看見。`,
+      choices: () => [{ label: '完成第十七回，立下東京公開封賞約', action: () => finishChapterSeventeen() }]
+    },
+    chapter17_end: {
+      location: 'capitalrange', scene: 'courtyard', region: '東京班師公示臺', name: '東京神機演武場', caption: '第十七回終・功冊留名', speaker: '章回評語',
+      title: '第十七回完：朱武四門護冊，裴宣鐵面核賞，梁山班師功名與撫卹得以公開保存',
+      text: () => `本回把班師封賞改編成文書、法度與公開查驗的攻防：英雄的名字不應只存在於戰報，也要留在撫卹、家眷與百姓記憶裡。<p>朱武成為第十七名主角；裴宣加入同伴，梁山開放忠義文案閣與東京忠義護冊軍略。</p>`,
+      choices: () => [
+        { label: '開啟十七英雄譜', action: () => openRoster() },
+        { label: '重演東京忠義護冊', action: () => startCourtDuel(true) },
+        { label: '管理忠義文案閣與梁山建設', action: () => openBase() },
+        { label: '前往東京神機演武場', action: () => goScene('capital_free') },
+        { label: '查看十七回總成果', action: () => openSummary() },
+        { label: '回到遊戲標題', action: () => { saveGame(); showTitle(); } }
+      ]
+    },
+    capital_free: {
+      location: 'capitalrange', scene: 'courtyard', region: '東京班師公示臺', name: '東京神機演武場', caption: '戰後・護冊操典', speaker: '旁白',
+      title: '朱武把副本分送、印信校驗、撫卹核對與四門護冊編成忠義功冊操典',
+      text: () => `此處可挑戰神機護冊教頭、重演東京護冊、升級忠義文案閣並培養裴宣羈絆。<p>忠義文案閣 Lv.${state.base.archive || 1}｜東京演武 ${state.flags.capitalArenaWins || 0} 勝。</p>`,
+      choices: () => [
+        { label: '與東京神機護冊教頭切磋', action: () => startBattle('capitalArena', 'capital_arena_win') },
+        { label: '重演東京忠義護冊', action: () => startCourtDuel(true) },
+        { label: '快速整備目前英雄或全寨', action: () => openPreparation() },
+        { label: '管理梁山建設', action: () => openBase() },
+        { label: '調整江湖同伴編成', action: () => openTeam() },
+        { label: '切換十七名英雄', action: () => openRoster() },
         { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
       ]
     }
@@ -4084,6 +4312,19 @@
       state.battle.defense = Math.max(7, source.defense - Math.floor(plan / 2));
       state.battle.message = plan >= 4 ? '烽臺、傷兵路與水路都已被梁山控制，方臘中軍只能正面迎戰。' : `${source.name}擋住去路！`;
     }
+    if (enemyId === 'recordEscort' || enemyId === 'archiveGuard') {
+      const clues = clamp(state.flags.archiveClues || 0, 0, 4);
+      const discipline = clamp(state.flags.courtDiscipline || 0, 0, 5);
+      state.battle.attack = Math.max(16, source.attack - Math.floor(clues / 2) - Math.floor(discipline / 2));
+      state.battle.defense = Math.max(6, source.defense - Math.floor(clues / 2));
+      if (clues > 0) state.battle.message = `功冊線索 ${clues}/4 已辨出假令與印信破綻，敵方攻防受到削弱。`;
+    }
+    if (enemyId === 'corruptEnvoy') {
+      const plan = clamp(state.flags.courtPlanScore || 0, 0, 5);
+      state.battle.attack = Math.max(25, source.attack - Math.floor(plan / 2));
+      state.battle.defense = Math.max(8, source.defense - Math.floor(plan / 2));
+      state.battle.message = plan >= 4 ? '四門副本、印信與撫卹簿都已公開，密詔使只能正面阻攔。' : `${source.name}擋住去路！`;
+    }
     state.hero.guarding = false;
     battleLocked = false;
     lastNarratedBattleKey = '';
@@ -4104,7 +4345,7 @@
     $('[data-role="enemy-title"]', overlay).textContent = b.title;
     $('[data-role="enemy-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(b.hp))} / ${b.maxHp}`;
     $('[data-role="enemy-hp-bar"]', overlay).style.width = `${clamp((b.hp / b.maxHp) * 100, 0, 100)}%`;
-    $('[data-role="battle-hero-avatar"]', overlay).textContent = state.hero.avatar || ({ luzhishen: '魯', linchong: '林', yangzhi: '楊', songjiang: '宋', likui: '李', husanniang: '扈', huyanzhuo: '呼', lujunyi: '盧', gongsunsheng: '公', zhangqing: '張', huarong: '花', qiongying: '瓊', yanqing: '燕', zhangshun: '順', wusong: '武' }[state.activeHeroId] || '俠');
+    $('[data-role="battle-hero-avatar"]', overlay).textContent = state.hero.avatar || ({ luzhishen: '魯', linchong: '林', yangzhi: '楊', songjiang: '宋', likui: '李', husanniang: '扈', huyanzhuo: '呼', lujunyi: '盧', gongsunsheng: '公', zhangqing: '張', huarong: '花', qiongying: '瓊', yanqing: '燕', zhangshun: '順', daizong: '戴', zhuwu: '朱', wusong: '武' }[state.activeHeroId] || '俠');
     $('[data-role="battle-hero-name"]', overlay).textContent = state.hero.name;
     $('[data-role="battle-hero-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(state.hero.hp))} / ${state.hero.maxHp}`;
     $('[data-role="battle-hero-hp-bar"]', overlay).style.width = `${clamp((state.hero.hp / state.hero.maxHp) * 100, 0, 100)}%`;
@@ -4126,7 +4367,12 @@
 
     const actions = $('[data-role="battle-actions"]', overlay);
     actions.replaceChildren();
-    const heroSkillButtons = state.activeHeroId === 'daizong'
+    const heroSkillButtons = state.activeHeroId === 'zhuwu'
+      ? [
+          { label: '神機陣盤－10 豪氣', disabled: state.hero.sp < 10, action: () => heroBattleAction('strategyDisc') },
+          { label: '四門鎖陣－16 豪氣', disabled: state.hero.sp < 16, action: () => heroBattleAction('fourGateLock') }
+        ]
+      : state.activeHeroId === 'daizong'
       ? [
           { label: '神行甲馬－9 豪氣', disabled: state.hero.sp < 9, action: () => heroBattleAction('swiftTalisman') },
           { label: '飛符急救－15 豪氣', disabled: state.hero.sp < 15, action: () => heroBattleAction('urgentRescue') }
@@ -4590,6 +4836,32 @@
       tone('level');
     }
 
+    if (type === 'strategyDisc') {
+      state.hero.sp -= 10;
+      const clues = clamp(state.flags.archiveClues || 0, 0, 4);
+      const damage = Math.max(22, Math.round((stats.attack + randomInt(14, 23) + clues * 2) * 1.15 - b.defense * 0.18));
+      b.hp -= damage;
+      b.defense = Math.max(0, b.defense - (4 + Math.floor(clues / 2)));
+      b.critBoost = Math.max(b.critBoost || 0, 0.22 + clues * 0.03);
+      state.hero.sp = clamp(state.hero.sp + 4, 0, state.hero.maxSp);
+      message = `朱武旋開神機陣盤，辨出號令與步陣破綻，造成 ${damage} 點傷害並削弱筋骨；恢復 4 點豪氣，下一次普通攻擊更容易重創。`;
+      tone('skill');
+    }
+
+    if (type === 'fourGateLock') {
+      state.hero.sp -= 16;
+      const archive = clamp(state.base.archive || 1, 1, 5);
+      const damage = Math.max(26, Math.round((stats.attack + randomInt(16, 27) + archive * 2) * 1.22 - b.defense * 0.18));
+      b.hp -= damage;
+      b.attack = Math.max(8, b.attack - (4 + Math.floor(archive / 2)));
+      state.hero.guarding = true;
+      b.protectionTurns = Math.max(b.protectionTurns || 0, 2);
+      const locked = Math.random() < 0.38 + clamp(state.flags.archiveClues || 0, 0, 4) * 0.05;
+      if (locked) b.stunned = 1;
+      message = `朱武布下四門鎖陣，截斷傳令線，造成 ${damage} 點重創並削弱武力；你進入守勢。${locked ? '敵方號令被鎖，下一回合無法出手。' : ''}`;
+      tone(locked ? 'critical' : 'skill');
+    }
+
     if (type === 'guard') {
       state.hero.guarding = true;
       state.hero.sp = clamp(state.hero.sp + 7, 0, state.hero.maxSp);
@@ -4708,6 +4980,14 @@
         b.protectionTurns = Math.max(b.protectionTurns || 0, 2);
         b.attack = Math.max(8, b.attack - (2 + Math.floor(companion.bond / 2)));
         message = `安道全分辨傷勢、敷藥定氣，你恢復 ${heal} 點氣血與 ${spirit} 點豪氣，接下來兩次受傷降低。`;
+      } else if (companion.id === 'peixuan') {
+        const weaken = 4 + Math.floor(companion.bond / 2);
+        const spirit = 10 + companion.bond * 2;
+        b.attack = Math.max(8, b.attack - weaken);
+        b.defense = Math.max(0, b.defense - weaken);
+        state.hero.sp = clamp(state.hero.sp + spirit, 0, state.hero.maxSp);
+        b.protectionTurns = Math.max(b.protectionTurns || 0, 1);
+        message = `裴宣以鐵面勘驗拆穿假令，敵方武力與筋骨各降 ${weaken}；你恢復 ${spirit} 點豪氣並獲得一回合防護。`;
       }
       tone('level');
     }
@@ -5226,6 +5506,50 @@
       addLog(`完成第 ${state.flags.returnArenaWins} 次睦州神行救護演武，取得軍醫營建材。`);
       goScene('return_free');
     }
+    if (result.afterWin === 'record_escort_win') {
+      state.flags.recordEscortDefeated = true;
+      state.flags.zhuwuPerspective = true;
+      state.heroes.zhuwu.unlocked = true;
+      state.quests.main_capital.progress = '朱武護住功冊木匣，準備進功冊司查點名、撫卹、印信與交割';
+      state.hero.hp = clamp(state.hero.hp + 64, 0, state.hero.maxHp);
+      state.hero.sp = state.hero.maxSp;
+      changeMorality(10, '只取密令與兵器，保住功冊、家眷名單與撫卹簿');
+      goScene('capital_archive');
+    }
+    if (result.afterWin === 'archive_guard_win') {
+      state.flags.archiveGuardDefeated = true;
+      state.flags.metPeiXuan = true;
+      unlockCompanion('peixuan');
+      state.team.active = 'peixuan';
+      state.flags.courtPlanScore = Math.min(5, 1 + Math.floor((state.flags.archiveClues || 0) / 2) + Math.min(2, state.flags.courtDiscipline || 0));
+      state.quests.main_capital.progress = '功冊司印庫已通，裴宣加入勘驗，梁山準備五階段忠義護冊';
+      goScene('capital_council');
+    }
+    if (result.afterWin === 'corrupt_envoy_win') {
+      state.flags.corruptEnvoyDefeated = true;
+      const protectedRoll = (state.flags.archiveClues || 0) >= 3 || (state.base.archive || 1) >= 2 || (state.flags.courtDiscipline || 0) >= 3;
+      if (protectedRoll) {
+        state.flags.meritsProtected = true;
+        state.flags.rewardsSecured = true;
+        state.flags.courtOutcome = 'public_roll';
+        state.quests.main_capital.progress = '密詔使已退，功冊與撫卹交割在四門公開，所有姓名得以保全';
+        changeMorality(16, '以副本、法度與公開查驗保住功名與撫卹');
+        goScene('capital_victory');
+      } else {
+        state.flags.meritsProtected = false;
+        state.quests.main_capital.progress = '密詔使雖敗，部分名冊與撫卹仍有抽換缺口，須立刻補正';
+        goScene('capital_crisis');
+      }
+    }
+    if (result.afterWin === 'capital_arena_win') {
+      state.flags.capitalArenaWins = (state.flags.capitalArenaWins || 0) + 1;
+      state.base.timber += 1;
+      if (state.flags.capitalArenaWins % 2 === 0) state.base.stone += 1;
+      if (state.flags.capitalArenaWins % 3 === 0) state.base.grain += 1;
+      state.hero.hp = clamp(state.hero.hp + 40, 0, state.hero.maxHp);
+      addLog(`完成第 ${state.flags.capitalArenaWins} 次東京神機護冊演武，取得忠義文案閣建材。`);
+      goScene('capital_free');
+    }
     if (result.afterWin === 'liangshan_arena_win') {
       state.flags.liangshanArenaWins = (state.flags.liangshanArenaWins || 0) + 1;
       state.base.timber += 1;
@@ -5284,7 +5608,7 @@
       zengtouArena: 'zengtou_free',
       erxianTrial: 'erxian_trial',
       imperialGuard: 'edict_clash',
-      diplomacyArena: 'diplomacy_free', tongguanVanguard: 'chapter11_court_response', zhangqingTrial: 'dongchang_gate', imperialEnforcer: 'zhangqing_choice', gaoFlagship: 'naval_breached', navalArena: 'naval_free', liaoScouts: 'yanmen_pass', liaoCommander: 'liao_camp_breached', archeryArena: state.flags.chapter12Complete ? 'yanmen_free' : 'huarong_after', tianhuRequisition: 'zhaode_requisition', mistGuardian: 'qiongying_after', tianBao: 'zhaode_breached', hebeiArena: state.flags.chapter13Complete ? 'hebei_free' : 'qiongying_after', huaixiPatrol: 'jishan_patrol', wanzhouNightGuard: 'yanqing_infiltration', duBo: 'wanzhou_breached', huaixiArena: state.flags.chapter14Complete ? 'huaixi_free' : 'yanqing_infiltration', fanglaScout: 'qiantang_scout', yongjinGuard: 'zhangshun_tide', fangTianding: 'hangzhou_breached', hangzhouArena: state.flags.chapter15Complete ? 'jiangnan_free' : 'zhangshun_tide'
+      diplomacyArena: 'diplomacy_free', tongguanVanguard: 'chapter11_court_response', zhangqingTrial: 'dongchang_gate', imperialEnforcer: 'zhangqing_choice', gaoFlagship: 'naval_breached', navalArena: 'naval_free', liaoScouts: 'yanmen_pass', liaoCommander: 'liao_camp_breached', archeryArena: state.flags.chapter12Complete ? 'yanmen_free' : 'huarong_after', tianhuRequisition: 'zhaode_requisition', mistGuardian: 'qiongying_after', tianBao: 'zhaode_breached', hebeiArena: state.flags.chapter13Complete ? 'hebei_free' : 'qiongying_after', huaixiPatrol: 'jishan_patrol', wanzhouNightGuard: 'yanqing_infiltration', duBo: 'wanzhou_breached', huaixiArena: state.flags.chapter14Complete ? 'huaixi_free' : 'yanqing_infiltration', fanglaScout: 'qiantang_scout', yongjinGuard: 'zhangshun_tide', fangTianding: 'hangzhou_breached', hangzhouArena: state.flags.chapter15Complete ? 'jiangnan_free' : 'zhangshun_tide', fanglaCourier: 'return_courier', muzhouGuard: 'daizong_rescue', fanglaFinal: 'muzhou_breached', muzhouArena: state.flags.chapter16Complete ? 'return_free' : 'daizong_rescue', recordEscort: 'capital_gate_blocked', archiveGuard: 'capital_archive', corruptEnvoy: 'archive_breached', capitalArena: state.flags.chapter17Complete ? 'capital_free' : 'capital_archive'
     };
     goScene(recoveryScenes[enemyId] || state.sceneId);
   }
@@ -5295,7 +5619,7 @@
     state.battle = null;
     battleLocked = false;
     addLog('暫時退出戰鬥。');
-    const fleeScenes = { bandit: 'road_first', escortThugs: 'boar_forest', cangzhouArena: 'cangzhou_free', pursuitSoldiers: 'yangzhi_awake', damingArena: 'daming_free', yunchengArena: 'yuncheng_free', jiangzhouRuffians: 'likui_meet', liangshanArena: 'liangshan_free', zhujiaArena: 'zhujia_free', chainArena: 'chainhorse_free', zengtouArena: 'zengtou_free', diplomacyArena: 'diplomacy_free', navalArena: 'naval_free', archeryArena: state.flags.chapter12Complete ? 'yanmen_free' : 'huarong_after', hebeiArena: state.flags.chapter13Complete ? 'hebei_free' : 'qiongying_after', huaixiArena: state.flags.chapter14Complete ? 'huaixi_free' : 'yanqing_infiltration', fanglaScout: 'qiantang_scout', yongjinGuard: 'zhangshun_tide', fangTianding: 'hangzhou_breached', hangzhouArena: state.flags.chapter15Complete ? 'jiangnan_free' : 'zhangshun_tide' };
+    const fleeScenes = { bandit: 'road_first', escortThugs: 'boar_forest', cangzhouArena: 'cangzhou_free', pursuitSoldiers: 'yangzhi_awake', damingArena: 'daming_free', yunchengArena: 'yuncheng_free', jiangzhouRuffians: 'likui_meet', liangshanArena: 'liangshan_free', zhujiaArena: 'zhujia_free', chainArena: 'chainhorse_free', zengtouArena: 'zengtou_free', diplomacyArena: 'diplomacy_free', navalArena: 'naval_free', archeryArena: state.flags.chapter12Complete ? 'yanmen_free' : 'huarong_after', hebeiArena: state.flags.chapter13Complete ? 'hebei_free' : 'qiongying_after', huaixiArena: state.flags.chapter14Complete ? 'huaixi_free' : 'yanqing_infiltration', fanglaScout: 'qiantang_scout', yongjinGuard: 'zhangshun_tide', fangTianding: 'hangzhou_breached', hangzhouArena: state.flags.chapter15Complete ? 'jiangnan_free' : 'zhangshun_tide', fanglaCourier: 'return_courier', muzhouGuard: 'daizong_rescue', fanglaFinal: 'muzhou_breached', muzhouArena: state.flags.chapter16Complete ? 'return_free' : 'daizong_rescue', recordEscort: 'capital_gate_blocked', archiveGuard: 'capital_archive', corruptEnvoy: 'archive_breached', capitalArena: state.flags.chapter17Complete ? 'capital_free' : 'capital_archive' };
     goScene(fleeScenes[enemyId] || state.sceneId);
   }
 
@@ -6752,6 +7076,103 @@
     goScene(replay ? 'return_free' : 'return_strategy');
   }
 
+
+  function startCourtDuel(replay = false) {
+    closeBattleOverlay();
+    const archive = clamp(state.base.archive || 1, 1, 5);
+    const academy = clamp(state.base.academy || 1, 1, 5);
+    const clues = clamp(state.flags.archiveClues || 0, 0, 4);
+    const plan = clamp(state.flags.courtPlanScore || 0, 0, 5);
+    state.courtBattle = {
+      defense: Math.max(170, 252 - plan * 6 - clues * 4),
+      maxDefense: Math.max(170, 252 - plan * 6 - clues * 4),
+      momentum: 160 + archive * 10 + academy * 5 + (state.flags.courtSupply || 1) * 3,
+      maxMomentum: 160 + archive * 10 + academy * 5 + (state.flags.courtSupply || 1) * 3,
+      alarm: Math.max(5, 46 - (state.flags.courtDiscipline || 0) * 3 - clues * 3),
+      turn: 1, used: [], replay,
+      message: '東京封賞以密令、假印、抽換名冊與封門形成文武封鎖。須先分送副本，再校印、核撫卹、四門護冊，最後公開封賞。'
+    };
+    courtLocked = false;
+    renderCourtDuel();
+    tone('battle');
+  }
+
+  function renderCourtDuel() {
+    const n = state.courtBattle;
+    if (!n) return;
+    let overlay = $('.battle-overlay');
+    if (!overlay) { document.body.append($('#battleTemplate').content.cloneNode(true)); overlay = $('.battle-overlay'); }
+    $('[data-role="enemy-avatar"]', overlay).textContent = '冊';
+    $('[data-role="enemy-name"]', overlay).textContent = '東京密詔抽冊封鎖';
+    $('[data-role="enemy-title"]', overlay).textContent = `抽換警戒｜${Math.round(n.alarm)}%`;
+    $('[data-role="enemy-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.defense))} / ${n.maxDefense}`;
+    $('[data-role="enemy-hp-bar"]', overlay).style.width = `${clamp((n.defense / n.maxDefense) * 100, 0, 100)}%`;
+    $('[data-role="battle-hero-avatar"]', overlay).textContent = '忠';
+    $('[data-role="battle-hero-name"]', overlay).textContent = '梁山忠義護冊隊';
+    $('[data-role="battle-hero-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.momentum))} / ${n.maxMomentum}`;
+    $('[data-role="battle-hero-hp-bar"]', overlay).style.width = `${clamp((n.momentum / n.maxMomentum) * 100, 0, 100)}%`;
+    const support = $('[data-role="battle-companion"]', overlay);
+    support.classList.remove('hidden');
+    $('[data-role="battle-companion-avatar"]', overlay).textContent = '裴';
+    $('[data-role="battle-companion-name"]', overlay).textContent = `護冊 ${state.flags.courtPlanScore || 0}/5｜文案閣 Lv.${state.base.archive || 1}`;
+    $('[data-role="battle-message"]', overlay).innerHTML = `<strong>第 ${n.turn} 驗</strong>｜${n.message}`;
+    const actions = $('[data-role="battle-actions"]', overlay); actions.replaceChildren();
+    const specs = [
+      ['copies', '戴宗分送三份功冊副本', false],
+      ['seal', '蕭讓校對勅書紙印副署', !n.used.includes('copies')],
+      ['pension', '裴宣核驗傷亡與撫卹交割', !n.used.includes('seal')],
+      ['gates', '朱武布四門護冊陣', !n.used.includes('pension')],
+      ['publish', '宋江公開封賞與離隊名錄', n.used.length < 4 || n.defense > 76]
+    ];
+    for (const [id, label, unavailable] of specs) {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = `${label}${n.used.includes(id) ? '（已用）' : ''}`;
+      button.disabled = courtLocked || unavailable || n.used.includes(id);
+      button.addEventListener('click', () => courtAction(id)); actions.append(button);
+    }
+    if (prefs.narration && prefs.narrateBattle) speakText(`第 ${n.turn} 驗。${n.message}`, { interrupt: true });
+  }
+
+  function courtAction(type) {
+    const n = state.courtBattle; if (!n || courtLocked || n.used.includes(type)) return;
+    courtLocked = true; n.used.push(type);
+    const clues = clamp(state.flags.archiveClues || 0, 0, 4);
+    const archive = clamp(state.base.archive || 1, 1, 5);
+    const academy = clamp(state.base.academy || 1, 1, 5);
+    if (type === 'copies') { n.defense -= 32 + clues * 2; n.alarm = Math.max(0, n.alarm - 14); n.message = '戴宗把正本留在公示臺，兩份副本分送中書與御史臺，任何一處抽冊都能互相比對。'; }
+    else if (type === 'seal') { n.defense -= 38 + academy * 2; n.momentum = Math.min(n.maxMomentum, n.momentum + 10); n.message = '蕭讓逐字比對紙色、騎縫印與副署，假密詔當場顯出拼接痕跡。'; }
+    else if (type === 'pension') { n.defense -= 44 + clues * 2; n.alarm = Math.max(0, n.alarm - 10); n.message = '裴宣按姓名、傷勢、家眷與交割票逐項勘驗，被截留的撫卹銀重新入冊。'; }
+    else if (type === 'gates') { n.defense -= 50 + archive * 2; n.alarm = Math.max(0, n.alarm - 10); n.message = '朱武依四門方位布置護冊隊，文書車、家眷隊與公示臺彼此照應，密令無法再單點截斷。'; }
+    else if (type === 'publish') { n.defense = 0; n.message = '宋江在宣德門外公開封賞、撫卹與離隊名錄；眾人姓名由四門副本同時留存，密詔抽冊封鎖完全瓦解。'; }
+    if (type !== 'publish') n.defense = Math.max(1, n.defense);
+    tone(type === 'publish' ? 'critical' : 'skill'); renderCourtDuel();
+    if (n.defense <= 0) { setTimeout(finishCourtDuel, 650); return; }
+    setTimeout(courtOpponentTurn, 650);
+  }
+
+  function courtOpponentTurn() {
+    const n = state.courtBattle; if (!n) return;
+    const pressure = randomInt(15, 21) + Math.floor(n.alarm / 30);
+    n.momentum -= pressure; n.alarm = Math.min(100, n.alarm + randomInt(6, 11)); n.turn += 1;
+    n.message = `密詔親隨重新封門、抽換副本並拖延交割，忠義護冊隊消耗 ${pressure} 點軍勢；抽換警戒正在升高。`;
+    if (n.momentum <= 0 || n.alarm >= 100) { renderCourtDuel(); setTimeout(loseCourtDuel, 650); return; }
+    courtLocked = false; renderCourtDuel();
+  }
+
+  function finishCourtDuel() {
+    const replay = Boolean(state.courtBattle?.replay); state.courtBattle = null; courtLocked = false; closeBattleOverlay();
+    addLog('東京忠義護冊成功：副本分送、校印、核撫卹、四門護冊與公開封賞形成完整功冊軍略。'); tone('victory');
+    if (replay) goScene('capital_free');
+    else { state.flags.archiveFormationBroken = true; state.flags.courtPlanScore = Math.max(4, state.flags.courtPlanScore || 0); state.quests.main_capital.progress = '東京密詔抽冊封鎖已破，朱武準備迎戰最後密詔使'; goScene('archive_breached'); }
+  }
+
+  function loseCourtDuel() {
+    const replay = Boolean(state.courtBattle?.replay); state.courtBattle = null; courtLocked = false; closeBattleOverlay();
+    addLog('東京四門副本被重新隔斷，梁山退回功冊司核對點名、印信與撫卹交割。');
+    toast('軍勢耗盡或警戒過高，請依分送副本、校印、核撫卹、四門護冊、公開封賞的順序重試。');
+    goScene(replay ? 'capital_free' : 'capital_strategy');
+  }
+
   function openFactionCouncil() {
     const outcome = state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒絕苛詔、守寨自立' : state.flags.councilOutcome === 'delay' ? '暫緩受詔、先行護民' : '尚未表決';
     openModal({
@@ -6800,10 +7221,10 @@
           <article class="info-card"><h3>雁門鎖關</h3><p>第十二回依「偵察、護糧、飛石、神箭、騎軍封口」順序破解遼軍鷹狼陣；軍糧紀律、瞄準準備與馬廄會改變軍勢。</p></article>
           <article class="info-card"><h3>宛州水陸潛行</h3><p>第十四回依「取暗語、斷鐵鏈、假令調哨、熄滅烽燈、開民門」順序破解淮西封鎖；線索、船塢與暗哨營會改變軍勢。</p></article>
           <article class="info-card"><h3>湧金門夜襲</h3><p>第十五回先查潮表、水柵、船籍與水燈，再依「測潮、拆柵、假燈調哨、射熄火樓、開水門」順序破陣；準備充足可改寫張順的原著悲壯命運。</p></article>
-          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺、文書院、船塢、馬廄、驛站、暗哨營、水門工坊及軍醫營；完成第八回後可派出山寨遠征。</p></article>
+          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺、文書院、船塢、馬廄、驛站、暗哨營、水門工坊、軍醫營及忠義文案閣；完成第八回後可派出山寨遠征。</p></article>
           <article class="info-card"><h3>回合戰鬥</h3><p>普通攻擊可累積豪氣；技能傷害較高。防禦能大幅降低下一次受傷。</p></article>
           <article class="info-card"><h3>酒意</h3><p>酒意越高，普通攻擊暴擊率越高，但命中稍微下降；醉拳技能也會更強。</p></article>
-          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青、蕭讓、李俊、關勝、喬道清、阮小七與安道全。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
+          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青、蕭讓、李俊、關勝、喬道清、阮小七、安道全與裴宣。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
           <article class="info-card"><h3>陽谷擂臺</h3><p>完成第一回後可在陽谷縣重複挑戰，用來測試編成、累積閱歷及同伴羈絆。</p></article>
           <article class="info-card"><h3>本機存檔</h3><p>按「存檔」可立即保存。清除瀏覽器網站資料會一併移除進度。</p></article>
           <article class="info-card"><h3>顯示模式</h3><p>右上角「◐」可循環切換水墨宣紙、深色與黑白電子紙模式。</p></article>
@@ -6816,11 +7237,11 @@
   function openAbout() {
     openModal({
       title: `梁山風雲 v${VERSION}`,
-      subtitle: '十六章回版：新增戴宗主角、睦州忠義急援、安道全與梁山軍醫營',
+      subtitle: '十七章回版：新增朱武主角、東京忠義護冊、裴宣與忠義文案閣',
       content: `
         <div class="modal-grid">
-          <article class="info-card"><h3>已收錄</h3><p>十六回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝／張清／花榮／瓊英／燕青／張順／戴宗十六主角、專屬技能、十六名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
-          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市、菊花會招安之議、兩贏童貫三敗高俅、受詔征遼、征田虎、征王慶、征方臘與睦州班師終局為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
+          <article class="info-card"><h3>已收錄</h3><p>十七回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝／張清／花榮／瓊英／燕青／張順／戴宗／朱武十七主角、專屬技能、十七名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
+          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市、菊花會招安之議、兩贏童貫三敗高俅、受詔征遼、征田虎、征王慶、征方臘、睦州班師與東京功冊封賞為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
           <article class="info-card"><h3>技術</h3><p>純 HTML、CSS、JavaScript 製作，不使用外部套件，也不需要伺服器或資料庫。</p></article>
           <article class="info-card"><h3>存檔位置</h3><p>使用瀏覽器 LocalStorage。版本更新通常不影響存檔，但更換裝置不會自動同步。</p></article>
         </div>`
@@ -6847,8 +7268,8 @@
 
   function openRoster() {
     syncActiveHero();
-    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清', huarong: '花榮', qiongying: '瓊英', yanqing: '燕青', zhangshun: '張順', daizong: '戴宗' };
-    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場', zhangqing: '水陸協同演武場', huarong: '雁門騎射場', qiongying: '昭德護民演武場', yanqing: '宛州巧弩演武場', zhangshun: '杭州分水演武場', daizong: '睦州神行演武場' };
+    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清', huarong: '花榮', qiongying: '瓊英', yanqing: '燕青', zhangshun: '張順', daizong: '戴宗', zhuwu: '朱武' };
+    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場', zhangqing: '水陸協同演武場', huarong: '雁門騎射場', qiongying: '昭德護民演武場', yanqing: '宛州巧弩演武場', zhangshun: '杭州分水演武場', daizong: '睦州神行演武場', zhuwu: '東京神機演武場' };
     const unlockHints = {
       wusong: '第一回初始英雄。',
       luzhishen: '完成第一回後，開啟「魯提轄拳打鎮關西」。',
@@ -6865,7 +7286,8 @@
       qiongying: '完成第十二回後，開啟「河北征田虎・幻魔破陣」。',
       yanqing: '完成第十三回後，開啟「征王慶・宛州潛行」。',
       zhangshun: '完成第十四回後，開啟「征方臘・湧金門夜襲」。',
-      daizong: '完成第十五回後，開啟「睦州決戰・忠義歸途」。'
+      daizong: '完成第十五回後，開啟「睦州決戰・忠義歸途」。',
+      zhuwu: '完成第十六回後，開啟「東京功冊・忠義封賞」。'
     };
     const cards = Object.keys(HERO_BLUEPRINTS).map(id => {
       const hero = state.heroes[id];
@@ -6873,9 +7295,9 @@
       if (!unlocked) return `<article class="hero-roster-card locked"><span class="hero-roster-avatar">？</span><div><h3>尚未開篇</h3><p>${escapeHtml(unlockHints[id])}</p></div></article>`;
       const stats = getStatsForHero(id);
       const active = id === state.activeHeroId;
-      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : id === 'zhangqing' ? state.flags.chapter11Complete : id === 'huarong' ? state.flags.chapter12Complete : id === 'qiongying' ? state.flags.chapter13Complete : id === 'yanqing' ? state.flags.chapter14Complete : id === 'zhangshun' ? state.flags.chapter15Complete : id === 'daizong' ? state.flags.chapter16Complete : true;
+      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : id === 'zhangqing' ? state.flags.chapter11Complete : id === 'huarong' ? state.flags.chapter12Complete : id === 'qiongying' ? state.flags.chapter13Complete : id === 'yanqing' ? state.flags.chapter14Complete : id === 'zhangshun' ? state.flags.chapter15Complete : id === 'daizong' ? state.flags.chapter16Complete : id === 'zhuwu' ? state.flags.chapter17Complete : true;
       const switchDisabled = active || !state.flags.chapter2Complete || !storyComplete;
-      const chapterLabel = id === 'daizong' ? '十六' : id === 'zhangshun' ? '十五' : id === 'yanqing' ? '十四' : id === 'qiongying' ? '十三' : id === 'huarong' ? '十二' : id === 'zhangqing' ? '十一' : id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
+      const chapterLabel = id === 'zhuwu' ? '十七' : id === 'daizong' ? '十六' : id === 'zhangshun' ? '十五' : id === 'yanqing' ? '十四' : id === 'qiongying' ? '十三' : id === 'huarong' ? '十二' : id === 'zhangqing' ? '十一' : id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
       const buttonText = active ? '目前主角' : !storyComplete ? `完成第${chapterLabel}回後開放` : `切換為${heroNames[id]}`;
       return `<article class="hero-roster-card ${active ? 'active' : ''}">
         <span class="hero-roster-avatar">${escapeHtml(hero.avatar || hero.name.slice(0, 1))}</span>
@@ -6883,7 +7305,9 @@
         <button type="button" data-switch-hero="${id}" ${switchDisabled ? 'disabled' : ''}>${buttonText}</button>
       </article>`;
     }).join('');
-    const subtitle = state.flags.chapter16Complete ? '十六位英雄均可自由切換；軍醫營與睦州忠義急援軍略已開放。'
+    const subtitle = state.flags.chapter17Complete ? '十七位英雄均可自由切換；忠義文案閣與東京護冊軍略已開放。'
+      : state.flags.chapter17Started ? '第十七回進行中；完成東京功冊公開後，朱武將正式加入英雄譜。'
+      : state.flags.chapter16Complete ? '十六位英雄均可自由切換；可開啟東京功冊與忠義封賞。'
       : state.flags.chapter16Started ? '第十六回進行中；完成睦州終戰與班師救援後，戴宗將正式加入英雄譜。'
       : state.flags.chapter15Complete ? '十五位英雄均可自由切換；可開啟睦州決戰與忠義歸途。'
       : state.flags.chapter15Started ? '第十五回進行中；完成杭州護民後，張順將正式加入英雄譜。'
@@ -6986,7 +7410,9 @@
       chaincamp: [18, 44], hookrange: [50, 40], qingzhou: [82, 35],
       lumanor: [10, 31], zengtou: [40, 12], erxian: [72, 10], imperialcamp: [78, 27], dongchang: [92, 15], shipyard: [42, 94], gaofleet: [74, 92], capitaledict: [90, 72], yanmen: [88, 5], northrange: [65, 5], hebeiroad: [57, 13], xiangyuan: [43, 5], zhaode: [29, 8], hebeirange: [18, 17],
       huaixiroad: [12, 27], jishandu: [34, 22], wanzhou: [57, 17], huairange: [80, 13],
-      southroad: [14, 8], qiantang: [38, 5], hangzhou: [64, 8], southrange: [88, 5]
+      southroad: [14, 8], qiantang: [38, 5], hangzhou: [64, 8], southrange: [88, 5],
+      returnroad: [12, 18], muzhou: [36, 14], bangyuan: [61, 19], returnrange: [86, 15],
+      capitalroad: [88, 28], capitalgate: [72, 38], archivehall: [49, 44], capitalrange: [24, 50]
     };
     const nodes = MAP_NODES.map(node => {
       const unlocked = node.unlock(state);
@@ -7024,10 +7450,11 @@
     const thirteenthChapterLocations = ['hebeiroad', 'xiangyuan', 'zhaode', 'hebeirange'];
     const fourteenthChapterLocations = ['huaixiroad', 'jishandu', 'wanzhou', 'huairange'];
     const fifteenthChapterLocations = ['southroad', 'qiantang', 'hangzhou', 'southrange'];
+    const seventeenthChapterLocations = ['capitalroad', 'capitalgate', 'archivehall', 'capitalrange'];
     const sixteenthChapterLocations = ['returnroad', 'muzhou', 'bangyuan', 'returnrange'];
     const twelfthChapterLocations = ['capitaledict', 'yanmen', 'northrange'];
     const eighthChapterLocations = ['chaincamp', 'hookrange', 'qingzhou'];
-    const requiredHero = sixteenthChapterLocations.includes(locationId) ? (locationId === 'returnroad' && !state.flags.daizongPerspective ? 'songjiang' : 'daizong') : fifteenthChapterLocations.includes(locationId) ? (locationId === 'southroad' && !state.flags.zhangshunPerspective ? 'songjiang' : 'zhangshun') : fourteenthChapterLocations.includes(locationId) ? (locationId === 'huaixiroad' && !state.flags.yanqingPerspective ? 'songjiang' : 'yanqing') : thirteenthChapterLocations.includes(locationId) ? (locationId === 'hebeiroad' && !state.flags.qiongyingPerspective ? 'songjiang' : 'qiongying') : twelfthChapterLocations.includes(locationId) ? (locationId === 'capitaledict' && !state.flags.huarongJoined ? 'songjiang' : 'huarong') : eleventhChapterLocations.includes(locationId) ? 'zhangqing' : tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
+    const requiredHero = seventeenthChapterLocations.includes(locationId) ? (locationId === 'capitalroad' && !state.flags.zhuwuPerspective ? 'songjiang' : 'zhuwu') : sixteenthChapterLocations.includes(locationId) ? (locationId === 'returnroad' && !state.flags.daizongPerspective ? 'songjiang' : 'daizong') : fifteenthChapterLocations.includes(locationId) ? (locationId === 'southroad' && !state.flags.zhangshunPerspective ? 'songjiang' : 'zhangshun') : fourteenthChapterLocations.includes(locationId) ? (locationId === 'huaixiroad' && !state.flags.yanqingPerspective ? 'songjiang' : 'yanqing') : thirteenthChapterLocations.includes(locationId) ? (locationId === 'hebeiroad' && !state.flags.qiongyingPerspective ? 'songjiang' : 'qiongying') : twelfthChapterLocations.includes(locationId) ? (locationId === 'capitaledict' && !state.flags.huarongJoined ? 'songjiang' : 'huarong') : eleventhChapterLocations.includes(locationId) ? 'zhangqing' : tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
     if (state.activeHeroId !== requiredHero) {
       if (!state.flags.chapter2Complete) { toast('目前正處於另一位英雄的關鍵章回，尚不能跨線旅行。'); return; }
       if (requiredHero === 'linchong' && !state.flags.chapter3Complete) { closeModal(); startChapterThree(); return; }
@@ -7044,8 +7471,9 @@
       if (requiredHero === 'zhangshun' && !state.flags.chapter15Complete) { closeModal(); startChapterFifteen(); return; }
       if (requiredHero === 'daizong' && !state.flags.chapter16Complete) { closeModal(); startChapterSixteen(); return; }
       if (requiredHero === 'huarong' && !state.flags.chapter12Complete) { closeModal(); startChapterTwelve(); return; }
+      if (requiredHero === 'zhuwu' && !state.flags.chapter17Complete) { closeModal(); startChapterSeventeen(); return; }
       setActiveHero(requiredHero);
-      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16 }[requiredHero];
+      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17 }[requiredHero];
     }
     const destinations = {
       manor: 'manor_depart', road: state.flags.roadBanditCleared ? 'road_after_bandit' : 'road_first', inn: 'inn_arrive',
@@ -7094,7 +7522,11 @@
       returnroad: state.flags.chapter16Complete ? 'return_free' : state.flags.returnReached ? 'return_supply' : 'chapter16_orders',
       muzhou: state.flags.chapter16Complete ? 'return_free' : state.flags.fanglaCourierDefeated ? 'daizong_rescue' : 'return_courier',
       bangyuan: state.flags.chapter16Complete ? 'return_free' : state.flags.muzhouFormationBroken ? 'muzhou_breached' : state.flags.muzhouGuardDefeated ? 'muzhou_council' : 'daizong_rescue',
-      returnrange: state.flags.chapter16Complete ? 'return_free' : 'daizong_rescue'
+      returnrange: state.flags.chapter16Complete ? 'return_free' : 'daizong_rescue',
+      capitalroad: state.flags.chapter17Complete ? 'capital_free' : state.flags.capitalReached ? 'capital_supply' : 'chapter17_orders',
+      capitalgate: state.flags.chapter17Complete ? 'capital_free' : state.flags.recordEscortDefeated ? 'capital_archive' : 'capital_gate_blocked',
+      archivehall: state.flags.chapter17Complete ? 'capital_free' : state.flags.archiveFormationBroken ? 'archive_breached' : state.flags.archiveGuardDefeated ? 'capital_council' : 'capital_archive',
+      capitalrange: state.flags.chapter17Complete ? 'capital_free' : 'capital_archive'
     };
     closeModal();
     goScene(destinations[locationId]);
@@ -7103,7 +7535,7 @@
   function openSummary() {
     syncActiveHero();
     const completed = Object.values(state.quests).filter(q => q.status === 'completed').length;
-    const ids = ['wusong', 'luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong'];
+    const ids = ['wusong', 'luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong', 'zhuwu'];
     const unlockedHeroes = ids.map(id => state.heroes[id]).filter(hero => hero?.unlocked);
     const averageMorality = unlockedHeroes.reduce((sum, hero) => sum + hero.morality, 0) / Math.max(1, unlockedHeroes.length);
     const ending = averageMorality >= 75 ? '義薄雲天' : averageMorality >= 58 ? '群星聚義' : '豪傑本色';
@@ -7114,14 +7546,14 @@
       const stats = unlocked ? getStatsForHero(id) : { attack: '－', defense: '－' };
       return `<article class="info-card"><h3>${unlocked ? escapeHtml(hero.name) : fallbacks[id]}</h3><p>${unlocked ? escapeHtml(hero.title) : '章回尚未開啟'}</p><p>等級 ${unlocked ? hero.level : '－'}</p><p>武力 ${stats.attack}｜筋骨 ${stats.defense}</p><p>義氣 ${unlocked ? hero.morality : '－'}</p></article>`;
     }).join('');
-    const title = state.flags.chapter16Complete ? '十六回章回成果' : state.flags.chapter15Complete ? '十五回章回成果' : state.flags.chapter14Complete ? '十四回章回成果' : state.flags.chapter13Complete ? '十三回章回成果' : state.flags.chapter12Complete ? '十二回章回成果' : state.flags.chapter11Complete ? '十一回章回成果' : state.flags.chapter10Complete ? '十回章回成果' : state.flags.chapter9Complete ? '九回章回成果' : state.flags.chapter8Complete ? '八回章回成果' : state.flags.chapter7Complete ? '七回章回成果' : state.flags.chapter6Complete ? '六回章回成果' : state.flags.chapter5Complete ? '五回章回成果' : state.flags.chapter4Complete ? '四回章回成果' : state.flags.chapter3Complete ? '三回章回成果' : state.flags.chapter2Complete ? '兩回章回成果' : '第一回成果';
+    const title = state.flags.chapter17Complete ? '十七回章回成果' : state.flags.chapter16Complete ? '十六回章回成果' : state.flags.chapter15Complete ? '十五回章回成果' : state.flags.chapter14Complete ? '十四回章回成果' : state.flags.chapter13Complete ? '十三回章回成果' : state.flags.chapter12Complete ? '十二回章回成果' : state.flags.chapter11Complete ? '十一回章回成果' : state.flags.chapter10Complete ? '十回章回成果' : state.flags.chapter9Complete ? '九回章回成果' : state.flags.chapter8Complete ? '八回章回成果' : state.flags.chapter7Complete ? '七回章回成果' : state.flags.chapter6Complete ? '六回章回成果' : state.flags.chapter5Complete ? '五回章回成果' : state.flags.chapter4Complete ? '四回章回成果' : state.flags.chapter3Complete ? '三回章回成果' : state.flags.chapter2Complete ? '兩回章回成果' : '第一回成果';
     openModal({
       title, subtitle: `章回評等：${ending}`,
       content: `<div class="modal-grid">
         ${heroCards}
-        <article class="info-card"><h3>歷程</h3><p>完成任務：${completed}</p><p>景陽岡猛虎：${state.flags.tigerDefeated ? '已擊破' : '未擊破'}</p><p>鎮關西鄭屠：${state.flags.zhengDefeated ? '已伏誅' : '尚未交鋒'}</p><p>山神廟陸謙：${state.flags.luqianDefeated ? '已伏誅' : '尚未交鋒'}</p><p>生辰綱：${state.flags.birthdayCargoLost ? '黃泥岡智取成功' : '章回尚未完成'}</p><p>鄆城結局：${state.flags.chapter5Complete ? (state.flags.yanOutcome === 'mercy' ? '義全人未傷' : state.flags.yanOutcome === 'exile' ? '忍辱遠走' : '原著悲劇線') : '章回尚未完成'}</p><p>江州法場：${state.flags.executionRescued ? '兩階段救援成功' : '章回尚未完成'}</p><p>祝家莊：${state.flags.chapter7Complete ? `三打破莊｜聯盟聲望 ${state.flags.allianceReputation}` : '章回尚未完成'}</p><p>連環馬：${state.flags.chapter8Complete ? `鉤鐮破陣｜訓練 ${state.flags.hookTrainingScore}/5` : '章回尚未完成'}</p><p>曾頭市：${state.flags.chapter9Complete ? `五寨已破｜聚義聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '章回尚未完成'}</p><p>招安議事：${state.flags.chapter10Complete ? (state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒苛詔、守寨自立' : '暫緩受詔、先行護民') : '章回尚未完成'}</p><p>童貫高俅：${state.flags.chapter11Complete ? '水陸聯軍破艦、公開停戰條件' : '章回尚未完成'}</p><p>雁門征遼：${state.flags.chapter12Complete ? `雁門鎖關｜軍略 ${state.flags.northernPlanScore}/5｜軍糧紀律 ${state.flags.supplyDiscipline}` : '章回尚未完成'}</p><p>河北征田虎：${state.flags.chapter13Complete ? `襄垣破幻｜軍略 ${state.flags.tianhuPlanScore}/5｜護糧紀律 ${state.flags.hebeiDiscipline}` : '章回尚未完成'}</p><p>淮西征王慶：${state.flags.chapter14Complete ? `宛州潛行｜軍略 ${state.flags.huaiPlanScore}/5｜水陸紀律 ${state.flags.huaiDiscipline}` : '章回尚未完成'}</p><p>江南征方臘：${state.flags.chapter15Complete ? `湧金門夜襲｜軍略 ${state.flags.southPlanScore}/5｜潮汐線索 ${state.flags.tideClues}/4｜張順 ${state.flags.zhangshunRescued ? '生還' : state.flags.zhangshunOutcome === 'tragic_seen' ? '曾見原著悲壯線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>睦州忠義歸途：${state.flags.chapter16Complete ? `忠義急援｜軍略 ${state.flags.returnPlanScore}/5｜急援線索 ${state.flags.rescueClues}/4｜軍民傷者 ${state.flags.retreatRescued ? '已接回' : state.flags.returnOutcome === 'tragic_seen' ? '曾見原著傷亡線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>演武勝場：${(state.flags.arenaWins || 0) + (state.flags.weizhouArenaWins || 0) + (state.flags.cangzhouArenaWins || 0) + (state.flags.damingArenaWins || 0) + (state.flags.yunchengArenaWins || 0) + (state.flags.liangshanArenaWins || 0) + (state.flags.zhujiaArenaWins || 0) + (state.flags.chainArenaWins || 0) + (state.flags.zengtouArenaWins || 0) + (state.flags.diplomacyArenaWins || 0) + (state.flags.navalArenaWins || 0) + (state.flags.archeryArenaWins || 0) + (state.flags.hebeiArenaWins || 0) + (state.flags.huaiArenaWins || 0) + (state.flags.southArenaWins || 0) + (state.flags.returnArenaWins || 0)}</p></article>
+        <article class="info-card"><h3>歷程</h3><p>完成任務：${completed}</p><p>景陽岡猛虎：${state.flags.tigerDefeated ? '已擊破' : '未擊破'}</p><p>鎮關西鄭屠：${state.flags.zhengDefeated ? '已伏誅' : '尚未交鋒'}</p><p>山神廟陸謙：${state.flags.luqianDefeated ? '已伏誅' : '尚未交鋒'}</p><p>生辰綱：${state.flags.birthdayCargoLost ? '黃泥岡智取成功' : '章回尚未完成'}</p><p>鄆城結局：${state.flags.chapter5Complete ? (state.flags.yanOutcome === 'mercy' ? '義全人未傷' : state.flags.yanOutcome === 'exile' ? '忍辱遠走' : '原著悲劇線') : '章回尚未完成'}</p><p>江州法場：${state.flags.executionRescued ? '兩階段救援成功' : '章回尚未完成'}</p><p>祝家莊：${state.flags.chapter7Complete ? `三打破莊｜聯盟聲望 ${state.flags.allianceReputation}` : '章回尚未完成'}</p><p>連環馬：${state.flags.chapter8Complete ? `鉤鐮破陣｜訓練 ${state.flags.hookTrainingScore}/5` : '章回尚未完成'}</p><p>曾頭市：${state.flags.chapter9Complete ? `五寨已破｜聚義聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '章回尚未完成'}</p><p>招安議事：${state.flags.chapter10Complete ? (state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒苛詔、守寨自立' : '暫緩受詔、先行護民') : '章回尚未完成'}</p><p>童貫高俅：${state.flags.chapter11Complete ? '水陸聯軍破艦、公開停戰條件' : '章回尚未完成'}</p><p>雁門征遼：${state.flags.chapter12Complete ? `雁門鎖關｜軍略 ${state.flags.northernPlanScore}/5｜軍糧紀律 ${state.flags.supplyDiscipline}` : '章回尚未完成'}</p><p>河北征田虎：${state.flags.chapter13Complete ? `襄垣破幻｜軍略 ${state.flags.tianhuPlanScore}/5｜護糧紀律 ${state.flags.hebeiDiscipline}` : '章回尚未完成'}</p><p>淮西征王慶：${state.flags.chapter14Complete ? `宛州潛行｜軍略 ${state.flags.huaiPlanScore}/5｜水陸紀律 ${state.flags.huaiDiscipline}` : '章回尚未完成'}</p><p>江南征方臘：${state.flags.chapter15Complete ? `湧金門夜襲｜軍略 ${state.flags.southPlanScore}/5｜潮汐線索 ${state.flags.tideClues}/4｜張順 ${state.flags.zhangshunRescued ? '生還' : state.flags.zhangshunOutcome === 'tragic_seen' ? '曾見原著悲壯線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>睦州忠義歸途：${state.flags.chapter16Complete ? `忠義急援｜軍略 ${state.flags.returnPlanScore}/5｜急援線索 ${state.flags.rescueClues}/4｜軍民傷者 ${state.flags.retreatRescued ? '已接回' : state.flags.returnOutcome === 'tragic_seen' ? '曾見原著傷亡線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>東京忠義封賞：${state.flags.chapter17Complete ? `忠義護冊｜軍略 ${state.flags.courtPlanScore}/5｜功冊線索 ${state.flags.archiveClues}/4｜功名撫卹 ${state.flags.meritsProtected ? '已公開保全' : state.flags.courtOutcome === 'tragic_seen' ? '曾見原著散失線、待改寫' : '待保全'}` : '章回尚未完成'}</p><p>演武勝場：${(state.flags.arenaWins || 0) + (state.flags.weizhouArenaWins || 0) + (state.flags.cangzhouArenaWins || 0) + (state.flags.damingArenaWins || 0) + (state.flags.yunchengArenaWins || 0) + (state.flags.liangshanArenaWins || 0) + (state.flags.zhujiaArenaWins || 0) + (state.flags.chainArenaWins || 0) + (state.flags.zengtouArenaWins || 0) + (state.flags.diplomacyArenaWins || 0) + (state.flags.navalArenaWins || 0) + (state.flags.archeryArenaWins || 0) + (state.flags.hebeiArenaWins || 0) + (state.flags.huaiArenaWins || 0) + (state.flags.southArenaWins || 0) + (state.flags.returnArenaWins || 0) + (state.flags.capitalArenaWins || 0)}</p></article>
         <article class="info-card"><h3>同伴與收藏</h3><p>已結識同伴：${Object.values(state.companions).filter(entry => entry.unlocked).length} / ${Object.keys(COMPANIONS).length}</p><p>打虎英雄牌：${state.inventory.tigerToken ? '已取得' : '未取得'}</p><p>五臺度牒：${state.inventory.monkCertificate ? '已取得' : '未取得'}</p><p>草料場銅印：${state.inventory.grassYardSeal ? '已取得' : '未取得'}</p><p>棗瓢暗記：${state.inventory.dateScoop ? '已取得' : '未取得'}</p><p>鄆城押司印記：${state.inventory.yunchengSeal ? '已取得' : '未取得'}</p><p>梁山聚義旗：${state.inventory.liangshanBanner ? '已取得' : '未取得'}</p><p>獨龍岡盟誓牌：${state.inventory.allianceToken ? '已取得' : '未取得'}</p><p>鉤鐮槍譜：${state.inventory.hookLanceManual ? '已取得' : '未取得'}</p><p>聚義座次卷：${state.inventory.assemblyScroll ? '已取得' : '未取得'}</p><p>菊花會盟帖：${state.inventory.chrysanthemumPact ? '已取得' : '未取得'}</p><p>受詔三約：${state.inventory.amnestyTerms ? '已取得' : '依路線未立'}</p><p>錢塘潮汐圖：${state.inventory.qiantangTideMap ? '已取得' : '未取得'}</p><p>江南軍民護送約：${state.inventory.jiangnanPact ? '已取得' : '未取得'}</p><p>山寨：聚義廳 Lv.${state.base.hall}｜醫館 Lv.${state.base.infirmary}｜鐵匠鋪 Lv.${state.base.forge}｜糧倉 Lv.${state.base.granary}｜軍械坊 Lv.${state.base.armory || 1}｜瞭望臺 Lv.${state.base.watchtower || 1}｜文書院 Lv.${state.base.academy || 1}｜船塢 Lv.${state.base.shipyard || 1}｜馬廄 Lv.${state.base.stable || 1}｜驛站 Lv.${state.base.relay || 1}｜暗哨營 Lv.${state.base.scoutcamp || 1}｜水門工坊 Lv.${state.base.harbor || 1}｜軍醫營 Lv.${state.base.mediccamp || 1}</p><p>糧草：${state.base.grain}｜遠征 ${state.flags.expeditionCount || 0} 次</p></article>
-        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter16Complete ? '十六英雄完成睦州終戰與忠義班師，可在睦州演武、重演急援並持續經營梁山。' : state.flags.chapter15Complete ? '可開啟睦州決戰與忠義歸途，體驗戴宗、安道全、傷兵急援與軍醫營。' : state.flags.chapter14Complete ? '可開啟征方臘與湧金門夜襲，體驗張順、阮小七、潮汐偵察與水門工坊。' : state.flags.chapter13Complete ? '可開啟征王慶與宛州潛行，體驗燕青、李俊、水陸滲透與暗哨營。' : state.flags.chapter12Complete ? '可開啟河北征田虎，體驗瓊英、喬道清、幻霧軍略與驛站建設。' : state.flags.chapter11Complete ? '可開啟受詔招安與雁門征遼，體驗花榮、關勝、騎射軍略與馬廄建設。' : state.flags.chapter10Complete ? '可開啟兩贏童貫、三敗高俅，體驗張清、李俊、水陸軍略與船塢建設。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
+        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter17Complete ? '十七英雄完成東京功冊公開與忠義封賞，可在東京演武、重演護冊並持續經營梁山。' : state.flags.chapter16Complete ? '可開啟東京功冊與忠義封賞，體驗朱武、裴宣、功冊查驗與忠義文案閣。' : state.flags.chapter15Complete ? '可開啟睦州決戰與忠義歸途，體驗戴宗、安道全、傷兵急援與軍醫營。' : state.flags.chapter14Complete ? '可開啟征方臘與湧金門夜襲，體驗張順、阮小七、潮汐偵察與水門工坊。' : state.flags.chapter13Complete ? '可開啟征王慶與宛州潛行，體驗燕青、李俊、水陸滲透與暗哨營。' : state.flags.chapter12Complete ? '可開啟河北征田虎，體驗瓊英、喬道清、幻霧軍略與驛站建設。' : state.flags.chapter11Complete ? '可開啟受詔招安與雁門征遼，體驗花榮、關勝、騎射軍略與馬廄建設。' : state.flags.chapter10Complete ? '可開啟兩贏童貫、三敗高俅，體驗張清、李俊、水陸軍略與船塢建設。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
       </div>`, wide: true
     });
   }
@@ -7136,8 +7568,8 @@
       ['公孫勝', '掌法道者・觀天護寨', '公'], ['張清', '飛石先鋒・水陸策應', '張'], ['花榮', '弓騎先鋒・雁門守關', '花'], ['瓊英', '飛星女將・河北護民', '瓊'], ['燕青', '巧弩潛行・淮西護渡', '燕'], ['張順', '分水先鋒・湧金開門', '順'], ['戴宗', '神行急援・忠義班師', '戴']
     ];
     const cards = order.map(([name, duty, avatar], index) => `<article class="hero-roster-card ${index < 2 ? 'active' : ''}"><span class="hero-roster-avatar">${avatar}</span><div class="hero-roster-copy"><h3>第 ${index + 1} 席・${name}</h3><p>${duty}</p></div></article>`).join('');
-    const status = state?.flags?.chapter16Complete ? `十六英雄同堂｜睦州軍略 ${state.flags.returnPlanScore || 0}/5｜軍醫營 Lv.${state.base.mediccamp || 1}` : state?.flags?.chapter15Complete ? `十五英雄同堂｜江南軍略 ${state.flags.southPlanScore || 0}/5｜水門工坊 Lv.${state.base.harbor || 1}` : state?.flags?.chapter14Complete ? `十四英雄同堂｜淮西軍略 ${state.flags.huaiPlanScore || 0}/5｜暗哨營 Lv.${state.base.scoutcamp || 1}` : state?.flags?.chapter13Complete ? `十三英雄同堂｜河北軍略 ${state.flags.tianhuPlanScore || 0}/5｜驛站 Lv.${state.base.relay || 1}` : state?.flags?.chapter12Complete ? `十二英雄同堂｜雁門軍略 ${state.flags.northernPlanScore || 0}/5｜馬廄 Lv.${state.base.stable || 1}` : state?.flags?.chapter11Complete ? `十一英雄同堂｜水陸軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}` : state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
-    openModal({ title: '梁山聚義座次', subtitle: status, content: `<div class="hero-roster-grid">${cards}</div><article class="info-card assembly-note"><h3>軍師職司・吳用</h3><p>吳用掌機密軍略與軍團攻略，列為軍師職司，不占十六名可操控英雄的席次。</p></article><article class="info-card assembly-note"><h3>座次設計原則</h3><p>本遊戲不照搬原著一百零八將完整排名，而以目前十六位可操控英雄的章回職司排列。座次代表責任分工，不等於人物品格高低。</p></article>`, wide: true });
+    const status = state?.flags?.chapter17Complete ? `十七英雄同堂｜東京護冊 ${state.flags.courtPlanScore || 0}/5｜文案閣 Lv.${state.base.archive || 1}` : state?.flags?.chapter16Complete ? `十六英雄同堂｜睦州軍略 ${state.flags.returnPlanScore || 0}/5｜軍醫營 Lv.${state.base.mediccamp || 1}` : state?.flags?.chapter15Complete ? `十五英雄同堂｜江南軍略 ${state.flags.southPlanScore || 0}/5｜水門工坊 Lv.${state.base.harbor || 1}` : state?.flags?.chapter14Complete ? `十四英雄同堂｜淮西軍略 ${state.flags.huaiPlanScore || 0}/5｜暗哨營 Lv.${state.base.scoutcamp || 1}` : state?.flags?.chapter13Complete ? `十三英雄同堂｜河北軍略 ${state.flags.tianhuPlanScore || 0}/5｜驛站 Lv.${state.base.relay || 1}` : state?.flags?.chapter12Complete ? `十二英雄同堂｜雁門軍略 ${state.flags.northernPlanScore || 0}/5｜馬廄 Lv.${state.base.stable || 1}` : state?.flags?.chapter11Complete ? `十一英雄同堂｜水陸軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}` : state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
+    openModal({ title: '梁山聚義座次', subtitle: status, content: `<div class="hero-roster-grid">${cards}</div><article class="info-card assembly-note"><h3>軍師職司・吳用</h3><p>吳用掌機密軍略與軍團攻略，列為軍師職司，不占十七名可操控英雄的席次。</p></article><article class="info-card assembly-note"><h3>座次設計原則</h3><p>本遊戲不照搬原著一百零八將完整排名，而以目前十七位可操控英雄的章回職司排列。座次代表責任分工，不等於人物品格高低。</p></article>`, wide: true });
   }
 
 
@@ -7186,6 +7618,7 @@
         <article class="info-card"><h3>梁山暗哨營 Lv.${b.scoutcamp || 1}</h3><p>提高淮西潛行初始軍勢、降低暗哨警戒，並強化易服、暗語與夜路偵察。</p><button type="button" data-base-upgrade="scoutcamp" ${state.flags.chapter14Started ? '' : 'disabled'}>升級：${costText(b.scoutcamp || 1)}</button><button type="button" data-start-huai ${state.flags.chapter14Complete ? '' : 'disabled'}>重演宛州潛行</button></article>
         <article class="info-card"><h3>梁山水門工坊 Lv.${b.harbor || 1}</h3><p>提高湧金門夜襲初始軍勢、降低水門警戒，並強化潮汐判讀、救生小舟與水下拆柵。</p><button type="button" data-base-upgrade="harbor" ${state.flags.chapter15Started ? '' : 'disabled'}>升級：${costText(b.harbor || 1)}</button><button type="button" data-start-south ${state.flags.chapter15Complete ? '' : 'disabled'}>重演湧金門夜襲</button></article>
         <article class="info-card"><h3>梁山軍醫營 Lv.${b.mediccamp || 1}</h3><p>提高睦州忠義急援初始軍勢、強化傷兵分診與緊急救援，並降低終戰後可避免的傷亡。</p><button type="button" data-base-upgrade="mediccamp" ${state.flags.chapter16Started ? '' : 'disabled'}>升級：${costText(b.mediccamp || 1)}</button><button type="button" data-start-return ${state.flags.chapter16Complete ? '' : 'disabled'}>重演睦州忠義急援</button></article>
+        <article class="info-card"><h3>忠義文案閣 Lv.${b.archive || 1}</h3><p>提高東京護冊初始軍勢、強化印信校驗與功冊副本保全，降低封賞與撫卹被抽換的風險。</p><button type="button" data-base-upgrade="archive" ${state.flags.chapter17Started ? '' : 'disabled'}>升級：${costText(b.archive || 1)}</button><button type="button" data-start-court ${state.flags.chapter17Complete ? '' : 'disabled'}>重演東京忠義護冊</button></article>
       </div>`, wide: true
     });
     $$('[data-base-upgrade]', modalRoot).forEach(button => button.addEventListener('click', () => upgradeBase(button.dataset.baseUpgrade)));
@@ -7199,6 +7632,7 @@
     $('[data-start-huai]', modalRoot)?.addEventListener('click', () => startHuaiDuel(true));
     $('[data-start-south]', modalRoot)?.addEventListener('click', () => startSouthDuel(true));
     $('[data-start-return]', modalRoot)?.addEventListener('click', () => startReturnDuel(true));
+    $('[data-start-court]', modalRoot)?.addEventListener('click', () => startCourtDuel(true));
   }
 
   function upgradeBase(type) {
@@ -7213,7 +7647,7 @@
       return;
     }
     b.timber -= timber; b.stone -= stone; state.hero.silver -= silver; b[type] += 1;
-    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院', shipyard: '水寨船塢', stable: '梁山馬廄', relay: '梁山驛站', scoutcamp: '梁山暗哨營', harbor: '梁山水門工坊', mediccamp: '梁山軍醫營' };
+    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院', shipyard: '水寨船塢', stable: '梁山馬廄', relay: '梁山驛站', scoutcamp: '梁山暗哨營', harbor: '梁山水門工坊', mediccamp: '梁山軍醫營', archive: '忠義文案閣' };
     addLog(`${names[type]}升至 Lv.${b[type]}。`);
     tone('level'); saveGame(false); openBase(); renderHeroPanel();
   }
