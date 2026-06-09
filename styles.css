@@ -524,3 +524,49 @@ body[data-theme="paper"] .title-art { background: #fff; border: 2px solid #000; 
 @media (max-width: 620px) {
   .scene-visual[data-scene="fortress"] { min-height: 190px; }
 }
+
+
+/* v2.8 東京功冊與忠義封賞 */
+.scene-visual[data-scene="capital"] {
+  background:
+    linear-gradient(180deg, rgba(221,196,141,.18), transparent 42%),
+    linear-gradient(145deg, #cdbb91 0%, #776349 47%, #27231f 100%);
+}
+.scene-visual[data-scene="capital"]::before {
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgba(52,38,27,.48) 8% 13%, transparent 13% 87%, rgba(52,38,27,.48) 87% 92%, transparent 92%),
+    repeating-linear-gradient(90deg, transparent 0 42px, rgba(241,220,169,.12) 43px 46px),
+    linear-gradient(0deg, rgba(24,20,18,.5), transparent 58%);
+}
+.scene-visual[data-scene="capital"] .scene-weather::after {
+  content: "冊　印　義";
+  position: absolute; right: 7%; top: 9%;
+  color: rgba(246,224,177,.72); font-weight: 900; letter-spacing: .55em;
+  writing-mode: vertical-rl; text-shadow: 0 2px 8px rgba(0,0,0,.45);
+}
+
+/* 手機版輿圖：地點增加後改為雙欄清單，避免節點重疊並提升觸控可用性 */
+@media (max-width: 620px) {
+  .map-grid {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding: 10px;
+    overflow: visible;
+  }
+  .map-grid::before, .map-road { display: none; }
+  .map-node {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none;
+    width: 100%;
+    min-width: 0;
+    min-height: 64px;
+    padding: 8px 7px;
+    font-size: .8rem;
+    box-shadow: 0 3px 9px rgba(0,0,0,.1);
+  }
+  .map-node span { font-size: .68rem; }
+}
