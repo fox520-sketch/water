@@ -1,4 +1,4 @@
-const CACHE_NAME = 'liangshan-rpg-v2.9.0';
+const CACHE_NAME = 'liangshan-rpg-v3.0.0';
 const APP_SHELL = [
   './', './index.html', './styles.css', './game.js', './manifest.webmanifest',
   './assets/icon-192.png', './assets/icon-512.png'
