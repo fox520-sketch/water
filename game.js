@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'liangshan-rpg-save-v1';
   const PREF_KEY = 'liangshan-rpg-prefs-v1';
-  const VERSION = '3.9.0';
+  const VERSION = '4.0.0';
   const THEMES = ['ink', 'dark', 'paper'];
   const THEME_NAMES = { ink: '水墨宣紙', dark: '夜行深色', paper: '黑白電子紙' };
 
@@ -199,6 +199,12 @@
       hp: 338, maxHp: 338, sp: 190, maxSp: 200,
       baseAttack: 59, baseDefense: 45, morality: 100, silver: 88, drunk: 0,
       guarding: false, unlocked: false
+    },
+    zhangqinginn: {
+      id: 'zhangqinginn', name: '張青', avatar: '青', title: '菜園子・梁山酒食頭領', level: 28, xp: 0, nextXp: 2445,
+      hp: 358, maxHp: 358, sp: 204, maxSp: 214,
+      baseAttack: 61, baseDefense: 47, morality: 100, silver: 92, drunk: 0,
+      guarding: false, unlocked: false
     }
   };
 
@@ -314,6 +320,10 @@
     sunerniang: [
       { id: 'nightForkGuestCheck', name: '母夜叉驗宿', cost: 17, description: '核對投宿名冊、飲食樣本、房牌與行李封籤，造成傷害、削弱攻防並提高下一擊重創機會。' },
       { id: 'fourWatchSafeInn', name: '四更護驛', cost: 27, description: '聯動登記、試飲、封籤、夜巡與求援五線，重創敵手、建立守勢並可能截斷黑店暗號。' }
+    ],
+    zhangqinginn: [
+      { id: 'gardenSealCheck', name: '菜園封籤', cost: 18, description: '核對寄件人、收件人、品名重量與封籤號碼，造成傷害、削弱攻防並提高下一擊重創機會。' },
+      { id: 'fourRouteParcelRelay', name: '四路接運', cost: 28, description: '聯動驗貨、稱重、腳夫、驛站與理賠五線，重創敵手、建立守勢並可能截斷黑腳行暗號。' }
     ]
   };
 
@@ -458,7 +468,12 @@
     safeLodgingArmor: { name: '水泊宿安巡驗衣', type: 'armor', hero: 'sunerniang', description: '配有房牌簿、試飲杯、行李封籤、夜巡燈與求援繩的巡驗衣，筋骨 +29。', defense: 29 },
     guestRegister: { name: '水泊旅宿實名總冊', type: 'key', description: '記錄旅客姓名、同行者、房號、入退宿時刻與緊急聯絡，防止冒名投宿與失蹤無人追查。' },
     luggageSealLedger: { name: '行李封籤與夜巡求援簿', type: 'key', description: '記錄行李封籤、交接、客房夜巡、求援燈號及失蹤通報，避免偷換行囊與黑店暗害。' },
-    safeLodgingPact: { name: '水泊百宿安行約', type: 'key', description: '梁山新約：旅宿必須實名登記、飲食不得下藥、行李必須封籤交接、夜巡求援與失蹤救援補償必須公開。' }
+    safeLodgingPact: { name: '水泊百宿安行約', type: 'key', description: '梁山新約：旅宿必須實名登記、飲食不得下藥、行李必須封籤交接、夜巡求援與失蹤救援補償必須公開。' },
+    gardenSealStaff: { name: '菜園封籤短棒', type: 'weapon', hero: 'zhangqinginn', description: '張青巡查寄運貨包、腳夫交接與驛路暗號所用短棒，武力 +31、筋骨 +6。', attack: 31, defense: 6 },
+    parcelNotaryArmor: { name: '水泊寄運公證衣', type: 'armor', hero: 'zhangqinginn', description: '配有稱重尺、封籤鉗、交接簿、求援旗與理賠袋的公證衣，筋骨 +30。', defense: 30 },
+    parcelRegister: { name: '水泊百包寄運總冊', type: 'key', description: '記錄寄件人、收件人、品名、重量、封籤號、承運腳夫與交接時刻，防止冒名寄送與貨包掉包。' },
+    parcelClaimLedger: { name: '寄運交接與理賠簿', type: 'key', description: '記錄驗貨稱重、驛站交接、破損遺失、尋回返還與公開賠償，讓每一件寄物都有可追查責任。' },
+    safeParcelPact: { name: '水泊百包安寄約', type: 'key', description: '梁山新約：寄運必須實名申報、當面稱重封籤、腳夫有牌、交接有簽、遺失破損與勒索必須公開追查賠償。' }
   };
 
   const COMPANIONS = {
@@ -601,6 +616,11 @@
       name: '張青', title: '菜園子・梁山酒食頭領', avatar: '青', role: '驛舍接應', skillName: '菜園子接驛',
       description: '每場戰鬥可使用一次，以房牌、後門、行李封籤與夜巡暗號接應旅客，重創敵人、削弱攻防、恢復氣血豪氣並建立防護。',
       unlockHint: '第二十八回於水泊安心客棧街完成實名投宿、行李封籤、夜巡求援與失蹤救援演練。'
+    },
+    gudasao: {
+      name: '顧大嫂', title: '母大蟲・梁山東山酒店頭領', avatar: '顧', role: '腳店護運', skillName: '母大蟲護運',
+      description: '每場戰鬥可使用一次，以酒店耳目、腳夫名牌、封籤交接與失物追索護送寄物，重創敵人、削弱攻防、恢復氣血豪氣並建立防護。',
+      unlockHint: '第二十九回於水泊安心腳店街完成寄運實名、稱重封籤、腳夫交接與失物理賠演練。'
     }
   };
 
@@ -1129,6 +1149,26 @@
       name: '梁山百宿安行教頭', title: '登記、試飲、封籤、夜巡與救援演武隊', avatar: '驛', maxHp: 1264, attack: 100, defense: 51,
       xp: 256, silver: 78, canFlee: true,
       moves: ['登記手核對旅客身份、同行者與房號', '巡驗隊查驗飲食樣本、行李封籤與客房門閂', '夜巡隊演練求援燈號、失蹤通報與受害補償']
+    },
+    forgedParcelPatrol: {
+      name: '掉包黑腳行巡丁', title: '冒名收件、偷改重量並撕換封籤', avatar: '包', maxHp: 1448, attack: 110, defense: 57,
+      xp: 452, silver: 140, canFlee: false,
+      moves: ['巡丁撕毀寄件實名牌與收件憑據', '黑腳夫把重貨換成空包並偷改重量', '打手扯下封籤、塗改驛站交接時刻']
+    },
+    porterGuildGuard: {
+      name: '黑腳牙行護院', title: '壟斷腳夫名牌、封鎖交接臺並阻撓失物通報', avatar: '腳', maxHp: 1498, attack: 113, defense: 59,
+      xp: 466, silver: 144, canFlee: false,
+      moves: ['護院搶奪稱重簿與封籤鉗', '牙人冒用腳夫名牌轉送貨包', '私兵堵住跨驛交接臺與失物申訴口']
+    },
+    parcelProfiteerBoss: {
+      name: '寄利掮客與黑腳豪商', title: '操弄冒名寄件、偷改重量、貨包掉換與理賠推諉的最後阻力', avatar: '贓', maxHp: 1612, attack: 117, defense: 62,
+      xp: 642, silver: 186, canFlee: false,
+      moves: ['豪商買通腳夫改寫寄件人與收件人', '黑腳打手衝擊寄運公證所', '掮客焚毀稱重封籤、驛路交接與失物理賠名冊']
+    },
+    parcelArena: {
+      name: '梁山百包安寄教頭', title: '實名、稱重、封籤、接運與理賠演武隊', avatar: '寄', maxHp: 1340, attack: 104, defense: 54,
+      xp: 270, silver: 82, canFlee: true,
+      moves: ['驗貨手核對寄收雙方、品名與禁寄物', '稱重隊演練封籤號碼與腳夫名牌交接', '驛運隊演練失物追索、破損返還與公開理賠']
     }
   };
 
@@ -1231,7 +1271,11 @@
     { id: 'guestyard', name: '金沙灘旅客登記場', region: '安心食市東側驛口', x: 65, y: 1, unlock: s => s.flags.chapter28Started },
     { id: 'lodginghall', name: '梁山宿安巡驗館', region: '驛站與安心食市之間', x: 76, y: 1, unlock: s => s.flags.sunerniangPerspective || s.flags.chapter28Complete },
     { id: 'safeinnstreet', name: '水泊安心客棧街', region: '金沙灘商旅住宿區', x: 87, y: 1, unlock: s => s.flags.blackInnGuardDefeated || s.flags.chapter28Complete },
-    { id: 'lodgingrange', name: '百宿安行演武場', region: '巡驗館外五更校場', x: 96, y: 1, unlock: s => s.flags.sunerniangJoined || s.flags.chapter28Complete }
+    { id: 'lodgingrange', name: '百宿安行演武場', region: '巡驗館外五更校場', x: 96, y: 1, unlock: s => s.flags.sunerniangJoined || s.flags.chapter28Complete },
+    { id: 'parcelyard', name: '金沙灘寄運驗貨場', region: '安心客棧街東側貨亭', x: 65, y: 1, unlock: s => s.flags.chapter29Started },
+    { id: 'parcelhall', name: '梁山寄運公證所', region: '驛站與通憑印務所之間', x: 76, y: 1, unlock: s => s.flags.zhangqinginnPerspective || s.flags.chapter29Complete },
+    { id: 'safeporterlane', name: '水泊安心腳店街', region: '金沙灘商旅寄運區', x: 87, y: 1, unlock: s => s.flags.porterGuildGuardDefeated || s.flags.chapter29Complete },
+    { id: 'parcelrange', name: '百包安寄演武場', region: '公證所外四路校場', x: 96, y: 1, unlock: s => s.flags.zhangqinginnJoined || s.flags.chapter29Complete }
   ];
 
   function createHero(id) {
@@ -1267,6 +1311,7 @@
     const huangfuduan = createHero('huangfuduan');
     const caozheng = createHero('caozheng');
     const sunerniang = createHero('sunerniang');
+    const zhangqinginn = createHero('zhangqinginn');
     return {
       version: VERSION,
       createdAt: new Date().toISOString(),
@@ -1276,8 +1321,8 @@
       chapter: 1,
       activeHeroId: 'wusong',
       hero: cloneData(wusong),
-      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng, zhangqing, huarong, qiongying, yanqing, zhangshun, daizong, zhuwu, xiaorang, peixuan, lehe, jindajian, mengkang, houjian, tanglong, lingzhen, huangfuduan, caozheng, sunerniang },
-      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1, flyingStonePouch: 1, cloudLightArmor: 1, cloudPiercingBow: 1, yanmenLightArmor: 1, starStoneBag: 1, pearArmor: 1, yanCrossbow: 1, wandererArmor: 1, waterBlade: 1, whiteWaveSuit: 1, divineTalismanBlade: 1, swiftCloudRobe: 1, strategyFan: 1, archiveRobe: 1, silverHookBrush: 1, deedKeeperRobe: 1, ironJusticeRuler: 1, justiceRobe: 1, ironCallFlute: 1, publicNoticeRobe: 1, jadeSealChisel: 1, transitCredentialRobe: 1, jadePennantRule: 1, hundredBoatArmor: 1, longArmShears: 1, craftSafetyRobe: 1, goldLeopardHammer: 1, toolInspectionArmor: 1, thunderSignalMallet: 1, disasterWatchArmor: 1, purpleWhiskNeedle: 1, herdCareRobe: 1, butcherInspectKnife: 1, foodSafetyApron: 1, nightForkBlade: 1, safeLodgingArmor: 1 },
+      heroes: { wusong, luzhishen, linchong, yangzhi, songjiang, likui, husanniang, huyanzhuo, lujunyi, gongsunsheng, zhangqing, huarong, qiongying, yanqing, zhangshun, daizong, zhuwu, xiaorang, peixuan, lehe, jindajian, mengkang, houjian, tanglong, lingzhen, huangfuduan, caozheng, sunerniang, zhangqinginn },
+      inventory: { herb: 2, bun: 2, wine: 1, staff: 1, robe: 1, ironCudgel: 1, officerCoat: 1, linSpear: 1, snowCloak: 1, yangSaber: 1, escortArmor: 1, clerkBlade: 1, clerkRobe: 1, twinAxes: 1, blackWarCoat: 1, sunMoonSabers: 1, redBrocadeArmor: 1, steelTwinWhips: 1, chainCavalryArmor: 1, qilinStaff: 1, jadeArmor: 1, pineSword: 1, baguaRobe: 1, flyingStonePouch: 1, cloudLightArmor: 1, cloudPiercingBow: 1, yanmenLightArmor: 1, starStoneBag: 1, pearArmor: 1, yanCrossbow: 1, wandererArmor: 1, waterBlade: 1, whiteWaveSuit: 1, divineTalismanBlade: 1, swiftCloudRobe: 1, strategyFan: 1, archiveRobe: 1, silverHookBrush: 1, deedKeeperRobe: 1, ironJusticeRuler: 1, justiceRobe: 1, ironCallFlute: 1, publicNoticeRobe: 1, jadeSealChisel: 1, transitCredentialRobe: 1, jadePennantRule: 1, hundredBoatArmor: 1, longArmShears: 1, craftSafetyRobe: 1, goldLeopardHammer: 1, toolInspectionArmor: 1, thunderSignalMallet: 1, disasterWatchArmor: 1, purpleWhiskNeedle: 1, herdCareRobe: 1, butcherInspectKnife: 1, foodSafetyApron: 1, nightForkBlade: 1, safeLodgingArmor: 1, gardenSealStaff: 1, parcelNotaryArmor: 1 },
       equipment: { weapon: 'staff', armor: 'robe' },
       equipments: {
         wusong: { weapon: 'staff', armor: 'robe' },
@@ -1307,7 +1352,8 @@
         lingzhen: { weapon: 'thunderSignalMallet', armor: 'disasterWatchArmor' },
         huangfuduan: { weapon: 'purpleWhiskNeedle', armor: 'herdCareRobe' },
         caozheng: { weapon: 'butcherInspectKnife', armor: 'foodSafetyApron' },
-        sunerniang: { weapon: 'nightForkBlade', armor: 'safeLodgingArmor' }
+        sunerniang: { weapon: 'nightForkBlade', armor: 'safeLodgingArmor' },
+        zhangqinginn: { weapon: 'gardenSealStaff', armor: 'parcelNotaryArmor' }
       },
       companions: {
         songjiang: { unlocked: false, bond: 1, wins: 0 },
@@ -1337,7 +1383,8 @@
         huangfuduan: { unlocked: false, bond: 1, wins: 0 },
         caozheng: { unlocked: false, bond: 1, wins: 0 },
         sunerniang: { unlocked: false, bond: 1, wins: 0 },
-        zhangqinginn: { unlocked: false, bond: 1, wins: 0 }
+        zhangqinginn: { unlocked: false, bond: 1, wins: 0 },
+        gudasao: { unlocked: false, bond: 1, wins: 0 }
       },
       team: { active: null },
       quests: {
@@ -1369,7 +1416,8 @@
         main_defense: { title: '轟天鳴警・水泊聯防', description: '百器公檢建立後，凌振與皇甫端查驗警號節律、火源分區、疏散路線及人畜救護，讓水泊遇到火災、風雨與突發事故時能迅速聯防。', status: 'hidden', progress: '尚未開篇' },
         main_health: { title: '紫髯辨疫・水泊牧護', description: '四隅聯防建立後，皇甫端與曹正查驗畜籍、飼水、隔離、屠檢及補償，讓牲畜疫病、假藥與污染肉品能被及早發現並公開處理。', status: 'hidden', progress: '尚未開篇' },
         main_food: { title: '操刀驗膳・百膳安民', description: '人畜安康建立後，曹正與孫二娘查驗食材來源、淨水熟度、生熟分案、留樣召回與食害補償，讓公共膳食能安全追溯並公開處理。', status: 'hidden', progress: '尚未開篇' },
-        main_lodging: { title: '母夜叉護驛・百宿安行', description: '百膳安民建立後，孫二娘與菜園子張青查驗冒名投宿、迷藥酒食、行李封籤、夜巡求援與失蹤補償，讓商旅能安心住宿並被追蹤救援。', status: 'hidden', progress: '尚未開篇' }
+        main_lodging: { title: '母夜叉護驛・百宿安行', description: '百膳安民建立後，孫二娘與菜園子張青查驗冒名投宿、迷藥酒食、行李封籤、夜巡求援與失蹤補償，讓商旅能安心住宿並被追蹤救援。', status: 'hidden', progress: '尚未開篇' },
+        main_parcel: { title: '菜園封運・百包安寄', description: '百宿安行建立後，張青與顧大嫂查驗冒名寄件、偷改重量、封籤掉包、腳夫交接與失物理賠，讓旅客與百姓的寄物能安全送達並公開追查。', status: 'hidden', progress: '尚未開篇' }
       },
       flags: {
         metSongJiang: false, leftManor: false, roadBanditCleared: false, reachedInn: false,
@@ -1542,7 +1590,14 @@
         drinkSampleChecked: false, luggageSealChecked: false, nightPatrolChecked: false,
         blackInnGuardDefeated: false, metZhangQingInn: false, lodgingPlanScore: 0,
         lodgingFormationBroken: false, lodgingProfiteerDefeated: false, sunerniangJoined: false,
-        publicLodgingSafetyEstablished: false, missingTravelerCasesClosed: false, lodgingOutcome: '', lodgingArenaWins: 0
+        publicLodgingSafetyEstablished: false, missingTravelerCasesClosed: false, lodgingOutcome: '', lodgingArenaWins: 0,
+        chapter29Started: false, chapter29Complete: false, parcelYardReached: false,
+        parcelSupply: 3, parcelDiscipline: 1, zhangqinginnPerspective: false,
+        forgedParcelPatrolDefeated: false, parcelClues: 0, parcelIdentityChecked: false,
+        parcelWeightChecked: false, porterRouteChecked: false, parcelClaimChecked: false,
+        porterGuildGuardDefeated: false, metGuDasao: false, parcelPlanScore: 0,
+        parcelFormationBroken: false, parcelProfiteerDefeated: false, zhangqinginnJoined: false,
+        publicParcelSafetyEstablished: false, lostParcelCasesClosed: false, parcelOutcome: '', parcelArenaWins: 0
       },
       log: ['第一回開篇：武松客居柴進莊。'],
       battle: null,
@@ -1570,7 +1625,8 @@
       healthBattle: null,
       foodBattle: null,
       lodgingBattle: null,
-      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1, shipyard: 1, stable: 1, relay: 1, scoutcamp: 1, harbor: 1, mediccamp: 1, archive: 1, settlement: 1, justicehall: 1, noticehall: 1, passhouse: 1, fleetoffice: 1, safetyhall: 1, inspectionhall: 1, alarmtower: 1, vetclinic: 1, foodhall: 1, lodginghall: 1 },
+      parcelBattle: null,
+      base: { timber: 3, stone: 2, grain: 5, hall: 1, infirmary: 1, forge: 1, granary: 1, armory: 1, watchtower: 1, academy: 1, shipyard: 1, stable: 1, relay: 1, scoutcamp: 1, harbor: 1, mediccamp: 1, archive: 1, settlement: 1, justicehall: 1, noticehall: 1, passhouse: 1, fleetoffice: 1, safetyhall: 1, inspectionhall: 1, alarmtower: 1, vetclinic: 1, foodhall: 1, lodginghall: 1, parcelhall: 1 },
       playMinutes: 0,
       lastTickAt: Date.now()
     };
@@ -1608,6 +1664,7 @@
   let healthLocked = false;
   let foodLocked = false;
   let lodgingLocked = false;
+  let parcelLocked = false;
   let availableVoices = [];
   let lastNarratedSceneId = '';
   let lastNarratedBattleKey = '';
@@ -1691,10 +1748,10 @@
 
   function migrateState(saved) {
     const base = defaultState();
-    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : /^樂/.test(saved.hero?.name || '') ? 'lehe' : /^裴/.test(saved.hero?.name || '') ? 'peixuan' : /^蕭/.test(saved.hero?.name || '') ? 'xiaorang' : /^朱/.test(saved.hero?.name || '') ? 'zhuwu' : /^戴/.test(saved.hero?.name || '') ? 'daizong' : /^張順/.test(saved.hero?.name || '') ? 'zhangshun' : /^張/.test(saved.hero?.name || '') ? 'zhangqing' : /^花/.test(saved.hero?.name || '') ? 'huarong' : /^瓊/.test(saved.hero?.name || '') ? 'qiongying' : /^燕/.test(saved.hero?.name || '') ? 'yanqing' : /^孫二娘|^母夜叉/.test(saved.hero?.name || '') ? 'sunerniang' : /^曹/.test(saved.hero?.name || '') ? 'caozheng' : /^皇甫|^髯/.test(saved.hero?.name || '') ? 'huangfuduan' : /^凌/.test(saved.hero?.name || '') ? 'lingzhen' : /^湯/.test(saved.hero?.name || '') ? 'tanglong' : /^侯/.test(saved.hero?.name || '') ? 'houjian' : /^孟/.test(saved.hero?.name || '') ? 'mengkang' : 'wusong');
+    const guessedActive = saved.activeHeroId || (/^魯/.test(saved.hero?.name || '') ? 'luzhishen' : /^林/.test(saved.hero?.name || '') ? 'linchong' : /^楊/.test(saved.hero?.name || '') ? 'yangzhi' : /^宋/.test(saved.hero?.name || '') ? 'songjiang' : /^李/.test(saved.hero?.name || '') ? 'likui' : /^扈/.test(saved.hero?.name || '') ? 'husanniang' : /^呼/.test(saved.hero?.name || '') ? 'huyanzhuo' : /^盧/.test(saved.hero?.name || '') ? 'lujunyi' : /^公/.test(saved.hero?.name || '') ? 'gongsunsheng' : /^樂/.test(saved.hero?.name || '') ? 'lehe' : /^裴/.test(saved.hero?.name || '') ? 'peixuan' : /^蕭/.test(saved.hero?.name || '') ? 'xiaorang' : /^朱/.test(saved.hero?.name || '') ? 'zhuwu' : /^戴/.test(saved.hero?.name || '') ? 'daizong' : /^張順/.test(saved.hero?.name || '') ? 'zhangshun' : (/^菜園子/.test(saved.hero?.title || '') || /寄運|百包/.test(saved.hero?.title || '')) ? 'zhangqinginn' : /^張/.test(saved.hero?.name || '') ? 'zhangqing' : /^花/.test(saved.hero?.name || '') ? 'huarong' : /^瓊/.test(saved.hero?.name || '') ? 'qiongying' : /^燕/.test(saved.hero?.name || '') ? 'yanqing' : /^孫二娘|^母夜叉/.test(saved.hero?.name || '') ? 'sunerniang' : /^曹/.test(saved.hero?.name || '') ? 'caozheng' : /^皇甫|^髯/.test(saved.hero?.name || '') ? 'huangfuduan' : /^凌/.test(saved.hero?.name || '') ? 'lingzhen' : /^湯/.test(saved.hero?.name || '') ? 'tanglong' : /^侯/.test(saved.hero?.name || '') ? 'houjian' : /^孟/.test(saved.hero?.name || '') ? 'mengkang' : 'wusong');
     const savedHeroes = saved.heroes || {};
     const savedEquipments = saved.equipments || {};
-    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong', 'zhuwu', 'xiaorang', 'peixuan', 'lehe', 'jindajian', 'mengkang', 'houjian', 'tanglong', 'lingzhen', 'huangfuduan', 'caozheng', 'sunerniang'].includes(guessedActive) ? guessedActive : 'wusong';
+    const oldHeroTarget = ['luzhishen', 'linchong', 'yangzhi', 'songjiang', 'likui', 'husanniang', 'huyanzhuo', 'lujunyi', 'gongsunsheng', 'zhangqing', 'huarong', 'qiongying', 'yanqing', 'zhangshun', 'daizong', 'zhuwu', 'xiaorang', 'peixuan', 'lehe', 'jindajian', 'mengkang', 'houjian', 'tanglong', 'lingzhen', 'huangfuduan', 'caozheng', 'sunerniang', 'zhangqinginn'].includes(guessedActive) ? guessedActive : 'wusong';
     const heroes = {
       wusong: { ...base.heroes.wusong, ...(savedHeroes.wusong || (oldHeroTarget === 'wusong' ? saved.hero : {})) },
       luzhishen: { ...base.heroes.luzhishen, ...(savedHeroes.luzhishen || (oldHeroTarget === 'luzhishen' ? saved.hero : {})) },
@@ -1723,7 +1780,8 @@
       lingzhen: { ...base.heroes.lingzhen, ...(savedHeroes.lingzhen || (oldHeroTarget === 'lingzhen' ? saved.hero : {})) },
       huangfuduan: { ...base.heroes.huangfuduan, ...(savedHeroes.huangfuduan || (oldHeroTarget === 'huangfuduan' ? saved.hero : {})) },
       caozheng: { ...base.heroes.caozheng, ...(savedHeroes.caozheng || (oldHeroTarget === 'caozheng' ? saved.hero : {})) },
-      sunerniang: { ...base.heroes.sunerniang, ...(savedHeroes.sunerniang || (oldHeroTarget === 'sunerniang' ? saved.hero : {})) }
+      sunerniang: { ...base.heroes.sunerniang, ...(savedHeroes.sunerniang || (oldHeroTarget === 'sunerniang' ? saved.hero : {})) },
+      zhangqinginn: { ...base.heroes.zhangqinginn, ...(savedHeroes.zhangqinginn || (oldHeroTarget === 'zhangqinginn' ? saved.hero : {})) }
     };
     const equipments = {
       wusong: { ...base.equipments.wusong, ...(savedEquipments.wusong || (oldHeroTarget === 'wusong' ? saved.equipment : {})) },
@@ -1753,7 +1811,8 @@
       lingzhen: { ...base.equipments.lingzhen, ...(savedEquipments.lingzhen || (oldHeroTarget === 'lingzhen' ? saved.equipment : {})) },
       huangfuduan: { ...base.equipments.huangfuduan, ...(savedEquipments.huangfuduan || (oldHeroTarget === 'huangfuduan' ? saved.equipment : {})) },
       caozheng: { ...base.equipments.caozheng, ...(savedEquipments.caozheng || (oldHeroTarget === 'caozheng' ? saved.equipment : {})) },
-      sunerniang: { ...base.equipments.sunerniang, ...(savedEquipments.sunerniang || (oldHeroTarget === 'sunerniang' ? saved.equipment : {})) }
+      sunerniang: { ...base.equipments.sunerniang, ...(savedEquipments.sunerniang || (oldHeroTarget === 'sunerniang' ? saved.equipment : {})) },
+      zhangqinginn: { ...base.equipments.zhangqinginn, ...(savedEquipments.zhangqinginn || (oldHeroTarget === 'zhangqinginn' ? saved.equipment : {})) }
     };
     const merged = {
       ...base,
@@ -1790,7 +1849,8 @@
         huangfuduan: { ...base.companions.huangfuduan, ...(saved.companions?.huangfuduan || {}) },
         caozheng: { ...base.companions.caozheng, ...(saved.companions?.caozheng || {}) },
         sunerniang: { ...base.companions.sunerniang, ...(saved.companions?.sunerniang || {}) },
-        zhangqinginn: { ...base.companions.zhangqinginn, ...(saved.companions?.zhangqinginn || {}) }
+        zhangqinginn: { ...base.companions.zhangqinginn, ...(saved.companions?.zhangqinginn || {}) },
+        gudasao: { ...base.companions.gudasao, ...(saved.companions?.gudasao || {}) }
       },
       team: { ...base.team, ...(saved.team || {}) },
       quests: { ...base.quests, ...saved.quests },
@@ -1822,6 +1882,7 @@
       healthBattle: null,
       foodBattle: null,
       lodgingBattle: null,
+      parcelBattle: null,
       lastTickAt: Date.now()
     };
     if (merged.flags.metSongJiang) merged.companions.songjiang.unlocked = true;
@@ -1852,6 +1913,7 @@
     if (merged.flags.metCaoZheng || merged.flags.chapter26Complete) merged.companions.caozheng.unlocked = true;
     if (merged.flags.metSunErniang || merged.flags.chapter27Complete) merged.companions.sunerniang.unlocked = true;
     if (merged.flags.metZhangQingInn || merged.flags.chapter28Complete) merged.companions.zhangqinginn.unlocked = true;
+    if (merged.flags.metGuDasao || merged.flags.chapter29Complete) merged.companions.gudasao.unlocked = true;
     if (merged.flags.chapter2Started || merged.flags.chapter2Complete || guessedActive === 'luzhishen') merged.heroes.luzhishen.unlocked = true;
     if (merged.flags.chapter3Started || merged.flags.chapter3Complete || guessedActive === 'linchong') merged.heroes.linchong.unlocked = true;
     if (merged.flags.chapter4Started || merged.flags.chapter4Complete || guessedActive === 'yangzhi') merged.heroes.yangzhi.unlocked = true;
@@ -1879,11 +1941,12 @@
     if (merged.flags.huangfuduanPerspective || merged.flags.chapter26Complete || guessedActive === 'huangfuduan') merged.heroes.huangfuduan.unlocked = true;
     if (merged.flags.caozhengPerspective || merged.flags.chapter27Complete || guessedActive === 'caozheng') merged.heroes.caozheng.unlocked = true;
     if (merged.flags.sunerniangPerspective || merged.flags.chapter28Complete || guessedActive === 'sunerniang') merged.heroes.sunerniang.unlocked = true;
+    if (merged.flags.zhangqinginnPerspective || merged.flags.chapter29Complete || guessedActive === 'zhangqinginn') merged.heroes.zhangqinginn.unlocked = true;
     if (!merged.heroes[merged.activeHeroId]?.unlocked) merged.activeHeroId = 'wusong';
     merged.hero = cloneData(merged.heroes[merged.activeHeroId]);
     merged.equipment = { ...merged.equipments[merged.activeHeroId] };
     if (!merged.team.active || !merged.companions[merged.team.active]?.unlocked) {
-      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : merged.companions.lijun.unlocked ? 'lijun' : merged.companions.qiaodaoqing.unlocked ? 'qiaodaoqing' : merged.companions.guansheng.unlocked ? 'guansheng' : merged.companions.ruanxiaoqi.unlocked ? 'ruanxiaoqi' : merged.companions.andaquan.unlocked ? 'andaquan' : merged.companions.peixuan.unlocked ? 'peixuan' : merged.companions.jiangjing.unlocked ? 'jiangjing' : merged.companions.lehe.unlocked ? 'lehe' : merged.companions.jindajian.unlocked ? 'jindajian' : merged.companions.mengkang.unlocked ? 'mengkang' : merged.companions.houjian.unlocked ? 'houjian' : merged.companions.tanglong.unlocked ? 'tanglong' : merged.companions.lingzhen.unlocked ? 'lingzhen' : merged.companions.huangfuduan.unlocked ? 'huangfuduan' : merged.companions.caozheng.unlocked ? 'caozheng' : merged.companions.sunerniang.unlocked ? 'sunerniang' : merged.companions.zhangqinginn.unlocked ? 'zhangqinginn' : null;
+      merged.team.active = merged.companions.songjiang.unlocked ? 'songjiang' : merged.companions.chaijin.unlocked ? 'chaijin' : merged.companions.shijin.unlocked ? 'shijin' : merged.companions.lixiaoer.unlocked ? 'lixiaoer' : merged.companions.wuyong.unlocked ? 'wuyong' : merged.companions.chaogai.unlocked ? 'chaogai' : merged.companions.daizong.unlocked ? 'daizong' : merged.companions.sunli.unlocked ? 'sunli' : merged.companions.xuning.unlocked ? 'xuning' : merged.companions.yanqing.unlocked ? 'yanqing' : merged.companions.xiaorang.unlocked ? 'xiaorang' : merged.companions.lijun.unlocked ? 'lijun' : merged.companions.qiaodaoqing.unlocked ? 'qiaodaoqing' : merged.companions.guansheng.unlocked ? 'guansheng' : merged.companions.ruanxiaoqi.unlocked ? 'ruanxiaoqi' : merged.companions.andaquan.unlocked ? 'andaquan' : merged.companions.peixuan.unlocked ? 'peixuan' : merged.companions.jiangjing.unlocked ? 'jiangjing' : merged.companions.lehe.unlocked ? 'lehe' : merged.companions.jindajian.unlocked ? 'jindajian' : merged.companions.mengkang.unlocked ? 'mengkang' : merged.companions.houjian.unlocked ? 'houjian' : merged.companions.tanglong.unlocked ? 'tanglong' : merged.companions.lingzhen.unlocked ? 'lingzhen' : merged.companions.huangfuduan.unlocked ? 'huangfuduan' : merged.companions.caozheng.unlocked ? 'caozheng' : merged.companions.sunerniang.unlocked ? 'sunerniang' : merged.companions.zhangqinginn.unlocked ? 'zhangqinginn' : merged.companions.gudasao.unlocked ? 'gudasao' : null;
     }
     return merged;
   }
@@ -2039,15 +2102,19 @@
       toast('完成第二十七回後，曹正才會正式加入英雄譜。');
       return;
     }
+    if (id === 'zhangqinginn' && !state.flags.chapter29Complete) {
+      toast('完成第二十九回後，菜園子張青才會正式加入英雄譜。');
+      return;
+    }
     if (id === 'sunerniang' && !state.flags.chapter28Complete) {
       toast('完成第二十八回後，孫二娘才會正式加入英雄譜。');
       return;
     }
     if (!setActiveHero(id)) return;
-    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17, xiaorang: 18, peixuan: 19, lehe: 20, jindajian: 21, mengkang: 22, houjian: 23, tanglong: 24, lingzhen: 25, huangfuduan: 26, caozheng: 27, sunerniang: 28 }[id] || 1;
+    state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17, xiaorang: 18, peixuan: 19, lehe: 20, jindajian: 21, mengkang: 22, houjian: 23, tanglong: 24, lingzhen: 25, huangfuduan: 26, caozheng: 27, sunerniang: 28, zhangqinginn: 29 }[id] || 1;
     closeModal();
     addLog(`目前操控英雄切換為「${state.hero.name}」。`);
-    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free', zhangqing: 'naval_free', huarong: 'yanmen_free', qiongying: 'hebei_free', yanqing: 'huaixi_free', zhangshun: 'jiangnan_free', daizong: 'return_free', zhuwu: 'capital_free', xiaorang: 'settlement_free', peixuan: 'justice_free', lehe: 'civic_free', jindajian: 'trust_free', mengkang: 'fleet_free', houjian: 'labor_free', tanglong: 'tool_free', lingzhen: 'defense_free', huangfuduan: 'health_free', caozheng: 'food_free', sunerniang: 'lodging_free' };
+    const homes = { wusong: 'county_free', luzhishen: 'wutai_free', linchong: 'cangzhou_free', yangzhi: 'daming_free', songjiang: state.flags.chapter6Complete ? 'liangshan_free' : 'yuncheng_free', likui: 'liangshan_free', husanniang: 'zhujia_free', huyanzhuo: 'chainhorse_free', lujunyi: 'zengtou_free', gongsunsheng: 'diplomacy_free', zhangqing: 'naval_free', huarong: 'yanmen_free', qiongying: 'hebei_free', yanqing: 'huaixi_free', zhangshun: 'jiangnan_free', daizong: 'return_free', zhuwu: 'capital_free', xiaorang: 'settlement_free', peixuan: 'justice_free', lehe: 'civic_free', jindajian: 'trust_free', mengkang: 'fleet_free', houjian: 'labor_free', tanglong: 'tool_free', lingzhen: 'defense_free', huangfuduan: 'health_free', caozheng: 'food_free', sunerniang: 'lodging_free', zhangqinginn: 'parcel_free' };
     goScene(homes[id]);
   }
 
@@ -3482,6 +3549,63 @@
       syncActiveHero();
     }
     goScene('chapter28_end');
+    saveGame(false);
+  }
+
+
+  function startChapterTwentyNine() {
+    if (!state?.flags?.chapter28Complete) {
+      toast('須先完成第二十八回「母夜叉護驛・百宿安行」。');
+      return;
+    }
+    if (state.flags.chapter29Complete) {
+      if (state.activeHeroId !== 'zhangqinginn') setActiveHero('zhangqinginn');
+      goScene('parcel_free');
+      return;
+    }
+    state.flags.chapter29Started = true;
+    state.chapter = 29;
+    state.quests.main_parcel.status = 'active';
+    if (state.quests.main_parcel.progress === '尚未開篇') state.quests.main_parcel.progress = '百宿安行穩定後，黑腳牙行冒名收件、偷改重量與掉換貨包，張青先建立寄收雙方實名、稱重與封籤交接';
+    const resumeScene = state.flags.parcelProfiteerDefeated ? (state.flags.publicParcelSafetyEstablished ? 'parcel_victory' : 'parcel_crisis')
+      : state.flags.parcelFormationBroken ? 'parcel_breached'
+        : state.flags.porterGuildGuardDefeated ? 'parcel_council'
+          : state.flags.forgedParcelPatrolDefeated ? 'parcel_evidence'
+            : state.flags.parcelYardReached ? 'parcel_yard_arrival' : 'chapter29_orders';
+    if (!state.log.some(entry => entry.includes('第二十九回開篇'))) addLog('第二十九回開篇：菜園子張青與母大蟲顧大嫂查驗寄收實名、稱重封籤、腳夫名牌、跨驛交接與失物理賠，建立水泊百包安寄制度。');
+    goScene(resumeScene);
+  }
+
+  function finishChapterTwentyNine() {
+    if (!state.flags.chapter29Complete) {
+      state.flags.chapter29Complete = true;
+      state.flags.parcelProfiteerDefeated = true;
+      state.flags.publicParcelSafetyEstablished = true;
+      state.flags.lostParcelCasesClosed = true;
+      state.flags.parcelOutcome = 'public_parcel';
+      state.quests.main_parcel.status = 'completed';
+      state.quests.main_parcel.progress = '寄收實名、品名重量、封籤號碼、腳夫名牌、跨驛交接、失物追索與破損賠償同時公開，梁山建立可寄、可查、可理賠的百包安寄制度';
+      state.flags.zhangqinginnJoined = true;
+      state.heroes.zhangqinginn.unlocked = true;
+      state.heroes.zhangqinginn.title = '菜園子・水泊百包寄運使';
+      state.flags.metGuDasao = true;
+      unlockCompanion('gudasao');
+      state.team.active = 'gudasao';
+      addItem('parcelRegister', 1);
+      addItem('parcelClaimLedger', 1);
+      addItem('safeParcelPact', 1);
+      state.base.timber += 20;
+      state.base.stone += 19;
+      state.base.grain += 23;
+      state.base.parcelhall = Math.max(1, state.base.parcelhall || 1);
+      state.flags.peopleSupport += 42;
+      state.flags.courtTrust += 9;
+      if (state.activeHeroId !== 'zhangqinginn') setActiveHero('zhangqinginn');
+      state.hero.title = '菜園子・水泊百包寄運使';
+      gainXp(630);
+      syncActiveHero();
+    }
+    goScene('chapter29_end');
     saveGame(false);
   }
 
@@ -6621,7 +6745,110 @@
         { label: '快速整備目前英雄或全寨', action: () => openPreparation() },
         { label: '管理梁山建設', action: () => openBase() },
         { label: '調整江湖同伴編成', action: () => openTeam() },
-        { label: '切換二十八名英雄', action: () => openRoster() },
+        { label: state.flags.chapter29Complete ? '切換二十九名英雄' : '切換二十八名英雄', action: () => openRoster() },
+        { label: state.flags.chapter29Started ? '返回第二十九回進度' : '開啟第二十九回：菜園封運・百包安寄', action: () => startChapterTwentyNine() },
+        { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
+      ]
+    },
+    chapter29_orders: {
+      location: 'parcelyard', scene: 'village', region: '安心客棧街東側貨亭', name: '金沙灘寄運驗貨場', caption: '百宿已安・黑腳掉包', speaker: '宋江',
+      title: '百宿安行讓旅客能安心入住，黑腳牙行卻冒名代收、偷改重量、掉換貨包並壟斷腳夫，讓失物無法追查、破損無人賠償',
+      text: () => `張青指出：投宿安全之後，旅客託運行李、商販寄送貨包、家眷轉送藥物仍需要寄收雙方實名、當面稱重封籤、腳夫名牌、跨驛交接與失物理賠。顧大嫂熟悉酒店腳夫與東山消息網，主張讓每一件寄物都有號可查。<p>寄運物資 ${state.flags.parcelSupply}｜公證紀律 ${state.flags.parcelDiscipline}｜公證所 Lv.${state.base.parcelhall || 1}。</p>`,
+      choices: () => [
+        { label: '先設置寄收實名簿、稱重臺與唯一封籤號', action: () => { state.flags.parcelSupply += 1; state.flags.parcelDiscipline += 2; state.flags.parcelYardReached = true; goScene('parcel_yard_arrival'); } },
+        { label: '立即核發腳夫名牌，建立跨驛交接與失物通報', action: () => { state.flags.parcelSupply += 2; state.flags.parcelDiscipline += 1; state.flags.parcelYardReached = true; goScene('parcel_yard_arrival'); } },
+        { label: '先讓腳店自行賠付，不公開掉包案件以免影響寄運生意', action: () => { state.flags.parcelSupply = Math.max(1, state.flags.parcelSupply - 1); state.flags.parcelDiscipline = Math.max(0, state.flags.parcelDiscipline - 1); state.flags.parcelYardReached = true; goScene('parcel_yard_arrival'); } }
+      ]
+    },
+    parcel_yard_arrival: {
+      location: 'parcelyard', scene: 'courtyard', region: '安心客棧街東側貨亭', name: '金沙灘寄運驗貨場', caption: '冒名收件・偷重換籤', speaker: '張青',
+      title: '黑腳巡丁撕毀寄收憑據，把重貨換成空包，並偷改稱重數字、封籤號與驛站交接時刻，逼旅客改用指定牙行',
+      text: () => `張青要先從包裹結繩、稱重痕跡、封籤缺口、腳夫名牌與交接口供辨出掉包手法，保住驗貨人員與寄物，再把證物送入寄運公證所交叉查驗。`,
+      choices: () => [{ label: '切換菜園子張青，以菜園封籤拆穿掉包黑腳行', action: () => { state.flags.zhangqinginnPerspective = true; state.heroes.zhangqinginn.unlocked = true; setActiveHero('zhangqinginn'); startBattle('forgedParcelPatrol', 'forged_parcel_win'); } }]
+    },
+    parcel_yard_blocked: {
+      location: 'parcelyard', scene: 'courtyard', region: '安心客棧街東側貨亭', name: '金沙灘寄運驗貨場', caption: '黑腳再攬・寄運待通', speaker: '張青',
+      title: '黑腳巡丁再次破壞寄件簿、稱重臺與封籤鉗，張青必須保住旅客、小販、家眷與正當腳夫的安全寄運線',
+      text: () => `張青只查驗冒名、偷重、掉包、勒索與侵吞行為，不把寄運公證變成對普通腳夫、商販與百姓包裹的無差別開拆。`,
+      choices: () => [{ label: '迎戰掉包黑腳行巡丁', action: () => { if (state.activeHeroId !== 'zhangqinginn') setActiveHero('zhangqinginn'); startBattle('forgedParcelPatrol', 'forged_parcel_win'); } }]
+    },
+    parcel_evidence: {
+      location: 'parcelhall', scene: 'hall', region: '驛站與通憑印務所之間', name: '梁山寄運公證所', caption: '實名稱重・封籤接運', speaker: '張青',
+      title: '公證所有四項關鍵：寄收身份與品名、重量包裝與封籤、腳夫名牌與驛路交接、失物破損追索與公開理賠',
+      text: () => `查明四項線索，可降低黑腳護院與寄利豪商的攻防，也能提高水泊百包安寄成功率。<p>寄運線索 ${state.flags.parcelClues}/4。</p>`,
+      choices: () => [
+        ...(!state.flags.parcelIdentityChecked ? [{ label: '由張青、蕭讓與裴宣核對寄件人、收件人、品名、禁寄物與交付時刻', action: () => { state.flags.parcelIdentityChecked = true; state.flags.parcelClues += 1; goScene('parcel_evidence'); } }] : []),
+        ...(!state.flags.parcelWeightChecked ? [{ label: '由湯隆、金大堅查驗重量、包裝結繩、封籤號與稱重器具', action: () => { state.flags.parcelWeightChecked = true; state.flags.parcelClues += 1; goScene('parcel_evidence'); } }] : []),
+        ...(!state.flags.porterRouteChecked ? [{ label: '由顧大嫂、戴宗核對腳夫名牌、行經驛站、交接人與到達回報', action: () => { state.flags.porterRouteChecked = true; state.flags.parcelClues += 1; goScene('parcel_evidence'); } }] : []),
+        ...(!state.flags.parcelClaimChecked ? [{ label: '由蔣敬、樂和核對失物通報、破損返還、尋回紀錄與公開賠償', action: () => { state.flags.parcelClaimChecked = true; state.flags.parcelClues += 1; goScene('parcel_evidence'); } }] : []),
+        { label: '突破黑腳牙行護院，接通公證所與安心腳店街交接臺', action: () => startBattle('porterGuildGuard', 'porter_guild_win') }
+      ]
+    },
+    parcel_council: {
+      location: 'parcelhall', scene: 'hall', region: '驛站與通憑印務所之間', name: '百包安寄軍議臺', caption: '包有實名・運有交接', speaker: '顧大嫂',
+      title: '張青核驗寄收身份，湯隆與金大堅稱重封籤，顧大嫂與戴宗核發腳夫名牌並接通跨驛交接，蔣敬、樂和公開失物追索與理賠',
+      text: () => `五步必須相連：寄收實名、當面稱重、唯一封籤、腳夫與驛路交接、公開失物追索與破損賠償。<p>寄運準備 ${state.flags.parcelPlanScore}/5｜線索 ${state.flags.parcelClues}/4｜公證所 Lv.${state.base.parcelhall || 1}。</p>`,
+      choices: () => [
+        { label: '發動「水泊百包安寄」五階段軍略', action: () => { state.flags.parcelPlanScore = Math.min(5, 1 + Math.floor((state.flags.parcelClues || 0) / 2) + Math.min(2, state.flags.parcelDiscipline || 0)); startParcelDuel(false); } },
+        { label: '先管理寄運公證所與梁山建設', action: () => openBase() }
+      ]
+    },
+    parcel_strategy: {
+      location: 'parcelhall', scene: 'night', region: '驛站與通憑印務所之間', name: '百包安寄軍議臺', caption: '軍略重整・寄線待清', speaker: '張青',
+      title: '上一次寄運公證受阻，須重新查對寄收實名、稱重封籤、腳夫名牌與跨驛交接',
+      text: () => `寄運線索 ${state.flags.parcelClues}/4｜公證紀律 ${state.flags.parcelDiscipline}｜公證所 Lv.${state.base.parcelhall || 1}。`,
+      choices: () => [
+        { label: '返回公證所補查線索', action: () => goScene('parcel_evidence') },
+        { label: '重新發動水泊百包安寄', action: () => startParcelDuel(false) },
+        { label: '管理寄運公證所與驛站', action: () => openBase() }
+      ]
+    },
+    parcel_breached: {
+      location: 'safeporterlane', scene: 'village', region: '金沙灘商旅寄運區', name: '水泊安心腳店街', caption: '五路已通・寄利現形', speaker: '張青',
+      title: '寄利掮客買通腳夫改寫寄收身份、衝擊公證所，企圖焚毀稱重封籤、驛路交接與失物理賠名冊',
+      text: () => `實名、稱重、封籤、接運與理賠已接通；張青可集中力量擊破最後操弄者，讓商旅、腳夫、家眷與小販的每一件寄物都能安全送達。`,
+      choices: () => [{ label: '操控張青，迎戰寄利掮客與黑腳豪商', action: () => { if (state.activeHeroId !== 'zhangqinginn') setActiveHero('zhangqinginn'); startBattle('parcelProfiteerBoss', 'parcel_profiteer_win'); } }]
+    },
+    parcel_crisis: {
+      location: 'safeporterlane', scene: 'night', region: '金沙灘商旅寄運區', name: '水泊寄運缺口', caption: '豪商已退・寄運尚可補正', speaker: '顧大嫂',
+      title: '黑腳操弄者雖敗，準備不足使部分寄件簿、稱重器具、封籤鉗、腳夫名牌、交接與失物理賠仍有缺口',
+      text: () => `安全寄運不只是把黑腳夫趕走；若寄收身份不全、重量沒有當面確認、封籤與交接無簽、遺失破損沒有受理，百姓仍無法證明貨包在哪一站被掉換。`,
+      choices: () => [
+        ...(state.hero.silver >= 46 ? [{ label: '補齊寄件簿、稱重臺、封籤鉗、腳夫名牌、交接臺與理賠金（消耗 46 兩）', action: () => { state.hero.silver -= 46; state.flags.parcelProfiteerDefeated = true; state.flags.publicParcelSafetyEstablished = true; state.flags.lostParcelCasesClosed = true; state.flags.parcelOutcome = 'public_parcel'; state.flags.peopleSupport += 20; goScene('parcel_victory'); } }] : []),
+        { label: '閱讀百包失序線，再返回軍議改寫', action: () => { state.flags.parcelOutcome = 'tragic_seen'; state.flags.parcelProfiteerDefeated = false; state.flags.parcelFormationBroken = false; addLog('百包失序線：若只驅逐黑腳夫卻沒有寄收實名、稱重封籤、腳夫名牌、跨驛交接與合理理賠，貨包掉換與勒索仍會再次出現；本回未結算，可強化公證所與查驗後重試。'); goScene('parcel_strategy'); } },
+        { label: '退回公證所，重新核對稱重、封籤與理賠', action: () => { state.flags.parcelProfiteerDefeated = false; state.flags.parcelFormationBroken = false; state.flags.porterGuildGuardDefeated = true; goScene('parcel_council'); } }
+      ]
+    },
+    parcel_victory: {
+      location: 'safeporterlane', scene: 'courtyard', region: '金沙灘商旅寄運區', name: '水泊百包安寄場', caption: '包可查號・失可追索', speaker: '宋江',
+      title: '寄收身份、品名重量、封籤號碼、腳夫名牌、驛站交接、失物通報與破損賠償同時公開，各腳店與驛站可以互相覆核',
+      text: () => `真正的安心寄運不是把每一件包裹都拆開，而是讓每一次寄送有申報、每一次稱重有見證、每一次交接有簽名、每一次遺失破損都能追查與賠償。`,
+      choices: () => [{ label: '完成第二十九回，立下水泊百包安寄約', action: () => finishChapterTwentyNine() }]
+    },
+    chapter29_end: {
+      location: 'parcelrange', scene: 'courtyard', region: '公證所外四路校場', name: '百包安寄演武場', caption: '第二十九回終・水泊寄運', speaker: '章回評語',
+      title: '第二十九回完：張青菜園封運，顧大嫂母大蟲護運，梁山由百宿安行走向可寄、可查、可理賠的水泊百包安寄',
+      text: () => `本回把「旅客與百姓的寄物如何不被黑腳行掉包」改編成實名、稱重、封籤、名牌、交接、追索與理賠的攻防：制度若只驅趕無牌腳夫卻不留下重量、封籤與跨驛紀錄，貨物遺失後仍難分清責任。<p>菜園子張青成為第二十九名主角；母大蟲顧大嫂加入同伴，梁山開放寄運公證所與水泊百包安寄軍略。</p>`,
+      choices: () => [
+        { label: '開啟二十九英雄譜', action: () => openRoster() },
+        { label: '重演水泊百包安寄', action: () => startParcelDuel(true) },
+        { label: '管理寄運公證所與梁山建設', action: () => openBase() },
+        { label: '前往百包安寄演武場', action: () => goScene('parcel_free') },
+        { label: '查看二十九回總成果', action: () => openSummary() },
+        { label: '回到遊戲標題', action: () => { saveGame(); showTitle(); } }
+      ]
+    },
+    parcel_free: {
+      location: 'parcelrange', scene: 'courtyard', region: '公證所外四路校場', name: '百包安寄演武場', caption: '戰後・寄運操典', speaker: '旁白',
+      title: '張青把寄收實名、當面稱重、唯一封籤、腳夫名牌、跨驛交接與公開理賠編成梁山百包安寄操典',
+      text: () => `此處可挑戰百包安寄教頭、重演水泊寄運、升級寄運公證所並培養母大蟲顧大嫂羈絆。<p>寄運公證所 Lv.${state.base.parcelhall || 1}｜百包演武 ${state.flags.parcelArenaWins || 0} 勝。</p>`,
+      choices: () => [
+        { label: '與百包安寄教頭切磋', action: () => startBattle('parcelArena', 'parcel_arena_win') },
+        { label: '重演水泊百包安寄', action: () => startParcelDuel(true) },
+        { label: '快速整備目前英雄或全寨', action: () => openPreparation() },
+        { label: '管理梁山建設', action: () => openBase() },
+        { label: '調整江湖同伴編成', action: () => openTeam() },
+        { label: '切換二十九名英雄', action: () => openRoster() },
         { label: '恢復全部狀態', action: () => { state.hero.hp = state.hero.maxHp; state.hero.sp = state.hero.maxSp; renderGame(); } }
       ]
     }
@@ -7020,7 +7247,12 @@
 
     const actions = $('[data-role="battle-actions"]', overlay);
     actions.replaceChildren();
-    const heroSkillButtons = state.activeHeroId === 'sunerniang'
+    const heroSkillButtons = state.activeHeroId === 'zhangqinginn'
+      ? [
+          { label: '菜園封籤－18 豪氣', disabled: state.hero.sp < 18, action: () => heroBattleAction('gardenSealCheck') },
+          { label: '四路接運－28 豪氣', disabled: state.hero.sp < 28, action: () => heroBattleAction('fourRouteParcelRelay') }
+        ]
+      : state.activeHeroId === 'sunerniang'
       ? [
           { label: '母夜叉驗宿－17 豪氣', disabled: state.hero.sp < 17, action: () => heroBattleAction('nightForkGuestCheck') },
           { label: '四更護驛－27 豪氣', disabled: state.hero.sp < 27, action: () => heroBattleAction('fourWatchSafeInn') }
@@ -7879,6 +8111,35 @@
       tone(blocked ? 'critical' : 'skill');
     }
 
+
+    if (type === 'gardenSealCheck') {
+      state.hero.sp -= 18;
+      const clues = clamp(state.flags.parcelClues || 0, 0, 4);
+      const damage = Math.max(45, Math.round((stats.attack + randomInt(29, 46) + clues * 2) * 1.27 - b.defense * 0.18));
+      b.hp -= damage;
+      const weaken = 10 + Math.floor(clues / 2);
+      b.attack = Math.max(8, b.attack - weaken);
+      b.defense = Math.max(0, b.defense - weaken);
+      b.critBoost = Math.max(b.critBoost || 0, 0.36 + clues * 0.03);
+      state.hero.sp = clamp(state.hero.sp + 9, 0, state.hero.maxSp);
+      message = `張青核對寄收身份、品名重量、封籤號與腳夫名牌，當場辨出掉包黑腳行，菜園封籤造成 ${damage} 點傷害，敵方武力與筋骨各降 ${weaken}；恢復 9 點豪氣，下一擊更容易重創。`;
+      tone('skill');
+    }
+
+    if (type === 'fourRouteParcelRelay') {
+      state.hero.sp -= 28;
+      const hall = clamp(state.base.parcelhall || 1, 1, 5);
+      const damage = Math.max(50, Math.round((stats.attack + randomInt(32, 50) + hall * 2) * 1.34 - b.defense * 0.18));
+      b.hp -= damage;
+      b.attack = Math.max(8, b.attack - (10 + Math.floor(hall / 2)));
+      state.hero.guarding = true;
+      b.protectionTurns = Math.max(b.protectionTurns || 0, 2);
+      const blocked = Math.random() < 0.54 + clamp(state.flags.parcelClues || 0, 0, 4) * 0.05;
+      if (blocked) b.stunned = 1;
+      message = `驗貨臺、稱重封籤、腳夫名牌、跨驛交接與失物理賠同時亮牌，四路接運造成 ${damage} 點重創並削弱武力；你進入守勢。${blocked ? '黑腳行冒名與掉包暗號被五線紀錄交叉否認，敵方下一回合無法出手。' : ''}`;
+      tone(blocked ? 'critical' : 'skill');
+    }
+
     if (type === 'guard') {
       state.hero.guarding = true;
       state.hero.sp = clamp(state.hero.sp + 7, 0, state.hero.maxSp);
@@ -8140,6 +8401,21 @@
         const stunned = Math.random() < 0.34 + companion.bond * 0.04;
         if (stunned) b.stunned = 1;
         message = `張青以菜園子接驛打開安全後門、核對房牌與行李封籤，造成 ${damage} 點傷害並削弱攻防；你恢復 ${heal} 點氣血、${spirit} 點豪氣、看破下一擊並獲得兩回合防護。${stunned ? '黑棧後門與冒名房牌被當場封鎖，敵方下一回合無法出手。' : ''}`;
+      } else if (companion.id === 'gudasao') {
+        const weaken = 10 + Math.floor(companion.bond / 2);
+        const damage = 88 + companion.bond * 18 + randomInt(16, 26);
+        const spirit = 21 + companion.bond * 2;
+        const heal = 32 + companion.bond * 5;
+        b.hp -= damage;
+        b.attack = Math.max(8, b.attack - weaken);
+        b.defense = Math.max(0, b.defense - Math.max(7, weaken - 1));
+        state.hero.sp = clamp(state.hero.sp + spirit, 0, state.hero.maxSp);
+        state.hero.hp = clamp(state.hero.hp + heal, 0, state.hero.maxHp);
+        b.protectionTurns = Math.max(b.protectionTurns || 0, 2);
+        b.informedDodge = 1;
+        const stunned = Math.random() < 0.36 + companion.bond * 0.04;
+        if (stunned) b.stunned = 1;
+        message = `顧大嫂以母大蟲護運召集酒店耳目與有牌腳夫，封住掉包路線，造成 ${damage} 點傷害並削弱攻防；你恢復 ${heal} 點氣血、${spirit} 點豪氣、看破下一擊並獲得兩回合防護。${stunned ? '黑腳名牌與偷換交接被當場扣住，敵方下一回合無法出手。' : ''}`;
       }
       tone('level');
     }
@@ -9199,6 +9475,52 @@
       goScene('lodging_free');
     }
 
+
+    if (result.afterWin === 'forged_parcel_win') {
+      state.flags.forgedParcelPatrolDefeated = true;
+      state.flags.zhangqinginnPerspective = true;
+      state.heroes.zhangqinginn.unlocked = true;
+      state.quests.main_parcel.progress = '張青保住寄收實名牌、稱重臺與封籤鉗，準備核對腳夫名牌、跨驛交接及失物理賠';
+      state.hero.hp = clamp(state.hero.hp + 104, 0, state.hero.maxHp);
+      state.hero.sp = state.hero.maxSp;
+      changeMorality(21, '只查封冒名、偷重、掉包、勒索與侵吞行為，先替旅客、家眷、小販與正當腳夫提供實名寄件、當面稱重與唯一封籤');
+      goScene('parcel_evidence');
+    }
+    if (result.afterWin === 'porter_guild_win') {
+      state.flags.porterGuildGuardDefeated = true;
+      state.flags.metGuDasao = true;
+      unlockCompanion('gudasao');
+      state.team.active = 'gudasao';
+      state.flags.parcelPlanScore = Math.min(5, 1 + Math.floor((state.flags.parcelClues || 0) / 2) + Math.min(2, state.flags.parcelDiscipline || 0));
+      state.quests.main_parcel.progress = '黑腳牙行與交接臺已通，母大蟲顧大嫂加入腳夫名牌、驛路交接與失物追索，梁山準備五階段水泊百包安寄';
+      goScene('parcel_council');
+    }
+    if (result.afterWin === 'parcel_profiteer_win') {
+      state.flags.parcelProfiteerDefeated = true;
+      const established = (state.flags.parcelClues || 0) >= 3 || (state.base.parcelhall || 1) >= 2 || (state.flags.parcelDiscipline || 0) >= 3;
+      if (established) {
+        state.flags.publicParcelSafetyEstablished = true;
+        state.flags.lostParcelCasesClosed = true;
+        state.flags.parcelOutcome = 'public_parcel';
+        state.quests.main_parcel.progress = '寄利掮客已退，實名、稱重、封籤、名牌、交接、追索與理賠在安心腳店街公開運作';
+        changeMorality(34, '以寄收實名、當面稱重、唯一封籤、腳夫名牌、跨驛交接與合理理賠打破黑腳操弄');
+        goScene('parcel_victory');
+      } else {
+        state.flags.publicParcelSafetyEstablished = false;
+        state.quests.main_parcel.progress = '黑腳豪商雖敗，部分寄件簿、稱重器具、封籤鉗、腳夫名牌、交接與失物理賠仍有缺口';
+        goScene('parcel_crisis');
+      }
+    }
+    if (result.afterWin === 'parcel_arena_win') {
+      state.flags.parcelArenaWins = (state.flags.parcelArenaWins || 0) + 1;
+      state.base.timber += 1;
+      if (state.flags.parcelArenaWins % 2 === 0) state.base.stone += 1;
+      if (state.flags.parcelArenaWins % 3 === 0) state.base.grain += 1;
+      state.hero.hp = clamp(state.hero.hp + 64, 0, state.hero.maxHp);
+      addLog(`完成第 ${state.flags.parcelArenaWins} 次水泊百包安寄演武，取得寄運公證所建材。`);
+      goScene('parcel_free');
+    }
+
     if (result.afterWin === 'liangshan_arena_win') {
       state.flags.liangshanArenaWins = (state.flags.liangshanArenaWins || 0) + 1;
       state.base.timber += 1;
@@ -9262,7 +9584,7 @@
       privatePunishers: 'public_square_blocked', falseWitnessGuard: 'justice_evidence', revengeBrokerBoss: 'justice_breached', justiceArena: 'justice_free',
       rumorPatrol: 'notice_square_blocked', guildGuard: 'civic_evidence', monopolyBrokerBoss: 'civic_breached', civicArena: 'civic_free',
       forgedPassPatrol: 'pass_gate_blocked', tollDepotGuard: 'trust_evidence', transitMonopolyBoss: 'trust_breached', transitArena: 'trust_free',
-      overloadedFerryPatrol: 'load_pier_blocked', privateShipyardGuard: 'fleet_evidence', shippingMonopolyBoss: 'fleet_breached', fleetArena: 'fleet_free', unsafeWorkshopPatrol: 'craft_yard_blocked', privateForgeGuard: 'labor_evidence', laborMonopolyBoss: 'labor_breached', laborArena: 'labor_free', shoddyToolPatrol: 'measure_yard_blocked', privateFoundryGuard: 'tool_evidence', toolMonopolyBoss: 'tool_breached', inspectionArena: 'tool_free', falseAlarmPatrol: 'signal_field_blocked', fireDepotGuard: 'defense_evidence', disasterBrokerBoss: 'defense_breached', disasterArena: 'defense_free', fakeMedicinePatrol: 'quarantine_yard_blocked', taintedFeedGuard: 'health_evidence', epidemicProfiteerBoss: 'health_breached', healthArena: 'health_free', adulteratedFoodPatrol: 'food_yard_blocked', blackKitchenGuard: 'food_evidence', foodProfiteerBoss: 'food_breached', foodArena: 'food_free', druggedInnPatrol: 'guest_yard_blocked', blackInnGuard: 'lodging_evidence', lodgingProfiteerBoss: 'lodging_breached', lodgingArena: 'lodging_free'
+      overloadedFerryPatrol: 'load_pier_blocked', privateShipyardGuard: 'fleet_evidence', shippingMonopolyBoss: 'fleet_breached', fleetArena: 'fleet_free', unsafeWorkshopPatrol: 'craft_yard_blocked', privateForgeGuard: 'labor_evidence', laborMonopolyBoss: 'labor_breached', laborArena: 'labor_free', shoddyToolPatrol: 'measure_yard_blocked', privateFoundryGuard: 'tool_evidence', toolMonopolyBoss: 'tool_breached', inspectionArena: 'tool_free', falseAlarmPatrol: 'signal_field_blocked', fireDepotGuard: 'defense_evidence', disasterBrokerBoss: 'defense_breached', disasterArena: 'defense_free', fakeMedicinePatrol: 'quarantine_yard_blocked', taintedFeedGuard: 'health_evidence', epidemicProfiteerBoss: 'health_breached', healthArena: 'health_free', adulteratedFoodPatrol: 'food_yard_blocked', blackKitchenGuard: 'food_evidence', foodProfiteerBoss: 'food_breached', foodArena: 'food_free', druggedInnPatrol: 'guest_yard_blocked', blackInnGuard: 'lodging_evidence', lodgingProfiteerBoss: 'lodging_breached', lodgingArena: 'lodging_free', forgedParcelPatrol: 'parcel_yard_blocked', porterGuildGuard: 'parcel_evidence', parcelProfiteerBoss: 'parcel_breached', parcelArena: 'parcel_free'
     };
     goScene(recoveryScenes[enemyId] || state.sceneId);
   }
@@ -9278,7 +9600,7 @@
       privatePunishers: 'public_square_blocked', falseWitnessGuard: 'justice_evidence', revengeBrokerBoss: 'justice_breached', justiceArena: 'justice_free',
       rumorPatrol: 'notice_square_blocked', guildGuard: 'civic_evidence', monopolyBrokerBoss: 'civic_breached', civicArena: 'civic_free',
       forgedPassPatrol: 'pass_gate_blocked', tollDepotGuard: 'trust_evidence', transitMonopolyBoss: 'trust_breached', transitArena: 'trust_free',
-      overloadedFerryPatrol: 'load_pier_blocked', privateShipyardGuard: 'fleet_evidence', shippingMonopolyBoss: 'fleet_breached', fleetArena: 'fleet_free', unsafeWorkshopPatrol: 'craft_yard_blocked', privateForgeGuard: 'labor_evidence', laborMonopolyBoss: 'labor_breached', laborArena: 'labor_free', shoddyToolPatrol: 'measure_yard_blocked', privateFoundryGuard: 'tool_evidence', toolMonopolyBoss: 'tool_breached', inspectionArena: 'tool_free', falseAlarmPatrol: 'signal_field_blocked', fireDepotGuard: 'defense_evidence', disasterBrokerBoss: 'defense_breached', disasterArena: 'defense_free', fakeMedicinePatrol: 'quarantine_yard_blocked', taintedFeedGuard: 'health_evidence', epidemicProfiteerBoss: 'health_breached', healthArena: 'health_free', adulteratedFoodPatrol: 'food_yard_blocked', blackKitchenGuard: 'food_evidence', foodProfiteerBoss: 'food_breached', foodArena: 'food_free', druggedInnPatrol: 'guest_yard_blocked', blackInnGuard: 'lodging_evidence', lodgingProfiteerBoss: 'lodging_breached', lodgingArena: 'lodging_free' };
+      overloadedFerryPatrol: 'load_pier_blocked', privateShipyardGuard: 'fleet_evidence', shippingMonopolyBoss: 'fleet_breached', fleetArena: 'fleet_free', unsafeWorkshopPatrol: 'craft_yard_blocked', privateForgeGuard: 'labor_evidence', laborMonopolyBoss: 'labor_breached', laborArena: 'labor_free', shoddyToolPatrol: 'measure_yard_blocked', privateFoundryGuard: 'tool_evidence', toolMonopolyBoss: 'tool_breached', inspectionArena: 'tool_free', falseAlarmPatrol: 'signal_field_blocked', fireDepotGuard: 'defense_evidence', disasterBrokerBoss: 'defense_breached', disasterArena: 'defense_free', fakeMedicinePatrol: 'quarantine_yard_blocked', taintedFeedGuard: 'health_evidence', epidemicProfiteerBoss: 'health_breached', healthArena: 'health_free', adulteratedFoodPatrol: 'food_yard_blocked', blackKitchenGuard: 'food_evidence', foodProfiteerBoss: 'food_breached', foodArena: 'food_free', druggedInnPatrol: 'guest_yard_blocked', blackInnGuard: 'lodging_evidence', lodgingProfiteerBoss: 'lodging_breached', lodgingArena: 'lodging_free', forgedParcelPatrol: 'parcel_yard_blocked', porterGuildGuard: 'parcel_evidence', parcelProfiteerBoss: 'parcel_breached', parcelArena: 'parcel_free' };
     goScene(fleeScenes[enemyId] || state.sceneId);
   }
 
@@ -11895,6 +12217,100 @@
     goScene(replay ? 'lodging_free' : 'lodging_strategy');
   }
 
+
+  function startParcelDuel(replay = false) {
+    if (!state.flags.chapter29Started && !state.flags.chapter29Complete) { toast('尚未開啟第二十九回。'); return; }
+    const clues = clamp(state.flags.parcelClues || 0, 0, 4);
+    const hall = clamp(state.base.parcelhall || 1, 1, 5);
+    state.parcelBattle = {
+      maxDefense: 440, defense: 440,
+      maxMomentum: 292 + hall * 16 + clues * 10,
+      momentum: 292 + hall * 16 + clues * 10,
+      alarm: Math.max(5, 60 - (state.flags.parcelDiscipline || 0) * 3 - clues * 3),
+      turn: 1, used: [], replay,
+      message: '水泊受冒名寄件、偷改重量、封籤掉包、腳夫壟斷與理賠推諉五面操弄。須先實名申報，再當面稱重、唯一封籤、接通腳夫驛路，最後公開追索與理賠。'
+    };
+    parcelLocked = false;
+    renderParcelDuel();
+    tone('battle');
+  }
+
+  function renderParcelDuel() {
+    const n = state.parcelBattle;
+    if (!n) return;
+    let overlay = $('.battle-overlay');
+    if (!overlay) { document.body.append($('#battleTemplate').content.cloneNode(true)); overlay = $('.battle-overlay'); }
+    $('[data-role="enemy-avatar"]', overlay).textContent = '包';
+    $('[data-role="enemy-name"]', overlay).textContent = '水泊黑腳寄利網';
+    $('[data-role="enemy-title"]', overlay).textContent = `寄運混亂｜${Math.round(n.alarm)}%`;
+    $('[data-role="enemy-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.defense))} / ${n.maxDefense}`;
+    $('[data-role="enemy-hp-bar"]', overlay).style.width = `${clamp((n.defense / n.maxDefense) * 100, 0, 100)}%`;
+    $('[data-role="battle-hero-avatar"]', overlay).textContent = '寄';
+    $('[data-role="battle-hero-name"]', overlay).textContent = '梁山百包安寄隊';
+    $('[data-role="battle-hero-hp-text"]', overlay).textContent = `${Math.max(0, Math.ceil(n.momentum))} / ${n.maxMomentum}`;
+    $('[data-role="battle-hero-hp-bar"]', overlay).style.width = `${clamp((n.momentum / n.maxMomentum) * 100, 0, 100)}%`;
+    const support = $('[data-role="battle-companion"]', overlay);
+    support.classList.remove('hidden');
+    $('[data-role="battle-companion-avatar"]', overlay).textContent = '顧';
+    $('[data-role="battle-companion-name"]', overlay).textContent = `寄運 ${state.flags.parcelPlanScore || 0}/5｜公證所 Lv.${state.base.parcelhall || 1}`;
+    $('[data-role="battle-message"]', overlay).innerHTML = `<strong>第 ${n.turn} 站</strong>｜${n.message}`;
+    const actions = $('[data-role="battle-actions"]', overlay); actions.replaceChildren();
+    const specs = [
+      ['register', '張青核對寄件人、收件人、品名與交付時刻', false],
+      ['weigh', '湯隆與金大堅當面稱重、檢查包裝與唯一封籤', !n.used.includes('register')],
+      ['porter', '顧大嫂核發腳夫名牌並公開承運責任', !n.used.includes('weigh')],
+      ['relay', '戴宗與樂和接通跨驛交接、到達回報與求援', !n.used.includes('porter')],
+      ['claim', '裴宣與蔣敬公開失物追索、破損返還與理賠', n.used.length < 4 || n.defense > 150]
+    ];
+    for (const [id, label, unavailable] of specs) {
+      const button = document.createElement('button'); button.type = 'button';
+      button.textContent = `${label}${n.used.includes(id) ? '（已用）' : ''}`;
+      button.disabled = parcelLocked || unavailable || n.used.includes(id);
+      button.addEventListener('click', () => parcelAction(id)); actions.append(button);
+    }
+    if (prefs.narration && prefs.narrateBattle) speakText(`第 ${n.turn} 站。${n.message}`, { interrupt: true });
+  }
+
+  function parcelAction(type) {
+    const n = state.parcelBattle; if (!n || parcelLocked || n.used.includes(type)) return;
+    parcelLocked = true; n.used.push(type);
+    const clues = clamp(state.flags.parcelClues || 0, 0, 4);
+    const hall = clamp(state.base.parcelhall || 1, 1, 5);
+    const relay = clamp(state.base.relay || 1, 1, 5);
+    if (type === 'register') { n.defense -= 60 + clues * 2; n.alarm = Math.max(0, n.alarm - 15); n.message = '張青為寄收雙方建立姓名、住址、品名、禁寄物與交付時刻，冒名代收與無主貨包無法再藏匿。'; }
+    else if (type === 'weigh') { n.defense -= 66 + hall * 2; n.momentum = Math.min(n.maxMomentum, n.momentum + 10); n.message = '湯隆與金大堅當面稱重、檢查結繩包裝並鉗上唯一封籤，偷改重量與半途換包當場現形。'; }
+    else if (type === 'porter') { n.defense -= 72 + hall * 2; n.alarm = Math.max(0, n.alarm - 11); n.message = '顧大嫂核發腳夫名牌、登記所屬腳店與承運責任，冒牌腳夫和牙行壟斷被切斷。'; }
+    else if (type === 'relay') { n.defense -= 78 + relay * 2; n.alarm = Math.max(0, n.alarm - 11); n.message = '戴宗與樂和接通驛站交接、到達回報、延誤求援與跨區追索，貨包不再能在途中失去紀錄。'; }
+    else if (type === 'claim') { n.defense = 0; n.message = '裴宣與蔣敬公開失物通報、尋回返還、破損估價、腳夫責任與合理理賠；黑腳寄利網完全瓦解。'; }
+    if (type !== 'claim') n.defense = Math.max(1, n.defense);
+    tone(type === 'claim' ? 'critical' : 'skill'); renderParcelDuel();
+    if (n.defense <= 0) { setTimeout(finishParcelDuel, 650); return; }
+    setTimeout(parcelOpponentTurn, 650);
+  }
+
+  function parcelOpponentTurn() {
+    const n = state.parcelBattle; if (!n) return;
+    const pressure = randomInt(27, 33) + Math.floor(n.alarm / 30);
+    n.momentum -= pressure; n.alarm = Math.min(100, n.alarm + randomInt(6, 11)); n.turn += 1;
+    n.message = `寄利掮客冒名收件、轉移封籤、掉換貨包並堵住驛站交接，安寄隊消耗 ${pressure} 點軍勢；寄運混亂正在升高。`;
+    if (n.momentum <= 0 || n.alarm >= 100) { renderParcelDuel(); setTimeout(loseParcelDuel, 650); return; }
+    parcelLocked = false; renderParcelDuel();
+  }
+
+  function finishParcelDuel() {
+    const replay = Boolean(state.parcelBattle?.replay); state.parcelBattle = null; parcelLocked = false; closeBattleOverlay();
+    addLog('水泊百包安寄成功：寄收實名、當面稱重、唯一封籤、腳夫名牌、跨驛交接與公開理賠形成完整寄運制度。'); tone('victory');
+    if (replay) goScene('parcel_free');
+    else { state.flags.parcelFormationBroken = true; state.flags.parcelPlanScore = Math.max(4, state.flags.parcelPlanScore || 0); state.quests.main_parcel.progress = '黑腳寄利封鎖已破，張青準備迎戰最後寄利掮客與黑腳豪商'; goScene('parcel_breached'); }
+  }
+
+  function loseParcelDuel() {
+    const replay = Boolean(state.parcelBattle?.replay); state.parcelBattle = null; parcelLocked = false; closeBattleOverlay();
+    addLog('梁山寄收實名、稱重封籤、腳夫名牌、跨驛交接與失物理賠被重新隔斷，眾人退回寄運公證所重整。');
+    toast('軍勢耗盡或寄運混亂過高，請依實名申報、當面稱重、唯一封籤、腳夫接運、公開追索與理賠的順序重試。');
+    goScene(replay ? 'parcel_free' : 'parcel_strategy');
+  }
+
   function openFactionCouncil() {
     const outcome = state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒絕苛詔、守寨自立' : state.flags.councilOutcome === 'delay' ? '暫緩受詔、先行護民' : '尚未表決';
     openModal({
@@ -11933,7 +12349,7 @@
       subtitle: '不需安裝、不需登入，進度保存在目前瀏覽器。',
       content: `
         <div class="modal-grid">
-          <article class="info-card"><h3>二十八章回探索</h3><p>依序操控武松、魯智深、林沖、楊志、宋江、李逵、扈三娘、呼延灼、盧俊義、公孫勝、張清、花榮、瓊英、燕青、張順、戴宗、朱武、蕭讓、裴宣、樂和、金大堅、孟康、侯健、湯隆、凌振、皇甫端、曹正、孫二娘與菜園子張青。第二十八回加入實名投宿、飲食試驗、行李封籤、夜巡求援、失蹤追查與受害補償。</p></article>
+          <article class="info-card"><h3>二十九章回探索</h3><p>依序操控武松、魯智深、林沖、楊志、宋江、李逵、扈三娘、呼延灼、盧俊義、公孫勝、沒羽箭張清、花榮、瓊英、燕青、張順、戴宗、朱武、蕭讓、裴宣、樂和、金大堅、孟康、侯健、湯隆、凌振、皇甫端、曹正、孫二娘與菜園子張青。第二十九回加入寄收實名、稱重封籤、腳夫名牌、跨驛交接、失物追索與破損理賠。</p></article>
           <article class="info-card"><h3>黃泥岡智策</h3><p>第四回先從楊志護送視角維持軍紀與士氣，再切換吳用視角，以計策順序瓦解護綱警戒。</p></article>
           <article class="info-card"><h3>鄆城案牘推演</h3><p>第五回以宋江押司身分核對口供、安排查訪次序，在官府疑心升滿前替晁蓋爭取逃離時間。</p></article>
           <article class="info-card"><h3>祝家莊攻略</h3><p>第七回結合盤陀路偵察、扈三娘決鬥、孫立臥底與五階段軍略。前兩次進攻取得的情報，會直接影響第三次總攻難度。</p></article>
@@ -11951,10 +12367,11 @@
           <article class="info-card"><h3>水泊人畜安康</h3><p>第二十六回依「建立畜籍、採驗飼水、隔離清消、屠檢分流、公開補償與解封」順序破解假藥疫利網；畜籍、飼水、隔離與屠檢四項線索會改變軍勢。</p></article>
           <article class="info-card"><h3>水泊百膳安民</h3><p>第二十七回依「核對來源、查驗淨水熟度、生熟分案、每餐留樣、公開召回與補償」順序破解黑廚膳利網；來源、淨水、分案與留樣四項線索會改變軍勢。</p></article>
           <article class="info-card"><h3>水泊百宿安行</h3><p>第二十八回依「實名登記、酒食試驗、行李封籤、夜巡求援、公開救援與補償」順序破解黑棧宿利網；身份、樣本、封籤與夜巡四項線索會改變軍勢。</p></article>
-          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺、文書院、船塢、馬廄、驛站、暗哨營、水門工坊、軍醫營、忠義文案閣、安業簿房、忠義公議堂、百業公示院、通憑印務所、百舸公運署、百工安作院、百器公檢所、災防鳴警臺、牧護防疫院、膳安公驗院與宿安巡驗館；完成第八回後可派出山寨遠征。</p></article>
+          <article class="info-card"><h3>水泊百包安寄</h3><p>第二十九回依「寄收實名、當面稱重、唯一封籤、腳夫名牌、跨驛交接、公開追索與理賠」順序破解黑腳寄利網；身份、重量封籤、腳夫路線與理賠四項線索會改變軍勢。</p></article>
+          <article class="info-card"><h3>梁山建設</h3><p>可使用木材、石料、糧草與銀兩升級聚義廳、醫館、鐵匠鋪、糧倉、軍械坊、瞭望臺、文書院、船塢、馬廄、驛站、暗哨營、水門工坊、軍醫營、忠義文案閣、安業簿房、忠義公議堂、百業公示院、通憑印務所、百舸公運署、百工安作院、百器公檢所、災防鳴警臺、牧護防疫院、膳安公驗院、宿安巡驗館與寄運公證所；完成第八回後可派出山寨遠征。</p></article>
           <article class="info-card"><h3>回合戰鬥</h3><p>普通攻擊可累積豪氣；技能傷害較高。防禦能大幅降低下一次受傷。</p></article>
           <article class="info-card"><h3>酒意</h3><p>酒意越高，普通攻擊暴擊率越高，但命中稍微下降；醉拳技能也會更強。</p></article>
-          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青、蕭讓、李俊、關勝、喬道清、阮小七、安道全、裴宣、蔣敬、樂和、金大堅、孟康、侯健、湯隆、凌振、皇甫端、曹正、孫二娘與菜園子張青。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
+          <article class="info-card"><h3>同伴編成</h3><p>目前可結識宋江、柴進、史進、李小二、吳用、晁蓋、戴宗、孫立、徐寧、燕青、蕭讓、李俊、關勝、喬道清、阮小七、安道全、裴宣、蔣敬、樂和、金大堅、孟康、侯健、湯隆、凌振、皇甫端、曹正、孫二娘、菜園子張青與母大蟲顧大嫂。每場戰鬥可使用一次助陣技能，共同取勝會提升羈絆。</p></article>
           <article class="info-card"><h3>陽谷擂臺</h3><p>完成第一回後可在陽谷縣重複挑戰，用來測試編成、累積閱歷及同伴羈絆。</p></article>
           <article class="info-card"><h3>本機存檔</h3><p>按「存檔」可立即保存。清除瀏覽器網站資料會一併移除進度。</p></article>
           <article class="info-card"><h3>顯示模式</h3><p>右上角「◐」可循環切換水墨宣紙、深色與黑白電子紙模式。</p></article>
@@ -11967,11 +12384,11 @@
   function openAbout() {
     openModal({
       title: `梁山風雲 v${VERSION}`,
-      subtitle: '二十八章回宿安版：新增孫二娘主角、水泊百宿安行、菜園子張青與宿安巡驗館',
+      subtitle: '二十九章回寄運版：新增菜園子張青主角、水泊百包安寄、母大蟲顧大嫂與寄運公證所',
       content: `
         <div class="modal-grid">
-          <article class="info-card"><h3>已收錄</h3><p>二十八回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝／張清／花榮／瓊英／燕青／張順／戴宗／朱武／蕭讓／裴宣／樂和／金大堅／孟康／侯健／湯隆／凌振／皇甫端／曹正／孫二娘二十八主角、專屬技能、二十八名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
-          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市、菊花會招安之議、兩贏童貫三敗高俅、受詔征遼、征田虎、征王慶、征方臘、睦州班師、東京功冊封賞、梁山安業新生、鐵面公議新法、百業共治、水泊通憑、百舸共運、百工安作、百器公檢、水泊聯防、水泊牧護、百膳安民與百宿安行為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
+          <article class="info-card"><h3>已收錄</h3><p>二十九回章回劇情、武松／魯智深／林沖／楊志／宋江／李逵／扈三娘／呼延灼／盧俊義／公孫勝／沒羽箭張清／花榮／瓊英／燕青／張順／戴宗／朱武／蕭讓／裴宣／樂和／金大堅／孟康／侯健／湯隆／凌振／皇甫端／曹正／孫二娘／菜園子張青二十九主角、專屬技能、二十九名同伴、黃泥岡智策、鄆城案牘、江州劫法場、祝家莊攻略、連環馬陣型戰、曾頭市軍團攻略、招安議事、聚義座次、山寨遠征、梁山建設、語音播報、本機存檔與 PWA。</p></article>
+          <article class="info-card"><h3>文學改編</h3><p>以《水滸傳》景陽岡打虎、拳打鎮關西、風雪山神廟、智取生辰綱、宋江私放晁蓋、江州劫法場、三打祝家莊、大破連環馬、曾頭市、菊花會招安之議、兩贏童貫三敗高俅、受詔征遼、征田虎、征王慶、征方臘、睦州班師、東京功冊封賞、梁山安業新生、鐵面公議新法、百業共治、水泊通憑、百舸共運、百工安作、百器公檢、水泊聯防、水泊牧護、百膳安民、百宿安行與百包安寄為主軸；部分選擇加入架空分歧，並非原文逐字重現。</p></article>
           <article class="info-card"><h3>技術</h3><p>純 HTML、CSS、JavaScript 製作，不使用外部套件，也不需要伺服器或資料庫。</p></article>
           <article class="info-card"><h3>存檔位置</h3><p>使用瀏覽器 LocalStorage。版本更新通常不影響存檔，但更換裝置不會自動同步。</p></article>
         </div>`
@@ -11998,8 +12415,8 @@
 
   function openRoster() {
     syncActiveHero();
-    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清', huarong: '花榮', qiongying: '瓊英', yanqing: '燕青', zhangshun: '張順', daizong: '戴宗', zhuwu: '朱武', xiaorang: '蕭讓', peixuan: '裴宣', lehe: '樂和', jindajian: '金大堅', mengkang: '孟康', houjian: '侯健', tanglong: '湯隆', lingzhen: '凌振', huangfuduan: '皇甫端', caozheng: '曹正', sunerniang: '孫二娘' };
-    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場', zhangqing: '水陸協同演武場', huarong: '雁門騎射場', qiongying: '昭德護民演武場', yanqing: '宛州巧弩演武場', zhangshun: '杭州分水演武場', daizong: '睦州神行演武場', zhuwu: '東京神機演武場', xiaorang: '安業護戶演武場', peixuan: '公議戒律演武場', lehe: '百業共治演武場', jindajian: '通憑護路演武場', mengkang: '百舸共運演武場', houjian: '百工安作演武場', tanglong: '百器公檢演武場', lingzhen: '水泊聯防演武場', huangfuduan: '人畜安康演武場', caozheng: '百膳安民演武場', sunerniang: '百宿安行演武場' };
+    const heroNames = { wusong: '武松', luzhishen: state.heroes.luzhishen.name || '魯智深', linchong: '林沖', yangzhi: '楊志', songjiang: '宋江', likui: '李逵', husanniang: '扈三娘', huyanzhuo: '呼延灼', lujunyi: '盧俊義', gongsunsheng: '公孫勝', zhangqing: '張清', huarong: '花榮', qiongying: '瓊英', yanqing: '燕青', zhangshun: '張順', daizong: '戴宗', zhuwu: '朱武', xiaorang: '蕭讓', peixuan: '裴宣', lehe: '樂和', jindajian: '金大堅', mengkang: '孟康', houjian: '侯健', tanglong: '湯隆', lingzhen: '凌振', huangfuduan: '皇甫端', caozheng: '曹正', sunerniang: '孫二娘', zhangqinginn: '張青' };
+    const homeNames = { wusong: '陽谷縣', luzhishen: '五臺山', linchong: '滄州牢城', yangzhi: '大名府演武院', songjiang: '梁山泊忠義堂', likui: '梁山泊聚義廳', husanniang: '獨龍岡演武庭', huyanzhuo: '鉤鐮槍演武場', lujunyi: '曾頭市演武場', gongsunsheng: '忠義堂議武場', zhangqing: '水陸協同演武場', huarong: '雁門騎射場', qiongying: '昭德護民演武場', yanqing: '宛州巧弩演武場', zhangshun: '杭州分水演武場', daizong: '睦州神行演武場', zhuwu: '東京神機演武場', xiaorang: '安業護戶演武場', peixuan: '公議戒律演武場', lehe: '百業共治演武場', jindajian: '通憑護路演武場', mengkang: '百舸共運演武場', houjian: '百工安作演武場', tanglong: '百器公檢演武場', lingzhen: '水泊聯防演武場', huangfuduan: '人畜安康演武場', caozheng: '百膳安民演武場', sunerniang: '百宿安行演武場', zhangqinginn: '百包安寄演武場' };
     const unlockHints = {
       wusong: '第一回初始英雄。',
       luzhishen: '完成第一回後，開啟「魯提轄拳打鎮關西」。',
@@ -12028,7 +12445,8 @@
       lingzhen: '完成第二十四回後，開啟「轟天鳴警・水泊聯防」。',
       huangfuduan: '完成第二十五回後，開啟「紫髯辨疫・水泊牧護」。',
       caozheng: '完成第二十六回後，開啟「操刀驗膳・百膳安民」。',
-      sunerniang: '完成第二十七回後，開啟「母夜叉護驛・百宿安行」。'
+      sunerniang: '完成第二十七回後，開啟「母夜叉護驛・百宿安行」。',
+      zhangqinginn: '完成第二十八回後，開啟「菜園封運・百包安寄」。'
     };
     const cards = Object.keys(HERO_BLUEPRINTS).map(id => {
       const hero = state.heroes[id];
@@ -12036,9 +12454,9 @@
       if (!unlocked) return `<article class="hero-roster-card locked"><span class="hero-roster-avatar">？</span><div><h3>尚未開篇</h3><p>${escapeHtml(unlockHints[id])}</p></div></article>`;
       const stats = getStatsForHero(id);
       const active = id === state.activeHeroId;
-      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : id === 'zhangqing' ? state.flags.chapter11Complete : id === 'huarong' ? state.flags.chapter12Complete : id === 'qiongying' ? state.flags.chapter13Complete : id === 'yanqing' ? state.flags.chapter14Complete : id === 'zhangshun' ? state.flags.chapter15Complete : id === 'daizong' ? state.flags.chapter16Complete : id === 'zhuwu' ? state.flags.chapter17Complete : id === 'sunerniang' ? state.flags.chapter28Complete : id === 'caozheng' ? state.flags.chapter27Complete : id === 'huangfuduan' ? state.flags.chapter26Complete : id === 'lingzhen' ? state.flags.chapter25Complete : id === 'tanglong' ? state.flags.chapter24Complete : id === 'houjian' ? state.flags.chapter23Complete : id === 'mengkang' ? state.flags.chapter22Complete : id === 'jindajian' ? state.flags.chapter21Complete : id === 'lehe' ? state.flags.chapter20Complete : id === 'peixuan' ? state.flags.chapter19Complete : id === 'xiaorang' ? state.flags.chapter18Complete : true;
+      const storyComplete = id === 'linchong' ? state.flags.chapter3Complete : id === 'yangzhi' ? state.flags.chapter4Complete : id === 'songjiang' ? state.flags.chapter5Complete : id === 'likui' ? state.flags.chapter6Complete : id === 'husanniang' ? state.flags.chapter7Complete : id === 'huyanzhuo' ? state.flags.chapter8Complete : id === 'lujunyi' ? state.flags.chapter9Complete : id === 'gongsunsheng' ? state.flags.chapter10Complete : id === 'zhangqing' ? state.flags.chapter11Complete : id === 'huarong' ? state.flags.chapter12Complete : id === 'qiongying' ? state.flags.chapter13Complete : id === 'yanqing' ? state.flags.chapter14Complete : id === 'zhangshun' ? state.flags.chapter15Complete : id === 'daizong' ? state.flags.chapter16Complete : id === 'zhuwu' ? state.flags.chapter17Complete : id === 'zhangqinginn' ? state.flags.chapter29Complete : id === 'sunerniang' ? state.flags.chapter28Complete : id === 'caozheng' ? state.flags.chapter27Complete : id === 'huangfuduan' ? state.flags.chapter26Complete : id === 'lingzhen' ? state.flags.chapter25Complete : id === 'tanglong' ? state.flags.chapter24Complete : id === 'houjian' ? state.flags.chapter23Complete : id === 'mengkang' ? state.flags.chapter22Complete : id === 'jindajian' ? state.flags.chapter21Complete : id === 'lehe' ? state.flags.chapter20Complete : id === 'peixuan' ? state.flags.chapter19Complete : id === 'xiaorang' ? state.flags.chapter18Complete : true;
       const switchDisabled = active || !state.flags.chapter2Complete || !storyComplete;
-      const chapterLabel = id === 'sunerniang' ? '二十八' : id === 'caozheng' ? '二十七' : id === 'huangfuduan' ? '二十六' : id === 'lingzhen' ? '二十五' : id === 'tanglong' ? '二十四' : id === 'houjian' ? '二十三' : id === 'mengkang' ? '二十二' : id === 'jindajian' ? '二十一' : id === 'lehe' ? '二十' : id === 'peixuan' ? '十九' : id === 'xiaorang' ? '十八' : id === 'zhuwu' ? '十七' : id === 'daizong' ? '十六' : id === 'zhangshun' ? '十五' : id === 'yanqing' ? '十四' : id === 'qiongying' ? '十三' : id === 'huarong' ? '十二' : id === 'zhangqing' ? '十一' : id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
+      const chapterLabel = id === 'zhangqinginn' ? '二十九' : id === 'sunerniang' ? '二十八' : id === 'caozheng' ? '二十七' : id === 'huangfuduan' ? '二十六' : id === 'lingzhen' ? '二十五' : id === 'tanglong' ? '二十四' : id === 'houjian' ? '二十三' : id === 'mengkang' ? '二十二' : id === 'jindajian' ? '二十一' : id === 'lehe' ? '二十' : id === 'peixuan' ? '十九' : id === 'xiaorang' ? '十八' : id === 'zhuwu' ? '十七' : id === 'daizong' ? '十六' : id === 'zhangshun' ? '十五' : id === 'yanqing' ? '十四' : id === 'qiongying' ? '十三' : id === 'huarong' ? '十二' : id === 'zhangqing' ? '十一' : id === 'gongsunsheng' ? '十' : id === 'lujunyi' ? '九' : id === 'huyanzhuo' ? '八' : id === 'husanniang' ? '七' : id === 'likui' ? '六' : id === 'songjiang' ? '五' : id === 'yangzhi' ? '四' : '三';
       const buttonText = active ? '目前主角' : !storyComplete ? `完成第${chapterLabel}回後開放` : `切換為${heroNames[id]}`;
       return `<article class="hero-roster-card ${active ? 'active' : ''}">
         <span class="hero-roster-avatar">${escapeHtml(hero.avatar || hero.name.slice(0, 1))}</span>
@@ -12046,7 +12464,9 @@
         <button type="button" data-switch-hero="${id}" ${switchDisabled ? 'disabled' : ''}>${buttonText}</button>
       </article>`;
     }).join('');
-    const subtitle = state.flags.chapter28Complete ? '二十八位英雄均可自由切換；宿安巡驗館與水泊百宿安行已開放。'
+    const subtitle = state.flags.chapter29Complete ? '二十九位英雄均可自由切換；寄運公證所與水泊百包安寄已開放。'
+      : state.flags.chapter29Started ? '第二十九回進行中；完成水泊百包安寄後，菜園子張青將正式加入英雄譜。'
+      : state.flags.chapter28Complete ? '二十八位英雄均可自由切換；宿安巡驗館與水泊百宿安行已開放。'
       : state.flags.chapter28Started ? '第二十八回進行中；完成水泊百宿安行後，孫二娘將正式加入英雄譜。'
       : state.flags.chapter27Complete ? '二十七位英雄均可自由切換；膳安公驗院與水泊百膳安民已開放。'
       : state.flags.chapter27Started ? '第二十七回進行中；完成水泊百膳安民後，曹正將正式加入英雄譜。'
@@ -12180,7 +12600,7 @@
       publicsquare: [12, 84], justicehall: [36, 80], mediationlane: [62, 84], justicerange: [87, 80],
       noticesquare: [16, 68], sealworkshop: [40, 64], craftmarket: [65, 68], civicrange: [88, 62],
       passgate: [16, 52], registryoffice: [40, 48], caravanport: [65, 52], transitrange: [88, 46],
-      loadpier: [16, 38], fleetoffice: [40, 34], publicferry: [65, 38], fleetrange: [88, 32], craftyard: [16, 22], safetyhall: [40, 18], workshoplane: [65, 22], laborrange: [88, 16], measureyard: [16, 10], inspectionhall: [40, 8], repairlane: [65, 10], inspectionrange: [88, 6], signalfield: [16, 4], alarmtower: [40, 4], rescuecamp: [65, 4], defenserange: [88, 4], quarantineyard: [16, 2], vetclinic: [40, 2], safemarket: [65, 2], healthrange: [88, 2], foodyard: [16, 2], foodhall: [40, 2], safekitchen: [65, 2], foodrange: [88, 2], guestyard: [16, 1], lodginghall: [40, 1], safeinnstreet: [65, 1], lodgingrange: [88, 1]
+      loadpier: [16, 38], fleetoffice: [40, 34], publicferry: [65, 38], fleetrange: [88, 32], craftyard: [16, 22], safetyhall: [40, 18], workshoplane: [65, 22], laborrange: [88, 16], measureyard: [16, 10], inspectionhall: [40, 8], repairlane: [65, 10], inspectionrange: [88, 6], signalfield: [16, 4], alarmtower: [40, 4], rescuecamp: [65, 4], defenserange: [88, 4], quarantineyard: [16, 2], vetclinic: [40, 2], safemarket: [65, 2], healthrange: [88, 2], foodyard: [16, 2], foodhall: [40, 2], safekitchen: [65, 2], foodrange: [88, 2], guestyard: [16, 1], lodginghall: [40, 1], safeinnstreet: [65, 1], lodgingrange: [88, 1], parcelyard: [16, 1], parcelhall: [40, 1], safeporterlane: [65, 1], parcelrange: [88, 1]
     };
     const nodes = MAP_NODES.map(node => {
       const unlocked = node.unlock(state);
@@ -12229,11 +12649,12 @@
     const twentyFifthChapterLocations = ['signalfield', 'alarmtower', 'rescuecamp', 'defenserange'];
     const twentySixthChapterLocations = ['quarantineyard', 'vetclinic', 'safemarket', 'healthrange'];
     const twentySeventhChapterLocations = ['foodyard', 'foodhall', 'safekitchen', 'foodrange'];
+    const twentyNinthChapterLocations = ['parcelyard', 'parcelhall', 'safeporterlane', 'parcelrange'];
     const twentyEighthChapterLocations = ['guestyard', 'lodginghall', 'safeinnstreet', 'lodgingrange'];
     const sixteenthChapterLocations = ['returnroad', 'muzhou', 'bangyuan', 'returnrange'];
     const twelfthChapterLocations = ['capitaledict', 'yanmen', 'northrange'];
     const eighthChapterLocations = ['chaincamp', 'hookrange', 'qingzhou'];
-    const requiredHero = twentyEighthChapterLocations.includes(locationId) ? (locationId === 'guestyard' && !state.flags.sunerniangPerspective && !state.flags.chapter28Complete ? 'songjiang' : 'sunerniang') : twentySeventhChapterLocations.includes(locationId) ? (locationId === 'foodyard' && !state.flags.caozhengPerspective && !state.flags.chapter27Complete ? 'songjiang' : 'caozheng') : twentySixthChapterLocations.includes(locationId) ? (locationId === 'quarantineyard' && !state.flags.huangfuduanPerspective && !state.flags.chapter26Complete ? 'songjiang' : 'huangfuduan') : twentyFifthChapterLocations.includes(locationId) ? (locationId === 'signalfield' && !state.flags.lingzhenPerspective && !state.flags.chapter25Complete ? 'songjiang' : 'lingzhen') : twentyFourthChapterLocations.includes(locationId) ? (locationId === 'measureyard' && !state.flags.tanglongPerspective && !state.flags.chapter24Complete ? 'songjiang' : 'tanglong') : twentyThirdChapterLocations.includes(locationId) ? (locationId === 'craftyard' && !state.flags.houjianPerspective && !state.flags.chapter23Complete ? 'songjiang' : 'houjian') : twentySecondChapterLocations.includes(locationId) ? (locationId === 'loadpier' && !state.flags.mengkangPerspective && !state.flags.chapter22Complete ? 'songjiang' : 'mengkang') : twentyFirstChapterLocations.includes(locationId) ? (locationId === 'passgate' && !state.flags.jindajianPerspective && !state.flags.chapter21Complete ? 'songjiang' : 'jindajian') : twentiethChapterLocations.includes(locationId) ? (locationId === 'noticesquare' && !state.flags.lehePerspective && !state.flags.chapter20Complete ? 'songjiang' : 'lehe') : nineteenthChapterLocations.includes(locationId) ? (locationId === 'publicsquare' && !state.flags.peixuanPerspective && !state.flags.chapter19Complete ? 'songjiang' : 'peixuan') : eighteenthChapterLocations.includes(locationId) ? (locationId === 'liangshanferry' && !state.flags.xiaorangPerspective && !state.flags.chapter18Complete ? 'songjiang' : 'xiaorang') : seventeenthChapterLocations.includes(locationId) ? (locationId === 'capitalroad' && !state.flags.zhuwuPerspective && !state.flags.chapter17Complete ? 'songjiang' : 'zhuwu') : sixteenthChapterLocations.includes(locationId) ? (locationId === 'returnroad' && !state.flags.daizongPerspective ? 'songjiang' : 'daizong') : fifteenthChapterLocations.includes(locationId) ? (locationId === 'southroad' && !state.flags.zhangshunPerspective ? 'songjiang' : 'zhangshun') : fourteenthChapterLocations.includes(locationId) ? (locationId === 'huaixiroad' && !state.flags.yanqingPerspective ? 'songjiang' : 'yanqing') : thirteenthChapterLocations.includes(locationId) ? (locationId === 'hebeiroad' && !state.flags.qiongyingPerspective ? 'songjiang' : 'qiongying') : twelfthChapterLocations.includes(locationId) ? (locationId === 'capitaledict' && !state.flags.huarongJoined ? 'songjiang' : 'huarong') : eleventhChapterLocations.includes(locationId) ? 'zhangqing' : tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
+    const requiredHero = twentyNinthChapterLocations.includes(locationId) ? (locationId === 'parcelyard' && !state.flags.zhangqinginnPerspective && !state.flags.chapter29Complete ? 'songjiang' : 'zhangqinginn') : twentyEighthChapterLocations.includes(locationId) ? (locationId === 'guestyard' && !state.flags.sunerniangPerspective && !state.flags.chapter28Complete ? 'songjiang' : 'sunerniang') : twentySeventhChapterLocations.includes(locationId) ? (locationId === 'foodyard' && !state.flags.caozhengPerspective && !state.flags.chapter27Complete ? 'songjiang' : 'caozheng') : twentySixthChapterLocations.includes(locationId) ? (locationId === 'quarantineyard' && !state.flags.huangfuduanPerspective && !state.flags.chapter26Complete ? 'songjiang' : 'huangfuduan') : twentyFifthChapterLocations.includes(locationId) ? (locationId === 'signalfield' && !state.flags.lingzhenPerspective && !state.flags.chapter25Complete ? 'songjiang' : 'lingzhen') : twentyFourthChapterLocations.includes(locationId) ? (locationId === 'measureyard' && !state.flags.tanglongPerspective && !state.flags.chapter24Complete ? 'songjiang' : 'tanglong') : twentyThirdChapterLocations.includes(locationId) ? (locationId === 'craftyard' && !state.flags.houjianPerspective && !state.flags.chapter23Complete ? 'songjiang' : 'houjian') : twentySecondChapterLocations.includes(locationId) ? (locationId === 'loadpier' && !state.flags.mengkangPerspective && !state.flags.chapter22Complete ? 'songjiang' : 'mengkang') : twentyFirstChapterLocations.includes(locationId) ? (locationId === 'passgate' && !state.flags.jindajianPerspective && !state.flags.chapter21Complete ? 'songjiang' : 'jindajian') : twentiethChapterLocations.includes(locationId) ? (locationId === 'noticesquare' && !state.flags.lehePerspective && !state.flags.chapter20Complete ? 'songjiang' : 'lehe') : nineteenthChapterLocations.includes(locationId) ? (locationId === 'publicsquare' && !state.flags.peixuanPerspective && !state.flags.chapter19Complete ? 'songjiang' : 'peixuan') : eighteenthChapterLocations.includes(locationId) ? (locationId === 'liangshanferry' && !state.flags.xiaorangPerspective && !state.flags.chapter18Complete ? 'songjiang' : 'xiaorang') : seventeenthChapterLocations.includes(locationId) ? (locationId === 'capitalroad' && !state.flags.zhuwuPerspective && !state.flags.chapter17Complete ? 'songjiang' : 'zhuwu') : sixteenthChapterLocations.includes(locationId) ? (locationId === 'returnroad' && !state.flags.daizongPerspective ? 'songjiang' : 'daizong') : fifteenthChapterLocations.includes(locationId) ? (locationId === 'southroad' && !state.flags.zhangshunPerspective ? 'songjiang' : 'zhangshun') : fourteenthChapterLocations.includes(locationId) ? (locationId === 'huaixiroad' && !state.flags.yanqingPerspective ? 'songjiang' : 'yanqing') : thirteenthChapterLocations.includes(locationId) ? (locationId === 'hebeiroad' && !state.flags.qiongyingPerspective ? 'songjiang' : 'qiongying') : twelfthChapterLocations.includes(locationId) ? (locationId === 'capitaledict' && !state.flags.huarongJoined ? 'songjiang' : 'huarong') : eleventhChapterLocations.includes(locationId) ? 'zhangqing' : tenthChapterLocations.includes(locationId) ? 'gongsunsheng' : locationId === 'imperialcamp' ? (state.flags.chapter10Complete ? 'gongsunsheng' : 'songjiang') : ninthChapterLocations.includes(locationId) ? 'lujunyi' : eighthChapterLocations.includes(locationId) ? 'huyanzhuo' : seventhChapterLocations.includes(locationId) ? 'husanniang' : locationId === 'liangshan' ? (state.activeHeroId === 'likui' ? 'likui' : 'songjiang') : sixthSongLocations.includes(locationId) ? 'songjiang' : fifthChapterLocations.includes(locationId) ? 'songjiang' : fourthChapterLocations.includes(locationId) ? 'yangzhi' : thirdChapterLocations.includes(locationId) ? 'linchong' : secondChapterLocations.includes(locationId) ? 'luzhishen' : 'wusong';
     if (state.activeHeroId !== requiredHero) {
       if (!state.flags.chapter2Complete) { toast('目前正處於另一位英雄的關鍵章回，尚不能跨線旅行。'); return; }
       if (requiredHero === 'linchong' && !state.flags.chapter3Complete) { closeModal(); startChapterThree(); return; }
@@ -12261,9 +12682,10 @@
       if (requiredHero === 'lingzhen' && !state.flags.chapter25Complete) { closeModal(); startChapterTwentyFive(); return; }
       if (requiredHero === 'huangfuduan' && !state.flags.chapter26Complete) { closeModal(); startChapterTwentySix(); return; }
       if (requiredHero === 'caozheng' && !state.flags.chapter27Complete) { closeModal(); startChapterTwentySeven(); return; }
+      if (requiredHero === 'zhangqinginn' && !state.flags.chapter29Complete) { closeModal(); startChapterTwentyNine(); return; }
       if (requiredHero === 'sunerniang' && !state.flags.chapter28Complete) { closeModal(); startChapterTwentyEight(); return; }
       setActiveHero(requiredHero);
-      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17, xiaorang: 18, peixuan: 19, lehe: 20, jindajian: 21, mengkang: 22, houjian: 23, tanglong: 24, lingzhen: 25, huangfuduan: 26, caozheng: 27, sunerniang: 28 }[requiredHero];
+      state.chapter = { wusong: 1, luzhishen: 2, linchong: 3, yangzhi: 4, songjiang: state.flags.chapter6Started ? 6 : 5, likui: 6, husanniang: 7, huyanzhuo: 8, lujunyi: 9, gongsunsheng: 10, zhangqing: 11, huarong: 12, qiongying: 13, yanqing: 14, zhangshun: 15, daizong: 16, zhuwu: 17, xiaorang: 18, peixuan: 19, lehe: 20, jindajian: 21, mengkang: 22, houjian: 23, tanglong: 24, lingzhen: 25, huangfuduan: 26, caozheng: 27, sunerniang: 28, zhangqinginn: 29 }[requiredHero];
     }
     const destinations = {
       manor: 'manor_depart', road: state.flags.roadBanditCleared ? 'road_after_bandit' : 'road_first', inn: 'inn_arrive',
@@ -12351,6 +12773,10 @@
       foodhall: state.flags.chapter27Complete ? 'food_free' : state.flags.foodFormationBroken ? 'food_breached' : state.flags.blackKitchenGuardDefeated ? 'food_council' : 'food_evidence',
       safekitchen: state.flags.chapter27Complete ? 'food_free' : state.flags.foodFormationBroken ? 'food_breached' : 'food_evidence',
       foodrange: 'food_free',
+      parcelyard: state.flags.chapter29Complete ? 'parcel_free' : state.flags.forgedParcelPatrolDefeated ? 'parcel_evidence' : 'parcel_yard_arrival',
+      parcelhall: state.flags.chapter29Complete ? 'parcel_free' : state.flags.parcelFormationBroken ? 'parcel_breached' : state.flags.porterGuildGuardDefeated ? 'parcel_council' : 'parcel_evidence',
+      safeporterlane: state.flags.chapter29Complete ? 'parcel_free' : state.flags.parcelFormationBroken ? 'parcel_breached' : 'parcel_evidence',
+      parcelrange: 'parcel_free',
       guestyard: state.flags.chapter28Complete ? 'lodging_free' : state.flags.druggedInnPatrolDefeated ? 'lodging_evidence' : 'guest_yard_arrival',
       lodginghall: state.flags.chapter28Complete ? 'lodging_free' : state.flags.lodgingFormationBroken ? 'lodging_breached' : state.flags.blackInnGuardDefeated ? 'lodging_council' : 'lodging_evidence',
       safeinnstreet: state.flags.chapter28Complete ? 'lodging_free' : state.flags.lodgingFormationBroken ? 'lodging_breached' : 'lodging_evidence',
@@ -12386,8 +12812,8 @@
       content: `<div class="modal-grid">
         ${heroCards}
         <article class="info-card"><h3>歷程</h3><p>完成任務：${completed}</p><p>景陽岡猛虎：${state.flags.tigerDefeated ? '已擊破' : '未擊破'}</p><p>鎮關西鄭屠：${state.flags.zhengDefeated ? '已伏誅' : '尚未交鋒'}</p><p>山神廟陸謙：${state.flags.luqianDefeated ? '已伏誅' : '尚未交鋒'}</p><p>生辰綱：${state.flags.birthdayCargoLost ? '黃泥岡智取成功' : '章回尚未完成'}</p><p>鄆城結局：${state.flags.chapter5Complete ? (state.flags.yanOutcome === 'mercy' ? '義全人未傷' : state.flags.yanOutcome === 'exile' ? '忍辱遠走' : '原著悲劇線') : '章回尚未完成'}</p><p>江州法場：${state.flags.executionRescued ? '兩階段救援成功' : '章回尚未完成'}</p><p>祝家莊：${state.flags.chapter7Complete ? `三打破莊｜聯盟聲望 ${state.flags.allianceReputation}` : '章回尚未完成'}</p><p>連環馬：${state.flags.chapter8Complete ? `鉤鐮破陣｜訓練 ${state.flags.hookTrainingScore}/5` : '章回尚未完成'}</p><p>曾頭市：${state.flags.chapter9Complete ? `五寨已破｜聚義聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '章回尚未完成'}</p><p>招安議事：${state.flags.chapter10Complete ? (state.flags.councilOutcome === 'terms' ? '受詔前先立三約' : state.flags.councilOutcome === 'selfrule' ? '拒苛詔、守寨自立' : '暫緩受詔、先行護民') : '章回尚未完成'}</p><p>童貫高俅：${state.flags.chapter11Complete ? '水陸聯軍破艦、公開停戰條件' : '章回尚未完成'}</p><p>雁門征遼：${state.flags.chapter12Complete ? `雁門鎖關｜軍略 ${state.flags.northernPlanScore}/5｜軍糧紀律 ${state.flags.supplyDiscipline}` : '章回尚未完成'}</p><p>河北征田虎：${state.flags.chapter13Complete ? `襄垣破幻｜軍略 ${state.flags.tianhuPlanScore}/5｜護糧紀律 ${state.flags.hebeiDiscipline}` : '章回尚未完成'}</p><p>淮西征王慶：${state.flags.chapter14Complete ? `宛州潛行｜軍略 ${state.flags.huaiPlanScore}/5｜水陸紀律 ${state.flags.huaiDiscipline}` : '章回尚未完成'}</p><p>江南征方臘：${state.flags.chapter15Complete ? `湧金門夜襲｜軍略 ${state.flags.southPlanScore}/5｜潮汐線索 ${state.flags.tideClues}/4｜張順 ${state.flags.zhangshunRescued ? '生還' : state.flags.zhangshunOutcome === 'tragic_seen' ? '曾見原著悲壯線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>睦州忠義歸途：${state.flags.chapter16Complete ? `忠義急援｜軍略 ${state.flags.returnPlanScore}/5｜急援線索 ${state.flags.rescueClues}/4｜軍民傷者 ${state.flags.retreatRescued ? '已接回' : state.flags.returnOutcome === 'tragic_seen' ? '曾見原著傷亡線、待改寫' : '待救'}` : '章回尚未完成'}</p><p>東京忠義封賞：${state.flags.chapter17Complete ? `忠義護冊｜軍略 ${state.flags.courtPlanScore}/5｜功冊線索 ${state.flags.archiveClues}/4｜功名撫卹 ${state.flags.meritsProtected ? '已公開保全' : state.flags.courtOutcome === 'tragic_seen' ? '曾見原著散失線、待改寫' : '待保全'}` : '章回尚未完成'}</p><p>梁山忠義安業：${state.flags.chapter18Complete ? `安民復寨｜軍略 ${state.flags.settlementPlanScore}/5｜安業線索 ${state.flags.settlementClues}/4｜田宅義糧 ${state.flags.homesRestored ? '已公開保全' : state.flags.settlementOutcome === 'tragic_seen' ? '曾見安置失敗線、待改寫' : '待保全'}` : '章回尚未完成'}</p><p>梁山鐵面公議：${state.flags.chapter19Complete ? `公議定法｜軍略 ${state.flags.justicePlanScore}/5｜公議線索 ${state.flags.justiceClues}/4｜公開審理 ${state.flags.publicTrialEstablished ? '已建立' : state.flags.justiceOutcome === 'tragic_seen' ? '曾見私刑復燃線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>梁山百業共治：${state.flags.chapter20Complete ? `百業共治｜軍略 ${state.flags.civicPlanScore}/5｜百業線索 ${state.flags.civicClues}/4｜共治議事 ${state.flags.publicCouncilEstablished ? '已建立' : state.flags.civicOutcome === 'tragic_seen' ? '曾見百業失衡線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊公信通憑：${state.flags.chapter21Complete ? `公信通憑｜軍略 ${state.flags.trustPlanScore}/5｜通憑線索 ${state.flags.trustClues}/4｜跨處驗憑 ${state.flags.publicPassEstablished ? '已建立' : state.flags.trustOutcome === 'tragic_seen' ? '曾見通行失信線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊百舸共運：${state.flags.chapter22Complete ? `百舸共運｜軍略 ${state.flags.fleetPlanScore}/5｜舟運線索 ${state.flags.fleetClues}/4｜公共舟運 ${state.flags.publicFleetEstablished ? '已建立' : state.flags.fleetOutcome === 'tragic_seen' ? '曾見舟運失序線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊百工安作：${state.flags.chapter23Complete ? `百工安作｜軍略 ${state.flags.laborPlanScore}/5｜安作線索 ${state.flags.laborClues}/4｜安全勞作 ${state.flags.publicLaborSafetyEstablished ? '已建立' : state.flags.laborOutcome === 'tragic_seen' ? '曾見百工失序線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊百器公檢：${state.flags.chapter24Complete ? `百器公檢｜軍略 ${state.flags.toolPlanScore}/5｜公檢線索 ${state.flags.toolClues}/4｜器具追溯 ${state.flags.publicToolInspectionEstablished ? '已建立' : state.flags.toolOutcome === 'tragic_seen' ? '曾見百器失準線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊四隅聯防：${state.flags.chapter25Complete ? `四隅聯防｜軍略 ${state.flags.defensePlanScore}/5｜聯防線索 ${state.flags.defenseClues}/4｜災防制度 ${state.flags.publicDisasterDefenseEstablished ? '已建立' : state.flags.defenseOutcome === 'tragic_seen' ? '曾見聯防失序線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>水泊人畜安康：${state.flags.chapter26Complete ? `人畜安康｜軍略 ${state.flags.healthPlanScore}/5｜牧護線索 ${state.flags.healthClues}/4｜防疫制度 ${state.flags.publicLivestockHealthEstablished ? '已建立' : state.flags.healthOutcome === 'tragic_seen' ? '曾見牧護失序線、待改寫' : '待建立'}` : '章回尚未完成'}</p><p>演武勝場：${(state.flags.arenaWins || 0) + (state.flags.weizhouArenaWins || 0) + (state.flags.cangzhouArenaWins || 0) + (state.flags.damingArenaWins || 0) + (state.flags.yunchengArenaWins || 0) + (state.flags.liangshanArenaWins || 0) + (state.flags.zhujiaArenaWins || 0) + (state.flags.chainArenaWins || 0) + (state.flags.zengtouArenaWins || 0) + (state.flags.diplomacyArenaWins || 0) + (state.flags.navalArenaWins || 0) + (state.flags.archeryArenaWins || 0) + (state.flags.hebeiArenaWins || 0) + (state.flags.huaiArenaWins || 0) + (state.flags.southArenaWins || 0) + (state.flags.returnArenaWins || 0) + (state.flags.capitalArenaWins || 0) + (state.flags.settlementArenaWins || 0) + (state.flags.justiceArenaWins || 0) + (state.flags.civicArenaWins || 0) + (state.flags.transitArenaWins || 0) + (state.flags.fleetArenaWins || 0) + (state.flags.laborArenaWins || 0) + (state.flags.inspectionArenaWins || 0) + (state.flags.defenseArenaWins || 0) + (state.flags.healthArenaWins || 0)}</p></article>
-        <article class="info-card"><h3>同伴與收藏</h3><p>已結識同伴：${Object.values(state.companions).filter(entry => entry.unlocked).length} / ${Object.keys(COMPANIONS).length}</p><p>打虎英雄牌：${state.inventory.tigerToken ? '已取得' : '未取得'}</p><p>五臺度牒：${state.inventory.monkCertificate ? '已取得' : '未取得'}</p><p>草料場銅印：${state.inventory.grassYardSeal ? '已取得' : '未取得'}</p><p>棗瓢暗記：${state.inventory.dateScoop ? '已取得' : '未取得'}</p><p>鄆城押司印記：${state.inventory.yunchengSeal ? '已取得' : '未取得'}</p><p>梁山聚義旗：${state.inventory.liangshanBanner ? '已取得' : '未取得'}</p><p>獨龍岡盟誓牌：${state.inventory.allianceToken ? '已取得' : '未取得'}</p><p>鉤鐮槍譜：${state.inventory.hookLanceManual ? '已取得' : '未取得'}</p><p>聚義座次卷：${state.inventory.assemblyScroll ? '已取得' : '未取得'}</p><p>菊花會盟帖：${state.inventory.chrysanthemumPact ? '已取得' : '未取得'}</p><p>受詔三約：${state.inventory.amnestyTerms ? '已取得' : '依路線未立'}</p><p>錢塘潮汐圖：${state.inventory.qiantangTideMap ? '已取得' : '未取得'}</p><p>江南軍民護送約：${state.inventory.jiangnanPact ? '已取得' : '未取得'}</p><p>山寨：聚義廳 Lv.${state.base.hall}｜醫館 Lv.${state.base.infirmary}｜鐵匠鋪 Lv.${state.base.forge}｜糧倉 Lv.${state.base.granary}｜軍械坊 Lv.${state.base.armory || 1}｜瞭望臺 Lv.${state.base.watchtower || 1}｜文書院 Lv.${state.base.academy || 1}｜船塢 Lv.${state.base.shipyard || 1}｜馬廄 Lv.${state.base.stable || 1}｜驛站 Lv.${state.base.relay || 1}｜暗哨營 Lv.${state.base.scoutcamp || 1}｜水門工坊 Lv.${state.base.harbor || 1}｜軍醫營 Lv.${state.base.mediccamp || 1}｜文案閣 Lv.${state.base.archive || 1}｜安業簿房 Lv.${state.base.settlement || 1}｜公議堂 Lv.${state.base.justicehall || 1}｜公示院 Lv.${state.base.noticehall || 1}｜印務所 Lv.${state.base.passhouse || 1}｜公運署 Lv.${state.base.fleetoffice || 1}｜安作院 Lv.${state.base.safetyhall || 1}｜公檢所 Lv.${state.base.inspectionhall || 1}｜鳴警臺 Lv.${state.base.alarmtower || 1}｜防疫院 Lv.${state.base.vetclinic || 1}｜公驗院 Lv.${state.base.foodhall || 1}｜巡驗館 Lv.${state.base.lodginghall || 1}</p><p>糧草：${state.base.grain}｜遠征 ${state.flags.expeditionCount || 0} 次</p></article>
-        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter28Complete ? '二十八英雄完成百宿安行制度，可在百宿演武場演武、重演宿安軍略並持續經營梁山。' : state.flags.chapter27Complete ? '可開啟母夜叉護驛與百宿安行，體驗孫二娘、菜園子張青、實名房牌與宿安巡驗館。' : state.flags.chapter26Complete ? '可開啟操刀驗膳與百膳安民，體驗曹正、孫二娘、食材溯源與膳安公驗院。' : state.flags.chapter25Complete ? '可開啟紫髯辨疫與水泊牧護，體驗皇甫端、曹正、畜籍檢疫與牧護防疫院。' : state.flags.chapter24Complete ? '可開啟轟天鳴警與水泊聯防，體驗凌振、皇甫端、統一警號與災防鳴警臺。' : state.flags.chapter23Complete ? '可開啟金錢鍛準與百器公檢，體驗湯隆、凌振、材料量規與百器公檢所。' : state.flags.chapter22Complete ? '可開啟通臂織護與百工安作，體驗侯健、湯隆、護具火道與百工安作院。' : state.flags.chapter21Complete ? '可開啟玉幡定載與百舸共運，體驗孟康、侯健、驗載號旗與百舸公運署。' : state.flags.chapter20Complete ? '可開啟玉臂刻信與水泊通憑，體驗金大堅、孟康、四路驗憑與通憑印務所。' : state.flags.chapter19Complete ? '可開啟鐵叫傳信與百業共治，體驗樂和、金大堅、真榜核驗與百業公示院。' : state.flags.chapter18Complete ? '可開啟鐵面公議與梁山新法，體驗裴宣、樂和、公開審理與忠義公議堂。' : state.flags.chapter17Complete ? '可開啟忠義安業與梁山新生，體驗蕭讓、蔣敬、田契查驗與安業簿房。' : state.flags.chapter16Complete ? '可開啟東京功冊與忠義封賞，體驗朱武、裴宣、功冊查驗與忠義文案閣。' : state.flags.chapter15Complete ? '可開啟睦州決戰與忠義歸途，體驗戴宗、安道全、傷兵急援與軍醫營。' : state.flags.chapter14Complete ? '可開啟征方臘與湧金門夜襲，體驗張順、阮小七、潮汐偵察與水門工坊。' : state.flags.chapter13Complete ? '可開啟征王慶與宛州潛行，體驗燕青、李俊、水陸滲透與暗哨營。' : state.flags.chapter12Complete ? '可開啟河北征田虎，體驗瓊英、喬道清、幻霧軍略與驛站建設。' : state.flags.chapter11Complete ? '可開啟受詔招安與雁門征遼，體驗花榮、關勝、騎射軍略與馬廄建設。' : state.flags.chapter10Complete ? '可開啟兩贏童貫、三敗高俅，體驗張清、李俊、水陸軍略與船塢建設。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
+        <article class="info-card"><h3>同伴與收藏</h3><p>已結識同伴：${Object.values(state.companions).filter(entry => entry.unlocked).length} / ${Object.keys(COMPANIONS).length}</p><p>打虎英雄牌：${state.inventory.tigerToken ? '已取得' : '未取得'}</p><p>五臺度牒：${state.inventory.monkCertificate ? '已取得' : '未取得'}</p><p>草料場銅印：${state.inventory.grassYardSeal ? '已取得' : '未取得'}</p><p>棗瓢暗記：${state.inventory.dateScoop ? '已取得' : '未取得'}</p><p>鄆城押司印記：${state.inventory.yunchengSeal ? '已取得' : '未取得'}</p><p>梁山聚義旗：${state.inventory.liangshanBanner ? '已取得' : '未取得'}</p><p>獨龍岡盟誓牌：${state.inventory.allianceToken ? '已取得' : '未取得'}</p><p>鉤鐮槍譜：${state.inventory.hookLanceManual ? '已取得' : '未取得'}</p><p>聚義座次卷：${state.inventory.assemblyScroll ? '已取得' : '未取得'}</p><p>菊花會盟帖：${state.inventory.chrysanthemumPact ? '已取得' : '未取得'}</p><p>受詔三約：${state.inventory.amnestyTerms ? '已取得' : '依路線未立'}</p><p>錢塘潮汐圖：${state.inventory.qiantangTideMap ? '已取得' : '未取得'}</p><p>江南軍民護送約：${state.inventory.jiangnanPact ? '已取得' : '未取得'}</p><p>山寨：聚義廳 Lv.${state.base.hall}｜醫館 Lv.${state.base.infirmary}｜鐵匠鋪 Lv.${state.base.forge}｜糧倉 Lv.${state.base.granary}｜軍械坊 Lv.${state.base.armory || 1}｜瞭望臺 Lv.${state.base.watchtower || 1}｜文書院 Lv.${state.base.academy || 1}｜船塢 Lv.${state.base.shipyard || 1}｜馬廄 Lv.${state.base.stable || 1}｜驛站 Lv.${state.base.relay || 1}｜暗哨營 Lv.${state.base.scoutcamp || 1}｜水門工坊 Lv.${state.base.harbor || 1}｜軍醫營 Lv.${state.base.mediccamp || 1}｜文案閣 Lv.${state.base.archive || 1}｜安業簿房 Lv.${state.base.settlement || 1}｜公議堂 Lv.${state.base.justicehall || 1}｜公示院 Lv.${state.base.noticehall || 1}｜印務所 Lv.${state.base.passhouse || 1}｜公運署 Lv.${state.base.fleetoffice || 1}｜安作院 Lv.${state.base.safetyhall || 1}｜公檢所 Lv.${state.base.inspectionhall || 1}｜鳴警臺 Lv.${state.base.alarmtower || 1}｜防疫院 Lv.${state.base.vetclinic || 1}｜公驗院 Lv.${state.base.foodhall || 1}｜巡驗館 Lv.${state.base.lodginghall || 1}｜公證所 Lv.${state.base.parcelhall || 1}</p><p>糧草：${state.base.grain}｜遠征 ${state.flags.expeditionCount || 0} 次</p></article>
+        <article class="info-card"><h3>後續預告</h3><p>${state.flags.chapter29Complete ? '二十九英雄完成百包安寄制度，可在百包演武場演武、重演寄運軍略並持續經營梁山。' : state.flags.chapter28Complete ? '可開啟菜園封運與百包安寄，體驗張青、顧大嫂、稱重封籤與寄運公證所。' : state.flags.chapter27Complete ? '可開啟母夜叉護驛與百宿安行，體驗孫二娘、菜園子張青、實名房牌與宿安巡驗館。' : state.flags.chapter26Complete ? '可開啟操刀驗膳與百膳安民，體驗曹正、孫二娘、食材溯源與膳安公驗院。' : state.flags.chapter25Complete ? '可開啟紫髯辨疫與水泊牧護，體驗皇甫端、曹正、畜籍檢疫與牧護防疫院。' : state.flags.chapter24Complete ? '可開啟轟天鳴警與水泊聯防，體驗凌振、皇甫端、統一警號與災防鳴警臺。' : state.flags.chapter23Complete ? '可開啟金錢鍛準與百器公檢，體驗湯隆、凌振、材料量規與百器公檢所。' : state.flags.chapter22Complete ? '可開啟通臂織護與百工安作，體驗侯健、湯隆、護具火道與百工安作院。' : state.flags.chapter21Complete ? '可開啟玉幡定載與百舸共運，體驗孟康、侯健、驗載號旗與百舸公運署。' : state.flags.chapter20Complete ? '可開啟玉臂刻信與水泊通憑，體驗金大堅、孟康、四路驗憑與通憑印務所。' : state.flags.chapter19Complete ? '可開啟鐵叫傳信與百業共治，體驗樂和、金大堅、真榜核驗與百業公示院。' : state.flags.chapter18Complete ? '可開啟鐵面公議與梁山新法，體驗裴宣、樂和、公開審理與忠義公議堂。' : state.flags.chapter17Complete ? '可開啟忠義安業與梁山新生，體驗蕭讓、蔣敬、田契查驗與安業簿房。' : state.flags.chapter16Complete ? '可開啟東京功冊與忠義封賞，體驗朱武、裴宣、功冊查驗與忠義文案閣。' : state.flags.chapter15Complete ? '可開啟睦州決戰與忠義歸途，體驗戴宗、安道全、傷兵急援與軍醫營。' : state.flags.chapter14Complete ? '可開啟征方臘與湧金門夜襲，體驗張順、阮小七、潮汐偵察與水門工坊。' : state.flags.chapter13Complete ? '可開啟征王慶與宛州潛行，體驗燕青、李俊、水陸滲透與暗哨營。' : state.flags.chapter12Complete ? '可開啟河北征田虎，體驗瓊英、喬道清、幻霧軍略與驛站建設。' : state.flags.chapter11Complete ? '可開啟受詔招安與雁門征遼，體驗花榮、關勝、騎射軍略與馬廄建設。' : state.flags.chapter10Complete ? '可開啟兩贏童貫、三敗高俅，體驗張清、李俊、水陸軍略與船塢建設。' : state.flags.chapter9Complete ? '可開啟菊花會與招安之議，體驗公孫勝、蕭讓、派系聲望與三條路線分歧。' : state.flags.chapter8Complete ? '可開啟曾頭市與梁山大聚義，體驗盧俊義、燕青、五寨軍團攻略與聚義座次。' : state.flags.chapter7Complete ? '可開啟大破連環馬，體驗呼延灼雙視角、鉤鐮槍陣型戰與山寨遠征。' : state.flags.chapter6Complete ? '可開啟三打祝家莊，體驗盤陀路、三莊聯盟與臥底攻略。' : state.flags.chapter5Complete ? '完成第五回後，可開啟江州題反詩與劫法場。' : state.flags.chapter4Complete ? '完成第四回後，可開啟宋江私放晁蓋與鄆城案牘推演。' : state.flags.chapter3Complete ? '完成第三回後，可開啟楊志與吳用交錯視角的智取生辰綱。' : state.flags.chapter2Complete ? '完成第二回後，可開啟林教頭風雪山神廟。' : '完成第一回後，可開啟魯提轄拳打鎮關西。'}</p></article>
       </div>`, wide: true
     });
   }
@@ -12403,7 +12829,7 @@
       ['朱武', '神機軍師・忠義護冊', '朱'], ['蕭讓', '聖手書生・忠義安業', '蕭'], ['裴宣', '鐵面孔目・忠義公議', '裴'], ['樂和', '鐵叫傳聲・百業共治', '樂'], ['金大堅', '玉臂刻信・水泊通憑', '金'], ['孟康', '玉幡定載・百舸共運', '孟'], ['侯健', '通臂織護・百工安作', '侯'], ['湯隆', '金錢鍛準・百器公檢', '湯'], ['凌振', '轟天鳴警・水泊聯防', '凌'], ['皇甫端', '紫髯辨疫・水泊牧護', '髯'], ['曹正', '操刀驗膳・百膳安民', '曹'], ['孫二娘', '母夜叉護驛・百宿安行', '孫']
     ];
     const cards = order.map(([name, duty, avatar], index) => `<article class="hero-roster-card ${index < 2 ? 'active' : ''}"><span class="hero-roster-avatar">${avatar}</span><div class="hero-roster-copy"><h3>第 ${index + 1} 席・${name}</h3><p>${duty}</p></div></article>`).join('');
-    const status = state?.flags?.chapter28Complete ? `二十八英雄同堂｜宿安軍略 ${state.flags.lodgingPlanScore || 0}/5｜巡驗館 Lv.${state.base.lodginghall || 1}` : state?.flags?.chapter27Complete ? `二十七英雄同堂｜膳安軍略 ${state.flags.foodPlanScore || 0}/5｜公驗院 Lv.${state.base.foodhall || 1}` : state?.flags?.chapter26Complete ? `二十六英雄同堂｜牧護軍略 ${state.flags.healthPlanScore || 0}/5｜防疫院 Lv.${state.base.vetclinic || 1}` : state?.flags?.chapter25Complete ? `二十五英雄同堂｜聯防軍略 ${state.flags.defensePlanScore || 0}/5｜鳴警臺 Lv.${state.base.alarmtower || 1}` : state?.flags?.chapter24Complete ? `二十四英雄同堂｜公檢軍略 ${state.flags.toolPlanScore || 0}/5｜公檢所 Lv.${state.base.inspectionhall || 1}` : state?.flags?.chapter23Complete ? `二十三英雄同堂｜安作軍略 ${state.flags.laborPlanScore || 0}/5｜安作院 Lv.${state.base.safetyhall || 1}` : state?.flags?.chapter22Complete ? `二十二英雄同堂｜共運軍略 ${state.flags.fleetPlanScore || 0}/5｜公運署 Lv.${state.base.fleetoffice || 1}` : state?.flags?.chapter21Complete ? `二十一英雄同堂｜通憑軍略 ${state.flags.trustPlanScore || 0}/5｜印務所 Lv.${state.base.passhouse || 1}` : state?.flags?.chapter20Complete ? `二十英雄同堂｜共治軍略 ${state.flags.civicPlanScore || 0}/5｜公示院 Lv.${state.base.noticehall || 1}` : state?.flags?.chapter19Complete ? `十九英雄同堂｜公議軍略 ${state.flags.justicePlanScore || 0}/5｜公議堂 Lv.${state.base.justicehall || 1}` : state?.flags?.chapter18Complete ? `十八英雄同堂｜安業軍略 ${state.flags.settlementPlanScore || 0}/5｜簿房 Lv.${state.base.settlement || 1}` : state?.flags?.chapter17Complete ? `十七英雄同堂｜東京護冊 ${state.flags.courtPlanScore || 0}/5｜文案閣 Lv.${state.base.archive || 1}` : state?.flags?.chapter16Complete ? `十六英雄同堂｜睦州軍略 ${state.flags.returnPlanScore || 0}/5｜軍醫營 Lv.${state.base.mediccamp || 1}` : state?.flags?.chapter15Complete ? `十五英雄同堂｜江南軍略 ${state.flags.southPlanScore || 0}/5｜水門工坊 Lv.${state.base.harbor || 1}` : state?.flags?.chapter14Complete ? `十四英雄同堂｜淮西軍略 ${state.flags.huaiPlanScore || 0}/5｜暗哨營 Lv.${state.base.scoutcamp || 1}` : state?.flags?.chapter13Complete ? `十三英雄同堂｜河北軍略 ${state.flags.tianhuPlanScore || 0}/5｜驛站 Lv.${state.base.relay || 1}` : state?.flags?.chapter12Complete ? `十二英雄同堂｜雁門軍略 ${state.flags.northernPlanScore || 0}/5｜馬廄 Lv.${state.base.stable || 1}` : state?.flags?.chapter11Complete ? `十一英雄同堂｜水陸軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}` : state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
+    const status = state?.flags?.chapter29Complete ? `二十九英雄同堂｜寄運軍略 ${state.flags.parcelPlanScore || 0}/5｜公證所 Lv.${state.base.parcelhall || 1}` : state?.flags?.chapter28Complete ? `二十八英雄同堂｜宿安軍略 ${state.flags.lodgingPlanScore || 0}/5｜巡驗館 Lv.${state.base.lodginghall || 1}` : state?.flags?.chapter27Complete ? `二十七英雄同堂｜膳安軍略 ${state.flags.foodPlanScore || 0}/5｜公驗院 Lv.${state.base.foodhall || 1}` : state?.flags?.chapter26Complete ? `二十六英雄同堂｜牧護軍略 ${state.flags.healthPlanScore || 0}/5｜防疫院 Lv.${state.base.vetclinic || 1}` : state?.flags?.chapter25Complete ? `二十五英雄同堂｜聯防軍略 ${state.flags.defensePlanScore || 0}/5｜鳴警臺 Lv.${state.base.alarmtower || 1}` : state?.flags?.chapter24Complete ? `二十四英雄同堂｜公檢軍略 ${state.flags.toolPlanScore || 0}/5｜公檢所 Lv.${state.base.inspectionhall || 1}` : state?.flags?.chapter23Complete ? `二十三英雄同堂｜安作軍略 ${state.flags.laborPlanScore || 0}/5｜安作院 Lv.${state.base.safetyhall || 1}` : state?.flags?.chapter22Complete ? `二十二英雄同堂｜共運軍略 ${state.flags.fleetPlanScore || 0}/5｜公運署 Lv.${state.base.fleetoffice || 1}` : state?.flags?.chapter21Complete ? `二十一英雄同堂｜通憑軍略 ${state.flags.trustPlanScore || 0}/5｜印務所 Lv.${state.base.passhouse || 1}` : state?.flags?.chapter20Complete ? `二十英雄同堂｜共治軍略 ${state.flags.civicPlanScore || 0}/5｜公示院 Lv.${state.base.noticehall || 1}` : state?.flags?.chapter19Complete ? `十九英雄同堂｜公議軍略 ${state.flags.justicePlanScore || 0}/5｜公議堂 Lv.${state.base.justicehall || 1}` : state?.flags?.chapter18Complete ? `十八英雄同堂｜安業軍略 ${state.flags.settlementPlanScore || 0}/5｜簿房 Lv.${state.base.settlement || 1}` : state?.flags?.chapter17Complete ? `十七英雄同堂｜東京護冊 ${state.flags.courtPlanScore || 0}/5｜文案閣 Lv.${state.base.archive || 1}` : state?.flags?.chapter16Complete ? `十六英雄同堂｜睦州軍略 ${state.flags.returnPlanScore || 0}/5｜軍醫營 Lv.${state.base.mediccamp || 1}` : state?.flags?.chapter15Complete ? `十五英雄同堂｜江南軍略 ${state.flags.southPlanScore || 0}/5｜水門工坊 Lv.${state.base.harbor || 1}` : state?.flags?.chapter14Complete ? `十四英雄同堂｜淮西軍略 ${state.flags.huaiPlanScore || 0}/5｜暗哨營 Lv.${state.base.scoutcamp || 1}` : state?.flags?.chapter13Complete ? `十三英雄同堂｜河北軍略 ${state.flags.tianhuPlanScore || 0}/5｜驛站 Lv.${state.base.relay || 1}` : state?.flags?.chapter12Complete ? `十二英雄同堂｜雁門軍略 ${state.flags.northernPlanScore || 0}/5｜馬廄 Lv.${state.base.stable || 1}` : state?.flags?.chapter11Complete ? `十一英雄同堂｜水陸軍略 ${state.flags.navalPlanScore || 0}/5｜船塢 Lv.${state.base.shipyard || 1}` : state?.flags?.chapter10Complete ? `十英雄同堂｜本回路線 ${state.flags.councilOutcome || '未定'}｜護民共識 ${state.flags.peopleSupport}` : state?.flags?.chapter9Complete ? `聚義大典已完成｜聲望 ${Math.round(state.flags.assemblyReputation || 0)}` : '完成第九回後正式定席；目前顯示預定職司。';
     openModal({ title: '梁山聚義座次', subtitle: status, content: `<div class="hero-roster-grid">${cards}</div><article class="info-card assembly-note"><h3>軍師職司・吳用</h3><p>吳用掌機密軍略與軍團攻略，列為軍師職司，不占二十六名可操控英雄的席次。</p></article><article class="info-card assembly-note"><h3>座次設計原則</h3><p>本遊戲不照搬原著一百零八將完整排名，而以目前二十六位可操控英雄的章回職司排列。座次代表責任分工，不等於人物品格高低。</p></article>`, wide: true });
   }
 
@@ -12465,6 +12891,7 @@
         <article class="info-card"><h3>梁山牧護防疫院 Lv.${b.vetclinic || 1}</h3><p>提高人畜安康初始軍勢、強化畜籍採樣、隔離清消、屠檢流向與牧戶補償，降低假藥、污飼水與疫症隱匿的風險。</p><button type="button" data-base-upgrade="vetclinic" ${state.flags.chapter26Started ? '' : 'disabled'}>升級：${costText(b.vetclinic || 1)}</button><button type="button" data-start-health ${state.flags.chapter26Complete ? '' : 'disabled'}>重演水泊人畜安康</button></article>
         <article class="info-card"><h3>梁山膳安公驗院 Lv.${b.foodhall || 1}</h3><p>提高百膳安民初始軍勢、強化食材溯源、淨水熟度、生熟分案、留樣召回與食害補償，降低黑廚與來源不明食材的風險。</p><button type="button" data-base-upgrade="foodhall" ${state.flags.chapter27Started ? '' : 'disabled'}>升級：${costText(b.foodhall || 1)}</button><button type="button" data-start-food ${state.flags.chapter27Complete ? '' : 'disabled'}>重演水泊百膳安民</button></article>
         <article class="info-card"><h3>梁山宿安巡驗館 Lv.${b.lodginghall || 1}</h3><p>提高百宿安行初始軍勢、強化實名房牌、酒食試驗、行李封籤、夜巡求援與失蹤補償，降低黑棧、迷藥與旅客失蹤的風險。</p><button type="button" data-base-upgrade="lodginghall" ${state.flags.chapter28Started ? '' : 'disabled'}>升級：${costText(b.lodginghall || 1)}</button><button type="button" data-start-lodging ${state.flags.chapter28Complete ? '' : 'disabled'}>重演水泊百宿安行</button></article>
+        <article class="info-card"><h3>梁山寄運公證所 Lv.${b.parcelhall || 1}</h3><p>提高百包安寄初始軍勢、強化寄收實名、稱重封籤、腳夫名牌、跨驛交接與失物理賠，降低掉包、勒索與寄物遺失的風險。</p><button type="button" data-base-upgrade="parcelhall" ${state.flags.chapter29Started ? '' : 'disabled'}>升級：${costText(b.parcelhall || 1)}</button><button type="button" data-start-parcel ${state.flags.chapter29Complete ? '' : 'disabled'}>重演水泊百包安寄</button></article>
       </div>`, wide: true
     });
     $$('[data-base-upgrade]', modalRoot).forEach(button => button.addEventListener('click', () => upgradeBase(button.dataset.baseUpgrade)));
@@ -12490,6 +12917,7 @@
     $('[data-start-health]', modalRoot)?.addEventListener('click', () => startHealthDuel(true));
     $('[data-start-food]', modalRoot)?.addEventListener('click', () => startFoodDuel(true));
     $('[data-start-lodging]', modalRoot)?.addEventListener('click', () => startLodgingDuel(true));
+    $('[data-start-parcel]', modalRoot)?.addEventListener('click', () => startParcelDuel(true));
   }
 
   function upgradeBase(type) {
@@ -12504,7 +12932,7 @@
       return;
     }
     b.timber -= timber; b.stone -= stone; state.hero.silver -= silver; b[type] += 1;
-    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院', shipyard: '水寨船塢', stable: '梁山馬廄', relay: '梁山驛站', scoutcamp: '梁山暗哨營', harbor: '梁山水門工坊', mediccamp: '梁山軍醫營', archive: '忠義文案閣', settlement: '梁山安業簿房', justicehall: '忠義公議堂', noticehall: '梁山百業公示院', passhouse: '梁山通憑印務所', fleetoffice: '梁山百舸公運署', safetyhall: '梁山百工安作院', inspectionhall: '梁山百器公檢所', alarmtower: '梁山災防鳴警臺', vetclinic: '梁山牧護防疫院', foodhall: '梁山膳安公驗院', lodginghall: '梁山宿安巡驗館' };
+    const names = { hall: '聚義廳', infirmary: '醫館', forge: '鐵匠鋪', granary: '糧倉', armory: '軍械坊', watchtower: '瞭望臺', academy: '文書院', shipyard: '水寨船塢', stable: '梁山馬廄', relay: '梁山驛站', scoutcamp: '梁山暗哨營', harbor: '梁山水門工坊', mediccamp: '梁山軍醫營', archive: '忠義文案閣', settlement: '梁山安業簿房', justicehall: '忠義公議堂', noticehall: '梁山百業公示院', passhouse: '梁山通憑印務所', fleetoffice: '梁山百舸公運署', safetyhall: '梁山百工安作院', inspectionhall: '梁山百器公檢所', alarmtower: '梁山災防鳴警臺', vetclinic: '梁山牧護防疫院', foodhall: '梁山膳安公驗院', lodginghall: '梁山宿安巡驗館', parcelhall: '梁山寄運公證所' };
     addLog(`${names[type]}升至 Lv.${b[type]}。`);
     tone('level'); saveGame(false); openBase(); renderHeroPanel();
   }
