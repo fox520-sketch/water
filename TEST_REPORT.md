@@ -1,52 +1,63 @@
-# 《水滸英雄傳：梁山風雲 v4.5.0》測試報告
+# 《水滸英雄傳：梁山風雲 v4.6.0》測試報告
 
 - 測試日期：2026-06-11
-- 測試方式：JavaScript 語法檢查、章回資料完整性檢查、場景導向檢查、PWA 檔案檢查、ZIP 打包檢查
-- 版本目標：由 v4.4.0 升級至 v4.5.0，新增第三十四回「出林龍驗泉・百水安飲」
+- 升級來源：v4.5.0
+- 新增章回：第三十五回「獨角龍疏渠・百田安灌」
+- 測試環境：Chromium 桌面版 1280×900、手機版 390×844、Node.js 語法檢查
 
-## 測試項目
+## 測試結論
 
-- ✅ VERSION = 4.5.0
-- ✅ contains zouyuan
-- ✅ contains zourun
-- ✅ contains chapter34Started
-- ✅ contains chapter34Complete
-- ✅ contains waterSupply
-- ✅ contains waterPlanScore
-- ✅ contains waterBattle
-- ✅ contains wateroffice
-- ✅ contains wateryard
-- ✅ contains safewaterstation
-- ✅ contains waterrange
-- ✅ scene chapter34_orders
-- ✅ scene water_yard_arrival
-- ✅ scene water_yard_blocked
-- ✅ scene water_evidence
-- ✅ scene safe_water_council
-- ✅ scene water_strategy
-- ✅ scene water_breached
-- ✅ scene water_crisis
-- ✅ scene water_victory
-- ✅ scene chapter34_end
-- ✅ scene water_free
-- ✅ function startChapterThirtyFour
-- ✅ function finishChapterThirtyFour
-- ✅ function startWaterDuel
-- ✅ all goScene targets exist
-- ✅ 34 hero blueprints including 鄒淵
-- ✅ index.html title updated
-- ✅ README v4.5.0 updated
-- ✅ Service Worker cache updated
-- ✅ manifest mentions 三十四英雄 and 百水安飲
+- 瀏覽器完整流程：**23／23 通過**
+- 靜態、語法與資料檢查：**12／12 通過**
+- ZIP 完整性：**1／1 通過**
+- 合計：**36／36 通過**
 
-## 額外檢查
+## 瀏覽器完整流程（23／23）
 
-- goScene 目標數：318；缺漏：0
-- Node.js 語法檢查：`node --check game.js` 通過
-- ZIP 完整性：`unzip -t` 通過
-- 已確認第三十四回主線場景、主角鄒淵、同伴鄒潤、百水安飲署、百水安飲演武場與舊存檔補資料欄位存在
-- 目前沙盒環境的 Chromium 導覽受到管理政策阻擋，因此本次未產出瀏覽器截圖；若上傳 GitHub Pages，可直接以瀏覽器再做實機確認。
+- ✅ 首頁版本標題與桌面版無水平溢位
+- ✅ v4.5.0 舊存檔自動升級至 v4.6.0
+- ✅ 自動補入鄒潤英雄、陶宗旺同伴、第三十五回旗標與百田安灌署
+- ✅ 第三十五回正常開篇
+- ✅ 第一場「霸渠巡丁」戰鬥
+- ✅ 渠源田界、閘口配水、清淤固堤、旱澇補種四項查驗
+- ✅ 第二場「私閘護院」戰鬥與陶宗旺入隊
+- ✅ 五階段「水泊百田安灌」軍略
+- ✅ 第三場「灌利掮客與侵田豪強」決戰
+- ✅ 第三十五回章回結算
+- ✅ 鄒潤正式加入英雄譜
+- ✅ 陶宗旺正式加入同伴編成
+- ✅ 制度物品與百田安灌署獎勵正確入帳
+- ✅ 三十五英雄譜、章回完成判定與三十五回總成果
+- ✅ 桌面版、手機版章回結算均無水平溢位
+- ✅ 手機版三十五英雄譜顯示正常
+
+## 靜態、語法與資料檢查（12／12）
+
+- ✅ `node --check game.js` 語法通過
+- ✅ 所有 `goScene()` 場景目標均存在，缺漏 0
+- ✅ `VERSION = 4.6.0`
+- ✅ `index.html` 標題與首頁版本同步更新
+- ✅ PWA manifest 更新為三十五英雄與百田安灌內容
+- ✅ Service Worker 快取名稱更新為 `liangshan-rpg-v4.6.0`
+- ✅ README 更新為 v4.6.0
+- ✅ `startChapterThirtyFive()` 開篇函式存在
+- ✅ `finishChapterThirtyFive()` 結算函式存在
+- ✅ `startIrrigationDuel()` 百田安灌軍略函式存在
+- ✅ 第三十五回核心場景完整
+- ✅ 鄒潤、陶宗旺、百田安灌制度與安灌署資料完整
+
+## 主要驗收結果
+
+- 五階段軍略必須依序完成「渠源分界、閘口配水、清淤固堤、旱澇輪灌、災後補種」。
+- 第五階段啟用門檻已校正，四項查驗完成後可正常推進，不會卡在最後一步。
+- 英雄譜與章回成果視窗已補入鄒潤，完成後顯示三十五位英雄。
+- v4.5.0 存檔可直接接續第三十五回，不需要重新開始遊戲。
+- 桌面版與 390 像素寬手機版均完成實際畫面驗收。
+
+## ZIP 打包檢查（1／1）
+
+- ✅ `unzip -t` 全部檔案完整，正式包不含測試存檔與除錯檔案。
 
 ## 結論
 
-本版靜態、語法與打包測試通過 32/32 項。v4.5.0 可供本機開啟 `index.html` 遊玩，或部署至 GitHub Pages。
+v4.6.0 已通過主線、戰鬥、軍略、舊存檔遷移、英雄譜、章回成果、PWA 版本及桌面／手機版面驗收，可直接開啟 `index.html` 遊玩，亦可部署至 GitHub Pages。
