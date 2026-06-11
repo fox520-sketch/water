@@ -1,61 +1,52 @@
-# 《水滸英雄傳：梁山風雲 v4.4.0》測試報告
+# 《水滸英雄傳：梁山風雲 v4.5.0》測試報告
 
-## 測試範圍
+- 測試日期：2026-06-11
+- 測試方式：JavaScript 語法檢查、章回資料完整性檢查、場景導向檢查、PWA 檔案檢查、ZIP 打包檢查
+- 版本目標：由 v4.4.0 升級至 v4.5.0，新增第三十四回「出林龍驗泉・百水安飲」
 
-- v4.3.0 存檔升級至 v4.4.0
-- 第三十三回開篇、四項查驗、三場戰鬥、五階段軍略與章回結算
-- 解寶雙技能「雙尾蠍辨藥」「四谷安採」
-- 鄒淵同伴解鎖、編成與「出林龍護採」援護
-- 解寶英雄資料、專屬裝備、收藏品、百藥安採署及新地圖節點
-- 英雄譜、同伴編成、梁山建設、章回總結、遊戲指南與版本介紹
-- 桌面版及手機版版面
-- JavaScript 語法、Manifest、Service Worker 與資料引用完整性
+## 測試項目
 
-## 自動化測試結果
+- ✅ VERSION = 4.5.0
+- ✅ contains zouyuan
+- ✅ contains zourun
+- ✅ contains chapter34Started
+- ✅ contains chapter34Complete
+- ✅ contains waterSupply
+- ✅ contains waterPlanScore
+- ✅ contains waterBattle
+- ✅ contains wateroffice
+- ✅ contains wateryard
+- ✅ contains safewaterstation
+- ✅ contains waterrange
+- ✅ scene chapter34_orders
+- ✅ scene water_yard_arrival
+- ✅ scene water_yard_blocked
+- ✅ scene water_evidence
+- ✅ scene safe_water_council
+- ✅ scene water_strategy
+- ✅ scene water_breached
+- ✅ scene water_crisis
+- ✅ scene water_victory
+- ✅ scene chapter34_end
+- ✅ scene water_free
+- ✅ function startChapterThirtyFour
+- ✅ function finishChapterThirtyFour
+- ✅ function startWaterDuel
+- ✅ all goScene targets exist
+- ✅ 34 hero blueprints including 鄒淵
+- ✅ index.html title updated
+- ✅ README v4.5.0 updated
+- ✅ Service Worker cache updated
+- ✅ manifest mentions 三十四英雄 and 百水安飲
 
-- 瀏覽器互動與主線回歸：**58 / 58 通過**
-- JavaScript 語法檢查：**通過**
-- Manifest JSON 檢查：**通過**
-- 完整第三十三回操作期間瀏覽器錯誤：**0**
-- 桌面版 1440 × 1000：**無水平溢位**
-- 手機版 390 × 844：**無水平溢位**
-- HTML 重複 ID：**0**
-- 地圖節點重複 ID：**0**
-- 主線內直接引用的英雄、同伴、敵人、場景與物品：**皆可解析**
+## 額外檢查
 
-## 資料完整性
-
-| 項目 | 數量 | 結果 |
-|---|---:|---|
-| 可用英雄 | 33 | 通過 |
-| 英雄技能組 | 33 | 通過 |
-| 同伴 | 33 | 通過 |
-| 物品 | 166 | 通過 |
-| 敵人 | 125 | 通過 |
-| 場景 | 375 | 通過 |
-| 地圖節點 | 119 | 通過 |
-
-所有英雄均具有兩項技能及有效武器、護甲；新遊戲初始資料也已完整建立解寶、解寶專屬裝備、鄒淵、第三十三回任務與百藥安採署。
-
-## 存檔相容性
-
-以模擬 v4.3.0 存檔進行遷移，確認會自動補入：
-
-- 解寶英雄與專屬裝備
-- 鄒淵同伴資料
-- 第三十三回主線任務與旗標
-- 百藥安採署建築等級
-- 新版號 v4.4.0
-
-原有英雄、進度、背包、同伴與山寨建設資料會保留。
-
-## 本版回歸修正
-
-- 修正新遊戲初始狀態未建立解寶英雄物件，避免第三十三回切換失敗
-- 修正英雄譜第三十三回完成判定、章回標示與解寶顯示
-- 修正章回總結未完整收錄孫新、解珍、解寶及第三十一至三十三回收藏品
-- 更新首頁、Manifest、Service Worker 快取、遊戲指南與版本介紹
+- goScene 目標數：318；缺漏：0
+- Node.js 語法檢查：`node --check game.js` 通過
+- ZIP 完整性：`unzip -t` 通過
+- 已確認第三十四回主線場景、主角鄒淵、同伴鄒潤、百水安飲署、百水安飲演武場與舊存檔補資料欄位存在
+- 目前沙盒環境的 Chromium 導覽受到管理政策阻擋，因此本次未產出瀏覽器截圖；若上傳 GitHub Pages，可直接以瀏覽器再做實機確認。
 
 ## 結論
 
-v4.4.0 已通過完整第三十三回流程、舊存檔遷移、桌面與手機顯示及資料完整性檢查，可供本機遊玩或部署至 GitHub Pages。
+本版靜態、語法與打包測試通過 32/32 項。v4.5.0 可供本機開啟 `index.html` 遊玩，或部署至 GitHub Pages。
