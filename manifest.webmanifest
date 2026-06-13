@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲",
-  "short_name": "梁山風雲",
-  "description": "章回式單機網頁 RPG：四十一英雄、青眼虎李雲與鬼臉兒杜興、水泊百案安查、百案安查署及快速整備。",
+  "name": "水滸英雄傳：梁山風雲 v5.3.0",
+  "short_name": "梁山風雲 v5.3",
+  "description": "第四十二回「鬼臉兒核契・百契安信」：四十二英雄章回式單機網頁 RPG。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
