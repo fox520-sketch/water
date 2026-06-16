@@ -1,33 +1,16 @@
-# 水滸英雄傳：梁山風雲 v5.7.0
-
-單機章回式網頁 RPG，可直接以瀏覽器開啟 `index.html`，亦支援 PWA 安裝與離線快取。
-
-## v5.7.0 新增
-
-- 第四十六回「小遮攔核賦・百賦安徵」
-- 第四十六名主角：小遮攔・穆春
-- 新同伴：沒遮攔・穆弘
-- 穆春雙技能「小遮攔核賦」、「四賦安徵」
-- 穆弘援護「沒遮攔護賦」
-- 四項徵賦查驗與五階段百賦安徵軍略
-- 三場主線戰鬥、百賦安徵演武與四個新地圖據點
-- 百賦安徵署及專屬武器、防具、核額總冊、緩徵簿與盟約
-- 補齊第四十三回至第四十六回章回成果標題及第三十六回至第四十六回歷程統計
-- 更新四十六英雄譜、聚義座次、世界地圖、版本資訊與 PWA 快取
-- 支援 v1.0.0～v5.6.0 舊存檔自動升級
-- 修正百賦軍略暫存欄位重複／漏建、英雄譜解鎖判定與版本說明遺漏
-- 補強 v5.4.0～v5.6.0 舊式單一角色存檔辨識，朱仝、雷橫與穆春不再被錯認成其他英雄
-
-## 執行方式
-
-1. 解壓縮全部檔案。
-2. 雙擊 `index.html` 開始遊戲。
-3. 部署到 GitHub Pages 時，將壓縮檔內所有檔案放在同一專案目錄。
-
-## 主要檔案
-
-- `index.html`：遊戲頁面
-- `game.js`：角色、章回、戰鬥與存檔邏輯
-- `styles.css`：桌面與手機版介面
-- `manifest.webmanifest`、`service-worker.js`：PWA 與離線支援
-- `assets/`：應用程式圖示
+{
+  "name": "水滸英雄傳：梁山風雲 v5.8.0",
+  "short_name": "梁山風雲 v5.8",
+  "description": "第四十七回「沒遮攔核債・百債安償」：四十七英雄章回式單機網頁 RPG。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe4c4",
+  "theme_color": "#6f1d1b",
+  "lang": "zh-Hant-TW",
+  "orientation": "any",
+  "icons": [
+    {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

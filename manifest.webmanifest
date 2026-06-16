@@ -1,16 +1,184 @@
-{
-  "name": "水滸英雄傳：梁山風雲 v5.7.0",
-  "short_name": "梁山風雲 v5.7",
-  "description": "第四十六回「小遮攔核賦・百賦安徵」：四十六英雄章回式單機網頁 RPG。",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#efe4c4",
-  "theme_color": "#6f1d1b",
-  "lang": "zh-Hant-TW",
-  "orientation": "any",
-  "icons": [
-    {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
-  ]
-}
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6f1d1b">
+  <meta name="description" content="《水滸英雄傳：梁山風雲》網頁版單機角色扮演遊戲。跟隨武松至沒遮攔穆弘等四十七名主角踏上英雄路，體驗第四十七回沒遮攔核債與百債安償、四十七英雄切換、債籍立號、本息明示、還款銷帳、抵押退還、急難展期及百債安償署建設。">
+  <meta property="og:title" content="水滸英雄傳：梁山風雲 v5.8.0">
+  <meta property="og:description" content="水墨章回式網頁 RPG：新增沒遮攔穆弘、病大蟲薛永、借據與本息查驗、水泊百債安償、百債安償署與四十七英雄切換。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/icon-512.png">
+  <title>水滸英雄傳：梁山風雲 v5.8.0</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="ink">
+  <noscript>本遊戲需要啟用 JavaScript 才能執行。</noscript>
+
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <button id="brandButton" class="brand" type="button" aria-label="回到遊戲標題">
+        <span class="seal">梁</span>
+        <span>
+          <strong>水滸英雄傳</strong>
+          <small>梁山風雲 v5.8.0</small>
+        </span>
+      </button>
+      <div class="top-actions">
+        <button id="installButton" class="ghost-button hidden" type="button">安裝遊戲</button>
+        <button id="soundButton" class="icon-button" type="button" aria-label="切換音效" title="切換音效">🔊</button>
+        <button id="narrationButton" class="icon-button" type="button" aria-label="開啟語音播報設定" title="語音播報設定">💬</button>
+        <button id="themeButton" class="icon-button" type="button" aria-label="切換顯示模式" title="切換顯示模式">◐</button>
+      </div>
+    </header>
+
+    <main id="screenRoot" class="screen-root" aria-live="polite"></main>
+
+    <footer class="site-footer">
+      <span>古典小說改編｜原創介面與程式</span>
+      <button id="aboutButton" class="text-button" type="button">版本與說明</button>
+    </footer>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-root" aria-live="assertive"></div>
+
+  <template id="titleTemplate">
+    <section class="title-screen">
+      <div class="title-art" role="img" aria-label="水墨山嶺與武松剪影">
+        <div class="sun"></div>
+        <div class="mountain mountain-one"></div>
+        <div class="mountain mountain-two"></div>
+        <div class="hero-silhouette">武</div>
+        <div class="tiger-mark">虎</div>
+      </div>
+      <div class="title-card paper-panel">
+        <p class="eyebrow">章回式單機網頁 RPG</p>
+        <h1>水滸英雄傳<br><span>梁山風雲</span></h1>
+        <p class="title-copy">四十七位英雄由百賦安徵走向百債安償。公共分擔有據之後，高利豪強卻以空白借據、複利暗增、重複收款、超額抵押、以工抵債與災病逼償侵害百姓；沒遮攔穆弘主持核債，病大蟲薛永辨傷護戶，眾頭領將建立借貸有人、本息明示、還款銷帳、抵押退還、急難可展的水泊清償制度。</p>
+        <div class="title-buttons">
+          <button class="primary-button" data-action="new-game" type="button">新開篇章</button>
+          <button class="secondary-button" data-action="continue-game" type="button">續讀存檔</button>
+          <button class="ghost-button" data-action="open-guide" type="button">遊戲指南</button>
+        </div>
+        <p class="save-hint" data-role="save-hint"></p>
+      </div>
+    </section>
+  </template>
+
+  <template id="gameTemplate">
+    <section class="game-screen">
+      <aside class="hero-panel paper-panel">
+        <div class="hero-heading">
+          <div class="portrait" data-role="portrait">武</div>
+          <div>
+            <p class="eyebrow" data-role="chapter-label">第一回</p>
+            <h2 data-role="hero-name">武松</h2>
+            <p class="hero-title" data-role="hero-title">清河縣壯士</p>
+          </div>
+        </div>
+        <div class="resource-block">
+          <div class="resource-line"><span>氣血</span><strong data-role="hp-text"></strong></div>
+          <div class="meter"><i data-role="hp-bar"></i></div>
+          <div class="resource-line"><span>豪氣</span><strong data-role="sp-text"></strong></div>
+          <div class="meter spirit"><i data-role="sp-bar"></i></div>
+          <div class="resource-line"><span>閱歷</span><strong data-role="xp-text"></strong></div>
+          <div class="meter xp"><i data-role="xp-bar"></i></div>
+        </div>
+        <div class="stat-grid">
+          <div><span>等級</span><strong data-role="level"></strong></div>
+          <div><span>武力</span><strong data-role="attack"></strong></div>
+          <div><span>筋骨</span><strong data-role="defense"></strong></div>
+          <div><span>義氣</span><strong data-role="morality"></strong></div>
+          <div><span>銀兩</span><strong data-role="silver"></strong></div>
+          <div><span>酒意</span><strong data-role="drunk"></strong></div>
+        </div>
+        <button class="companion-strip" data-action="open-team" type="button" aria-label="開啟同伴編成">
+          <span class="companion-avatar" data-role="companion-avatar">義</span>
+          <span><small>目前助陣</small><strong data-role="companion-name">尚未編成</strong></span>
+          <em data-role="companion-bond">羈絆－</em>
+        </button>
+        <nav class="hero-nav" aria-label="遊戲功能">
+          <button data-action="open-character" type="button">人物</button>
+          <button data-action="open-roster" type="button">英雄</button>
+          <button data-action="open-team" type="button">同伴</button>
+          <button data-action="open-inventory" type="button">行囊</button>
+          <button data-action="open-quests" type="button">任務</button>
+          <button data-action="open-base" type="button">山寨</button>
+          <button data-action="open-preparation" type="button">整備</button>
+          <button data-action="open-assembly" type="button">座次</button>
+          <button data-action="save-game" type="button">存檔</button>
+        </nav>
+      </aside>
+
+      <section class="adventure-column">
+        <div class="location-banner paper-panel">
+          <div>
+            <p class="eyebrow" data-role="location-region"></p>
+            <h2 data-role="location-name"></h2>
+          </div>
+          <button class="map-button" data-action="open-map" type="button">江湖輿圖</button>
+        </div>
+
+        <div class="scene-card" data-role="scene-card">
+          <div class="scene-visual" data-role="scene-visual">
+            <div class="scene-weather"></div>
+            <div class="scene-caption" data-role="scene-caption"></div>
+          </div>
+          <article class="story-panel paper-panel">
+            <div class="story-toolbar">
+              <p class="speaker" data-role="speaker"></p>
+              <button class="read-aloud-button" data-action="read-current-scene" type="button" aria-label="朗讀目前劇情">▶ 朗讀本段</button>
+            </div>
+            <h3 data-role="story-title"></h3>
+            <div class="story-text" data-role="story-text"></div>
+            <div class="choice-list" data-role="choices"></div>
+          </article>
+        </div>
+
+        <section class="log-panel paper-panel">
+          <div class="panel-heading">
+            <h3>江湖札記</h3>
+            <button class="text-button" data-action="clear-log" type="button">清除</button>
+          </div>
+          <div class="game-log" data-role="log"></div>
+        </section>
+      </section>
+    </section>
+  </template>
+
+  <template id="battleTemplate">
+    <div class="battle-overlay" role="dialog" aria-modal="true" aria-label="戰鬥畫面">
+      <section class="battle-stage">
+        <div class="battle-sky"></div>
+        <div class="battle-enemy">
+          <div class="enemy-avatar" data-role="enemy-avatar"></div>
+          <h2 data-role="enemy-name"></h2>
+          <p data-role="enemy-title"></p>
+          <div class="meter enemy-meter"><i data-role="enemy-hp-bar"></i></div>
+          <strong data-role="enemy-hp-text"></strong>
+        </div>
+        <div class="battle-hero">
+          <div class="hero-avatar" data-role="battle-hero-avatar">武</div>
+          <h2 data-role="battle-hero-name">武松</h2>
+          <div class="meter"><i data-role="battle-hero-hp-bar"></i></div>
+          <strong data-role="battle-hero-hp-text"></strong>
+        </div>
+        <div class="battle-companion hidden" data-role="battle-companion">
+          <div class="battle-companion-avatar" data-role="battle-companion-avatar">義</div>
+          <div><small>江湖助陣</small><strong data-role="battle-companion-name"></strong></div>
+        </div>
+      </section>
+      <section class="battle-console paper-panel">
+        <div class="battle-message" data-role="battle-message"></div>
+        <div class="battle-actions" data-role="battle-actions"></div>
+      </section>
+    </div>
+  </template>
+
+  <script src="game.js" defer></script>
+</body>
+</html>

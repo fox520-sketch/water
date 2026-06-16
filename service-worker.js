@@ -1,32 +1,28 @@
-const CACHE_NAME = 'liangshan-rpg-v5.7.0';
-const APP_SHELL = [
-  './', './index.html', './styles.css', './game.js', './manifest.webmanifest',
-  './assets/icon-192.png', './assets/icon-512.png'
-];
+# 水滸英雄傳：梁山風雲 v5.8.0
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
-});
+水墨章回式單機網頁 RPG，可直接開啟 `index.html` 遊玩，也可部署至 GitHub Pages。
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
-});
+## v5.8.0 新增
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-      return response;
-    }).catch(() => caches.match('./index.html')))
-  );
-});
+- 第四十七回「沒遮攔核債・百債安償」
+- 第四十七名主角：沒遮攔・穆弘
+- 新同伴：病大蟲・薛永
+- 穆弘雙技能「沒遮攔核債」「四債安償」
+- 薛永援護技能「病大蟲護償」
+- 四項查驗：借貸身分、實借本金與本息算法、還款銷帳、抵押退還與急難展期
+- 五階段軍略：債籍立號、本息明示、還款銷帳、抵押退還、急難展期
+- 三場第四十七回主線戰鬥與百債安償演武
+- 新增百債安償署、安心清償所、借據抵押踏勘場及演武場
+- 新增穆弘專屬武器、防具與三項章回成果道具
+- 更新四十七英雄譜、聚義座次、世界地圖、版本資訊與 PWA 快取
+- 支援 v1.0.0～v5.7.0 舊存檔自動升級
+
+## 遊玩方式
+
+1. 解壓縮全部檔案。
+2. 直接開啟 `index.html`。
+3. 存檔保存在瀏覽器本機儲存空間。
+
+## GitHub Pages
+
+將全部檔案上傳至儲存庫根目錄，於 Pages 設定選擇主分支與根目錄即可。
