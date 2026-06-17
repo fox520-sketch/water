@@ -1,13 +1,9 @@
-水滸英雄傳：梁山風雲 v7.1.0（Windows 相容版）
+Liangshan v7.2.0 - Windows Quick Start
 
-解壓縮方式：
-1. 將 ZIP 下載到「下載」或桌面。
-2. 在 ZIP 上按滑鼠右鍵，選擇「全部解壓縮」。
-3. 解壓縮後開啟 Liangshan_v7.1.0 資料夾。
-4. 雙擊 index.html 即可開始遊戲。
+1. Right-click Liangshan_v7.2.0_Windows.zip.
+2. Choose Extract All.
+3. Open the Liangshan_v7.2.0 folder.
+4. Double-click index.html.
 
-本相容版已：
-- 將 ZIP 與內部資料夾改用英文檔名。
-- 移除舊版本封存資料夾，縮短路徑。
-- 使用標準 Deflate ZIP 壓縮。
-- 保留 v7.1.0 全部遊戲功能與 108 回內容。
+All package paths and filenames use English ASCII characters for Windows compatibility.
+Game text is Traditional Chinese (Taiwan).

@@ -1,5 +1,5 @@
-const VERSION = '7.1.0';
-const CACHE = `liangshan-v${VERSION}-deep`;
+const VERSION = '7.2.0';
+const CACHE = `liangshan-v${VERSION}-growth`;
 const CORE = ['./','./index.html','./styles.css','./chapters.js','./game.js','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png'];
 
 self.addEventListener('install', event => {
