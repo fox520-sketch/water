@@ -1,3 +1,453 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#8a3b22">
+  <meta name="description" content="《水滸英雄傳：梁山風雲 v7.4.0 梁山遠征與雲端傳承版》108 回完整網頁 RPG。">
+  <title>水滸英雄傳：梁山風雲 v7.4.0 梁山遠征與雲端傳承版</title>
+  <style>
+:root{
+  color-scheme:light;
+  --bg:#f3ead7;
+  --paper:#fffaf0;
+  --paper-2:#f8efdc;
+  --ink:#2c231d;
+  --muted:#706258;
+  --line:#c9b28e;
+  --accent:#8a3b22;
+  --accent-2:#c47736;
+  --good:#287150;
+  --warn:#a26b16;
+  --danger:#a33832;
+  --shadow:0 12px 34px rgba(63,42,24,.13);
+  --radius:18px;
+  --safe-bottom:max(18px,env(safe-area-inset-bottom));
+  font-family:"Noto Serif TC","PingFang TC","Microsoft JhengHei",serif;
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);background:
+  radial-gradient(circle at 15% 0%,rgba(255,255,255,.75),transparent 30%),
+  repeating-linear-gradient(0deg,rgba(80,55,32,.025),rgba(80,55,32,.025) 1px,transparent 1px,transparent 5px),var(--bg)}
+body[data-theme="dark"]{
+  color-scheme:dark;--bg:#111210;--paper:#1c1e1b;--paper-2:#252820;--ink:#f2ead9;--muted:#b9ae9c;--line:#4d5146;--accent:#d87852;--accent-2:#e4a85e;--good:#73c99e;--warn:#e0b45f;--danger:#ec837d;--shadow:0 14px 38px rgba(0,0,0,.35)
+}
+body[data-theme="paper"]{
+  color-scheme:light;--bg:#fff;--paper:#fff;--paper-2:#f6f6f6;--ink:#000;--muted:#333;--line:#000;--accent:#000;--accent-2:#333;--good:#000;--warn:#000;--danger:#000;--shadow:none
+}
+button,input,select,textarea{font:inherit}
+button,a{touch-action:manipulation}
+a{color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:2px}
+#app{width:min(1180px,100%);margin:auto;padding:18px 18px calc(76px + var(--safe-bottom))}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{display:grid;place-items:center;width:50px;height:50px;border:2px solid var(--accent);border-radius:50%;font-weight:900;font-size:22px;background:var(--paper);box-shadow:var(--shadow)}
+.brand-text{min-width:0}.brand-text b{display:block;font-size:clamp(17px,2.6vw,23px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-text small{color:var(--muted)}
+.top-actions,.actions,.inline-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.hero{position:relative;overflow:hidden;padding:clamp(24px,5vw,58px);border:1px solid var(--line);border-radius:28px;background:
+  linear-gradient(125deg,color-mix(in srgb,var(--paper) 96%,transparent),color-mix(in srgb,var(--paper-2) 90%,transparent));box-shadow:var(--shadow)}
+.hero:after{content:"梁山";position:absolute;right:-16px;bottom:-42px;font-size:clamp(90px,18vw,220px);font-weight:900;color:color-mix(in srgb,var(--accent) 7%,transparent);line-height:1;pointer-events:none}
+.hero>*{position:relative;z-index:1}.eyebrow{font-weight:800;letter-spacing:.16em;color:var(--accent);font-size:13px;text-transform:uppercase}.hero h1{margin:.35em 0 .2em;font-size:clamp(34px,7vw,72px);line-height:1.08;letter-spacing:.02em}.hero h2{margin:0 0 14px;font-size:clamp(17px,3vw,27px);font-weight:650;color:var(--accent)}.hero p{max-width:780px;font-size:clamp(16px,2vw,19px);line-height:1.85;color:var(--muted)}
+.grid{display:grid;gap:16px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h2,.card h3{margin:0 0 10px}.card p{line-height:1.72;margin:.5em 0;color:var(--muted)}.card.success{border-color:var(--good);background:color-mix(in srgb,var(--paper) 92%,var(--good) 8%)}.card.warning{border-color:var(--warn)}.card.current{border:2px solid var(--accent)}
+.metric{display:flex;justify-content:space-between;align-items:end;gap:10px}.metric strong{font-size:clamp(29px,4vw,46px);line-height:1;color:var(--accent)}.metric span{color:var(--muted)}
+.btn{appearance:none;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);padding:11px 17px;font-weight:750;text-decoration:none;cursor:pointer;transition:.16s transform,.16s background,.16s border-color;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px}.btn:hover{transform:translateY(-1px);border-color:var(--accent)}.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.good{background:var(--good);border-color:var(--good);color:#fff}.btn.warn{background:var(--warn);border-color:var(--warn);color:#fff}.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}.btn.icon{width:44px;padding:0}.btn.small{min-height:36px;padding:7px 12px;font-size:14px}
+.tag{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;margin:2px 4px 2px 0;font-size:13px;background:var(--paper-2);color:var(--muted)}.tag.good{border-color:var(--good);color:var(--good)}.tag.warn{border-color:var(--warn);color:var(--warn)}.tag.accent{border-color:var(--accent);color:var(--accent)}
+.nav{position:sticky;top:8px;z-index:20;display:flex;gap:7px;align-items:center;overflow:auto;padding:8px;margin:0 0 16px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);box-shadow:var(--shadow)}.nav .btn{white-space:nowrap}.nav-spacer{flex:1}
+.progress{height:12px;border-radius:999px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s}
+.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 12px}.section-title h2{margin:0}.section-title p{margin:0;color:var(--muted)}
+.chapter-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:10px;margin:14px 0}.field{width:100%;border:1px solid var(--line);border-radius:13px;background:var(--paper);color:var(--ink);padding:11px 13px;min-height:44px}
+.chapter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.chapter-card{position:relative;text-align:left;min-height:190px;cursor:pointer;transition:.16s transform,.16s border-color}.chapter-card:hover{transform:translateY(-2px);border-color:var(--accent)}.chapter-card .chapter-no{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--accent);font-weight:900}.chapter-card .chapter-icon{font-size:34px}.chapter-card h3{font-size:18px;line-height:1.45;margin:10px 0 4px}.chapter-card p{font-size:14px}.chapter-card.completed:after{content:"✓";position:absolute;right:13px;bottom:10px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--good);color:#fff;font-weight:900}.chapter-card.recommended{border:2px solid var(--accent)}
+.portrait{display:flex;gap:14px;align-items:center}.avatar{display:grid;place-items:center;flex:0 0 auto;width:64px;height:64px;border-radius:19px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:28px;font-weight:900;border:2px solid color-mix(in srgb,var(--paper) 70%,transparent)}.portrait h3{margin:0}.portrait p{margin:3px 0}
+.task-list{display:grid;gap:10px}.task{width:100%;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:15px;padding:13px;background:var(--paper);color:var(--ink);cursor:pointer}.task:hover:not(:disabled){border-color:var(--accent)}.task:disabled{opacity:.48;cursor:not-allowed}.task.done{border-color:var(--good);background:color-mix(in srgb,var(--paper) 92%,var(--good) 8%)}.task-icon{font-size:25px;text-align:center}.task b{display:block}.task small{display:block;margin-top:3px;color:var(--muted);line-height:1.5}.task-state{font-weight:900;color:var(--good)}
+.status-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.statline{display:grid;grid-template-columns:54px 1fr auto;gap:8px;align-items:center;margin:10px 0;font-size:14px}.bar{height:13px;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper-2)}.bar i{display:block;height:100%;background:var(--danger)}.bar.sp i{background:var(--accent-2)}
+.battle-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.fighter{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow)}.fighter.enemy{border-color:color-mix(in srgb,var(--danger) 65%,var(--line))}.fighter-head{display:flex;justify-content:space-between;align-items:start;gap:12px}.battle-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:17px}.battle-actions .btn{border-radius:13px}.battle-note{margin-top:13px;padding:10px;border-radius:12px;background:var(--paper-2);color:var(--muted);font-size:14px}.log{max-height:250px;overflow:auto}.log div{padding:9px 0;border-bottom:1px dashed var(--line);line-height:1.55}.log div:first-child{color:var(--accent);font-weight:700}
+.grade-badge{display:inline-grid;place-items:center;width:112px;height:112px;border:4px solid var(--accent);border-radius:50%;float:right;margin:0 0 12px 20px;background:var(--paper);box-shadow:var(--shadow)}.grade-badge span{font-size:51px;line-height:.9;font-weight:950;color:var(--accent)}.grade-badge small{font-weight:800;color:var(--muted)}
+.roster-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.roster-card{padding:14px}.roster-card .avatar{width:50px;height:50px;border-radius:15px;font-size:22px}.roster-card h3{font-size:16px}.roster-card p{font-size:13px}
+.achievement{display:flex;gap:12px;align-items:start;padding:12px 0;border-bottom:1px dashed var(--line)}.achievement:last-child{border:0}.achievement .medal{font-size:27px}.achievement.locked{opacity:.5}
+.modal-backdrop{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.55);backdrop-filter:blur(5px)}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 30px 90px rgba(0,0,0,.35)}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:12px}.modal h2{margin:0}.modal textarea{width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--paper-2);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+.toast{position:relative;z-index:200;width:min(430px,calc(100vw - 30px));margin:8px auto;padding:13px 16px;border-radius:14px;background:var(--ink);color:var(--paper);box-shadow:var(--shadow);animation:toast-in .22s ease}.toast.good{background:var(--good);color:#fff}.toast.warn{background:var(--warn);color:#fff}@keyframes toast-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}#toastRoot{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));z-index:200;pointer-events:none}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}.muted{color:var(--muted)}.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--paper-2);border:1px solid var(--line);border-radius:7px;padding:2px 5px;font-size:.9em}.noscript{margin:30px;padding:20px;border:2px solid #900}
+@media(max-width:900px){.grid.three,.grid.four,.chapter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roster-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.status-grid{grid-template-columns:1fr}}
+@media(max-width:650px){#app{padding:12px 12px calc(70px + var(--safe-bottom))}.topbar{align-items:flex-start}.brand-mark{width:43px;height:43px}.top-actions .label{display:none}.grid.two,.grid.three,.grid.four,.chapter-grid,.battle-grid{grid-template-columns:1fr}.roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chapter-toolbar{grid-template-columns:1fr 1fr}.chapter-toolbar input{grid-column:1/-1}.hero{padding:25px 20px}.hero h1{font-size:36px}.nav{top:4px;border-radius:16px}.battle-actions{grid-template-columns:1fr}.grade-badge{float:none;margin:0 0 14px}.chapter-card{min-height:0}.task{grid-template-columns:36px 1fr auto;padding:12px}.fighter{padding:16px}}
+@media(max-width:380px){.roster-grid{grid-template-columns:1fr}.top-actions .btn:not(.icon){display:none}.hero h1{font-size:31px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media print{.topbar,.nav,.actions,.top-actions,.btn{display:none!important}body{background:#fff}#app{width:100%;padding:0}.card,.hero{box-shadow:none;break-inside:avoid}}
+
+/* v7.1.0 百八英雄深度玩法版 */
+.update-banner{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:180;width:min(720px,calc(100vw - 24px));display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border:2px solid var(--accent);border-radius:18px;background:var(--paper);box-shadow:0 20px 60px rgba(0,0,0,.28)}
+.update-banner b{display:block}.update-banner small{display:block;color:var(--muted);margin-top:3px}.update-banner .actions{flex-wrap:nowrap}
+.flow-list{display:grid;gap:11px}.flow-step{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow)}.flow-step.current{border:2px solid var(--accent);background:color-mix(in srgb,var(--paper) 92%,var(--accent) 8%)}.flow-step.done{border-color:var(--good);background:color-mix(in srgb,var(--paper) 92%,var(--good) 8%)}.flow-step.locked{opacity:.55}.flow-index{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--paper-2);border:1px solid var(--line);font-weight:900}.flow-step.current .flow-index{background:var(--accent);color:#fff}.flow-step.done .flow-index{background:var(--good);color:#fff}.flow-step h3{margin:0 0 4px}.flow-step p{margin:0;color:var(--muted);line-height:1.55}.flow-step .btn{min-width:96px}
+.skill-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.skill-card{border:1px solid var(--line);border-radius:14px;padding:13px;background:var(--paper-2)}.skill-card b{display:block;color:var(--accent);margin-bottom:4px}.skill-card small{line-height:1.55;color:var(--muted)}
+.boss-mechanic{margin-top:12px;padding:12px;border:1px solid var(--danger);border-radius:14px;background:color-mix(in srgb,var(--paper) 92%,var(--danger) 8%)}.boss-mechanic b{color:var(--danger)}
+.shop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.shop-card{display:flex;flex-direction:column}.shop-card .shop-icon{font-size:42px}.shop-card .shop-level{font-weight:900;color:var(--accent);font-size:20px}.shop-card .btn{margin-top:auto}.price{font-weight:900;color:var(--warn)}
+.filter-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}.recent-mark{position:absolute;left:13px;bottom:10px;font-size:12px;color:var(--accent);font-weight:800}.draft-mark{border-color:var(--warn)!important}.chapter-card.draft-mark:before{content:"進行中";position:absolute;right:12px;top:50px;background:var(--warn);color:#fff;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800}
+.inventory-line{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.level-pips{display:flex;gap:4px;margin:8px 0}.level-pips i{width:18px;height:7px;border-radius:999px;background:var(--line)}.level-pips i.on{background:var(--accent)}
+.status-effect{display:inline-flex;padding:3px 8px;border:1px solid var(--warn);border-radius:999px;color:var(--warn);font-size:12px;margin:2px}.status-effect.good{border-color:var(--good);color:var(--good)}
+@media(max-width:900px){.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.chapter-toolbar{grid-template-columns:1fr 1fr}.chapter-toolbar input{grid-column:1/-1}.shop-grid,.skill-panel{grid-template-columns:1fr}.flow-step{grid-template-columns:36px 1fr}.flow-step>.btn{grid-column:1/-1;width:100%}.update-banner{align-items:flex-start;flex-direction:column}.update-banner .actions{width:100%;flex-wrap:wrap}.update-banner .btn{flex:1}}
+
+/* v7.2.0 梁山聚義養成版 */
+.hero.compact{padding:32px}.hero.compact h1{font-size:clamp(32px,6vw,58px)}
+.materials-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow)}
+.materials-bar span{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:var(--paper-2);font-weight:750;font-size:14px}
+.team-mini{display:flex;gap:11px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}.team-mini:last-of-type{border-bottom:0}.team-mini .avatar{width:45px;height:45px;border-radius:13px;font-size:20px}.team-mini b,.team-mini small{display:block}.team-mini small{color:var(--muted);margin-top:3px}
+.formation-preview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.formation-card{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--paper-2)}.formation-card .avatar{width:48px;height:48px;border-radius:14px;font-size:21px}.formation-card b,.formation-card small{display:block}.formation-card small{color:var(--muted);margin-top:3px}.bond-banner{margin-top:12px;padding:11px 13px;border:1px solid var(--good);border-radius:13px;background:color-mix(in srgb,var(--paper) 90%,var(--good) 10%);color:var(--good)}
+.difficulty-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px}
+.formation-board{margin-top:16px}.formation-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:12px;align-items:stretch;margin:12px 0}.formation-row>b{display:grid;place-items:center;border:1px solid var(--line);border-radius:14px;background:var(--paper-2)}.formation-slot{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:13px;background:var(--paper)}.formation-slot .avatar{width:50px;height:50px;border-radius:15px;font-size:22px}.formation-slot>div{min-width:0;flex:1}.formation-slot b,.formation-slot small{display:block}.formation-slot small{color:var(--muted);margin-top:5px}.formation-slot select{margin-top:6px}
+.hero-growth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.growth-card{display:flex;flex-direction:column}.growth-card>.btn{margin-top:auto;align-self:flex-start}.passive-box{padding:11px;border:1px solid var(--accent);border-radius:13px;background:color-mix(in srgb,var(--paper) 93%,var(--accent) 7%);margin:10px 0}.passive-box b,.passive-box small{display:block}.passive-box small{margin-top:4px;color:var(--muted);line-height:1.5}.skill-tree{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}.tree-node{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);color:var(--ink);padding:9px 7px;font-weight:800;cursor:pointer}.tree-node small{display:block;color:var(--muted);font-weight:500;margin-top:4px}.tree-node:disabled{opacity:.5;cursor:not-allowed}.equipment-line{display:grid;gap:4px;padding:9px 0;font-size:14px;color:var(--muted)}.hero-search{width:min(330px,100%)}
+.equipment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.equipment-card{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--paper-2)}.equipment-card.good{border-color:var(--good)}.equipment-card.accent{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.equipment-icon{font-size:36px}.equipment-card h3{margin:5px 0}.equipment-card p{margin:3px 0;color:var(--muted);line-height:1.5}.equipment-actions{display:flex;gap:7px;flex-direction:column}.narrow{width:auto;min-width:150px}.shop-icon{font-size:40px}
+.base-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.building-card{display:flex;flex-direction:column}.building-icon{font-size:46px}.building-card>.btn{margin-top:auto;border-radius:14px;white-space:normal}.building-card small{display:block;color:var(--muted);line-height:1.55;margin-bottom:12px}
+.battle-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;padding:13px 15px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow)}.battle-toolbar b,.battle-toolbar small{display:block}.battle-toolbar small{color:var(--muted);margin-top:3px}.combat-board{display:grid;grid-template-columns:1fr 1fr;gap:16px}.combat-board h2{margin:0 0 10px}.combat-team{display:grid;gap:10px}.unit-card{width:100%;text-align:left;border:1px solid var(--line);border-radius:16px;padding:13px;background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}button.unit-card{cursor:pointer}.unit-card.active{border:2px solid var(--good);background:color-mix(in srgb,var(--paper) 92%,var(--good) 8%)}.unit-card.targeted{border:2px solid var(--danger);background:color-mix(in srgb,var(--paper) 92%,var(--danger) 8%)}.unit-card.fallen{opacity:.42;filter:grayscale(1)}.unit-head{display:flex;gap:10px;align-items:center;margin-bottom:7px}.unit-head b,.unit-head small{display:block}.unit-head small{color:var(--muted);margin-top:2px}.small-avatar{width:42px;height:42px;border-radius:12px;font-size:19px}.mechanic-note{display:block;margin-top:8px;color:var(--danger);line-height:1.45}.active-panel{margin-top:16px}.active-panel .battle-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:950px){.hero-growth-grid,.base-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.equipment-grid{grid-template-columns:1fr}.active-panel .battle-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.formation-preview,.combat-board,.hero-growth-grid,.base-grid{grid-template-columns:1fr}.formation-row{grid-template-columns:1fr}.formation-row>b{padding:9px}.equipment-card{grid-template-columns:45px 1fr}.equipment-actions{grid-column:1/-1;flex-direction:row}.battle-toolbar{align-items:flex-start;flex-direction:column}.battle-toolbar .actions{width:100%}.active-panel .battle-actions{grid-template-columns:1fr}.skill-tree{grid-template-columns:1fr}.materials-bar{gap:6px}.materials-bar span{font-size:12px}.formation-slot{align-items:flex-start}}
+
+/* v7.3.0 梁山英雄覺醒與戰略回合版 */
+.warning-banner{margin:0 0 14px;padding:12px 15px;border:1px solid var(--warn);border-radius:14px;background:color-mix(in srgb,var(--paper) 90%,var(--warn) 10%);color:var(--warn);font-weight:750}
+.story-choice{padding:16px;border:1px solid var(--accent);border-radius:18px;background:color-mix(in srgb,var(--paper) 94%,var(--accent) 6%)}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.choice-card{appearance:none;text-align:left;border:1px solid var(--line);border-radius:16px;padding:15px;background:var(--paper);color:var(--ink);cursor:pointer}.choice-card:hover{border-color:var(--accent);transform:translateY(-1px)}.choice-card b,.choice-card small{display:block}.choice-card small{margin-top:6px;line-height:1.55;color:var(--muted)}.choice-card.selected{border:2px solid var(--accent);background:color-mix(in srgb,var(--paper) 90%,var(--accent) 10%)}.choice-summary{padding:12px 14px;border-left:4px solid var(--accent);border-radius:10px;background:var(--paper-2)}
+.intel-panel{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:14px;border:1px solid var(--warn);border-radius:16px;background:color-mix(in srgb,var(--paper) 94%,var(--warn) 6%)}.intel-panel .intel-icon{font-size:34px}.intel-panel h3{margin:0 0 5px}.intel-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.initiative-strip{display:flex;gap:7px;overflow-x:auto;padding:10px;margin-bottom:14px;border:1px solid var(--line);border-radius:15px;background:var(--paper);scrollbar-width:thin}.initiative-token{flex:0 0 auto;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);font-size:13px;white-space:nowrap}.initiative-token.current{border:2px solid var(--accent);font-weight:900;background:color-mix(in srgb,var(--paper) 86%,var(--accent) 14%)}.initiative-token.ally{color:var(--good)}.initiative-token.enemy{color:var(--danger)}.initiative-token.fallen{opacity:.4;text-decoration:line-through}
+.boss-phase-alert{margin:0 0 12px;padding:12px 14px;border:2px solid var(--danger);border-radius:15px;background:color-mix(in srgb,var(--paper) 88%,var(--danger) 12%);color:var(--danger);font-weight:900;animation:phasePulse .45s ease-out}@keyframes phasePulse{from{transform:scale(.98);opacity:.45}to{transform:scale(1);opacity:1}}
+.formation-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.branch-row{display:grid;grid-template-columns:74px 1fr 1fr;gap:8px;align-items:stretch;margin:9px 0}.branch-row>b{display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--paper-2);font-size:14px;text-align:center}.tree-node.selected{border:2px solid var(--accent);background:color-mix(in srgb,var(--paper) 90%,var(--accent) 10%)}
+.awakening-box{margin:8px 0;padding:11px;border:1px dashed var(--line);border-radius:13px;background:var(--paper-2)}.awakening-box b,.awakening-box small{display:block}.awakening-box small{margin-top:4px;color:var(--muted);line-height:1.5}.awakening-box.awakened{border:2px solid var(--accent);background:linear-gradient(135deg,color-mix(in srgb,var(--paper) 86%,var(--accent) 14%),var(--paper));box-shadow:inset 0 0 24px color-mix(in srgb,var(--accent) 11%,transparent)}
+.equipment-picker{display:grid;gap:9px;max-height:min(62vh,620px);overflow:auto;padding-right:3px}.pick-item{appearance:none;width:100%;display:grid;grid-template-columns:1fr auto;gap:5px 12px;text-align:left;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--paper);color:var(--ink);cursor:pointer}.pick-item:hover,.pick-item.selected{border-color:var(--accent);background:color-mix(in srgb,var(--paper) 92%,var(--accent) 8%)}.pick-item b{grid-column:1/-1}.pick-item small{color:var(--muted)}.pick-item em{font-style:normal;color:var(--warn);font-size:13px}.set-guide{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 14px}
+.backup-list{display:grid;gap:8px;max-height:260px;overflow:auto}.backup-row{appearance:none;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--paper);color:var(--ink);cursor:pointer}.backup-row:hover{border-color:var(--accent)}.backup-row b,.backup-row small{display:block}.backup-row small{color:var(--muted)}
+.page-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:18px 0}.page-head h1{margin:.2em 0}.page-head p{margin:0;color:var(--muted);line-height:1.65}.muted{color:var(--muted)}
+.ending{text-align:center;padding:clamp(26px,6vw,62px);border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:var(--shadow)}.grade.huge{display:grid;place-items:center;width:120px;height:120px;margin:10px auto;border:5px solid var(--accent);border-radius:50%;font-size:64px;font-weight:950;color:var(--accent)}.achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;text-align:left;margin:20px auto;max-width:760px}
+@media(max-width:760px){.choice-grid,.achievement-grid{grid-template-columns:1fr}.branch-row{grid-template-columns:1fr}.branch-row>b{padding:8px}.page-head{align-items:stretch;flex-direction:column}.intel-panel{grid-template-columns:1fr}.pick-item{grid-template-columns:1fr}.backup-row{align-items:flex-start;flex-direction:column}.initiative-token{font-size:12px}.boss-phase-alert{font-size:14px}}
+
+/* v7.4.0 梁山遠征與雲端傳承版 */
+body{font-size:calc(16px * var(--user-font-scale,1))}
+.skip-link{position:fixed;left:12px;top:-80px;z-index:999;padding:10px 14px;border-radius:10px;background:var(--ink);color:var(--paper);font-weight:800}.skip-link:focus{top:10px}
+body.high-contrast{--bg:#000;--paper:#000;--paper-2:#111;--ink:#fff;--muted:#fff;--line:#fff;--accent:#ffdf00;--accent-2:#00e5ff;--good:#57ff9a;--warn:#ffd45c;--danger:#ff7777;--shadow:none}
+body.high-contrast .btn.primary,body.high-contrast .btn.good,body.high-contrast .btn.danger{color:#000}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+body.hide-keyboard-hints kbd{display:none}
+kbd{display:inline-grid;place-items:center;min-width:21px;padding:1px 5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--paper-2);font-size:.75em;color:var(--muted)}
+.btn.tiny{min-height:32px;padding:5px 9px;font-size:12px}
+.check-row{display:flex;gap:9px;align-items:center;padding:9px 0}.check-row input{width:20px;height:20px}
+.craft-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:14px 0}.craft-btn{flex-direction:column;border-radius:14px;white-space:normal}.craft-btn small{font-weight:500;color:var(--muted)}
+.six-slot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.equip-slot{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:6px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2)}.equip-slot span{font-size:12px;color:var(--muted)}.equip-slot b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.equipment-card.locked{box-shadow:inset 0 0 0 2px var(--warn)}
+.production-card{margin-bottom:16px}.dispatch-grid,.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.dispatch-card,.route-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--paper-2)}.route-card{display:flex;flex-direction:column}.route-card .btn{margin-top:auto}.route-icon{font-size:36px}.dispatch-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.endgame-card{display:flex;flex-direction:column}.endgame-card .btn{margin-top:auto}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare-grid section{padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--paper-2)}
+.branch-ending{max-width:780px;margin:16px auto;text-align:left;border:2px solid var(--accent)}
+.modal{max-height:90vh;overflow:auto}.modal label{display:block;margin:10px 0}.modal label.check-row{display:flex}
+.status-effect{display:inline-block;margin:2px;padding:3px 7px;border-radius:999px;border:1px solid var(--danger);font-size:12px;color:var(--danger)}.status-effect.good{border-color:var(--good);color:var(--good)}
+@media(max-width:1050px){.craft-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.route-grid,.dispatch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.craft-grid,.route-grid,.dispatch-grid,.six-slot-grid,.compare-grid{grid-template-columns:1fr}.dispatch-form{grid-template-columns:1fr}.equip-slot{grid-template-columns:48px 1fr auto}.grid.three,.grid.four{grid-template-columns:1fr}.top-actions{gap:5px}.nav{border-radius:14px}.chapter-toolbar{grid-template-columns:1fr}.chapter-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body data-theme="ink">
+  <div id="app" aria-live="polite"></div>
+  <div id="updateRoot" aria-live="polite"></div>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" aria-live="assertive"></div>
+  <noscript><div class="noscript">本遊戲需要啟用 JavaScript 才能遊玩。</div></noscript>
+<script>
+/* 水滸英雄傳：梁山風雲 v7.4.0 完整章回資料 */
+(() => {
+  'use strict';
+  const chapters = [{"number":1,"name":"武松","nickname":"行者","title":"景陽岡打虎・武松初聚義","focus":"山道旅人與猛獸危機","icon":"🐅","kind":"story","companion":"魯達","companionNickname":"花和尚","era":"經典篇"},{"number":2,"name":"魯達","nickname":"花和尚","title":"魯提轄拳打鎮關西","focus":"市井欺壓與弱者救援","icon":"🥊","kind":"justice","companion":"林沖","companionNickname":"豹子頭","era":"經典篇"},{"number":3,"name":"林沖","nickname":"豹子頭","title":"林教頭風雪山神廟","focus":"權勢陷害與驛路追殺","icon":"❄️","kind":"story","companion":"楊志","companionNickname":"青面獸","era":"經典篇"},{"number":4,"name":"楊志","nickname":"青面獸","title":"吳用智取生辰綱","focus":"官運押送與暑路風險","icon":"🎁","kind":"transport","companion":"宋江","companionNickname":"呼保義","era":"經典篇"},{"number":5,"name":"宋江","nickname":"呼保義","title":"宋江私放晁蓋","focus":"案牘追查與義法抉擇","icon":"📜","kind":"justice","companion":"李逵","companionNickname":"黑旋風","era":"經典篇"},{"number":6,"name":"李逵","nickname":"黑旋風","title":"江州劫法場・白龍廟聚義","focus":"牢城冤案與法場救援","icon":"🪓","kind":"justice","companion":"扈三娘","companionNickname":"一丈青","era":"經典篇"},{"number":7,"name":"扈三娘","nickname":"一丈青","title":"三打祝家莊","focus":"莊寨迷路與民戶保全","icon":"🏯","kind":"military","companion":"呼延灼","companionNickname":"雙鞭","era":"經典篇"},{"number":8,"name":"呼延灼","nickname":"雙鞭","title":"鉤鐮槍大破連環馬","focus":"連環騎陣與戰馬安置","icon":"🐎","kind":"military","companion":"盧俊義","companionNickname":"玉麒麟","era":"經典篇"},{"number":9,"name":"盧俊義","nickname":"玉麒麟","title":"曾頭市破・玉麒麟入山","focus":"莊園陷害與寨戰善後","icon":"🦄","kind":"story","companion":"公孫勝","companionNickname":"入雲龍","era":"經典篇"},{"number":10,"name":"公孫勝","nickname":"入雲龍","title":"菊花會論路・入雲龍歸山","focus":"招安分歧與山寨議決","icon":"☁️","kind":"justice","companion":"張清","companionNickname":"沒羽箭","era":"經典篇"},{"number":11,"name":"張清","nickname":"沒羽箭","title":"童貫兵退・高俅艦破","focus":"水陸聯戰與落水救援","icon":"🪨","kind":"military","companion":"花榮","companionNickname":"小李廣","era":"經典篇"},{"number":12,"name":"花榮","nickname":"小李廣","title":"三約受詔・雁門鎖關","focus":"受詔條件與邊關守備","icon":"🏹","kind":"military","companion":"瓊英","companionNickname":"瓊矢鏃","era":"經典篇"},{"number":13,"name":"瓊英","nickname":"瓊矢鏃","title":"瓊英飛石破幻霧","focus":"幻霧徵糧與村寨避戰","icon":"💎","kind":"story","companion":"燕青","companionNickname":"浪子","era":"經典篇"},{"number":14,"name":"燕青","nickname":"浪子","title":"燕青易服探宛州","focus":"潛行偵查與民船撤離","icon":"🎭","kind":"stealth","companion":"張順","companionNickname":"浪裡白條","era":"經典篇"},{"number":15,"name":"張順","nickname":"浪裡白條","title":"張順測潮入湧金門","focus":"潮汐夜襲與水門救援","icon":"🌊","kind":"water","companion":"戴宗","companionNickname":"神行太保","era":"經典篇"},{"number":16,"name":"戴宗","nickname":"神行太保","title":"戴宗神行接急援","focus":"傷兵轉送與軍民班師","icon":"💨","kind":"health","companion":"朱武","companionNickname":"神機軍師","era":"經典篇"},{"number":17,"name":"朱武","nickname":"神機軍師","title":"朱武四門護功冊","focus":"功冊核驗與撫卹公開","icon":"🧭","kind":"civic","companion":"蕭讓","companionNickname":"聖手書生","era":"經典篇"},{"number":18,"name":"蕭讓","nickname":"聖手書生","title":"蕭讓鐵筆驗田契","focus":"田契查驗與安業分籍","icon":"✒️","kind":"civic","companion":"裴宣","companionNickname":"鐵面孔目","era":"經典篇"},{"number":19,"name":"裴宣","nickname":"鐵面孔目","title":"裴宣鐵面開公議","focus":"公開審理與止私刑","icon":"⚖️","kind":"justice","companion":"樂和","companionNickname":"鐵叫子","era":"經典篇"},{"number":20,"name":"樂和","nickname":"鐵叫子","title":"樂和傳聲破偽榜","focus":"公告核真與證人保護","icon":"📣","kind":"civic","companion":"金大堅","companionNickname":"玉臂匠","era":"經典篇"},{"number":21,"name":"金大堅","nickname":"玉臂匠","title":"金大堅玉臂驗通憑","focus":"印信防偽與跨處通驗","icon":"🪪","kind":"civic","companion":"孟康","companionNickname":"玉幡竿","era":"經典篇"},{"number":22,"name":"孟康","nickname":"玉幡竿","title":"孟康玉幡定舟載","focus":"船籍載重與公共航運","icon":"⛵","kind":"water","companion":"侯健","companionNickname":"通臂猿","era":"經典篇"},{"number":23,"name":"侯健","nickname":"通臂猿","title":"侯健通臂織百工","focus":"工服護具與作業安全","icon":"🧵","kind":"trade","companion":"湯隆","companionNickname":"金錢豹子","era":"經典篇"},{"number":24,"name":"湯隆","nickname":"金錢豹子","title":"湯隆金錢鍛百器","focus":"器具量規與召回制度","icon":"🔨","kind":"trade","companion":"凌振","companionNickname":"轟天雷","era":"經典篇"},{"number":25,"name":"凌振","nickname":"轟天雷","title":"凌振轟天鳴聯防","focus":"警號辨識與災害疏散","icon":"💥","kind":"military","companion":"皇甫端","companionNickname":"紫髯伯","era":"經典篇"},{"number":26,"name":"皇甫端","nickname":"紫髯伯","title":"皇甫端紫髯辨疫","focus":"人畜檢疫與隔離補償","icon":"🐴","kind":"health","companion":"曹正","companionNickname":"操刀鬼","era":"經典篇"},{"number":27,"name":"曹正","nickname":"操刀鬼","title":"曹正操刀驗百膳","focus":"食材溯源與留樣召回","icon":"🍲","kind":"health","companion":"孫二娘","companionNickname":"母夜叉","era":"經典篇"},{"number":28,"name":"孫二娘","nickname":"母夜叉","title":"孫二娘護驛安百宿","focus":"旅宿登記與夜間求援","icon":"🏮","kind":"transport","companion":"張青","companionNickname":"菜園子","era":"經典篇"},{"number":29,"name":"張青","nickname":"菜園子","title":"張青菜園封百包","focus":"寄件封籤與遺失理賠","icon":"📦","kind":"transport","companion":"顧大嫂","companionNickname":"母大蟲","era":"經典篇"},{"number":30,"name":"顧大嫂","nickname":"母大蟲","title":"顧大嫂驗貨保百市","focus":"商品真樣與退換賠付","icon":"🛒","kind":"trade","companion":"孫新","companionNickname":"小尉遲","era":"經典篇"},{"number":31,"name":"孫新","nickname":"小尉遲","title":"孫新巡倉安百糧","focus":"糧倉驗收與輪儲救濟","icon":"🌾","kind":"trade","companion":"解珍","companionNickname":"兩頭蛇","era":"經典篇"},{"number":32,"name":"解珍","nickname":"兩頭蛇","title":"解珍辨跡護百林","focus":"禁獵清陷與山林防火","icon":"🌲","kind":"wild","companion":"解寶","companionNickname":"雙尾蠍","era":"經典篇"},{"number":33,"name":"解寶","nickname":"雙尾蠍","title":"解寶辨藥安百採","focus":"藥材辨種與留根乾燥","icon":"🌿","kind":"health","companion":"鄒淵","companionNickname":"出林龍","era":"經典篇"},{"number":34,"name":"鄒淵","nickname":"出林龍","title":"鄒淵驗泉安百水","focus":"泉井界源與飲水煮沸","icon":"💧","kind":"health","companion":"鄒潤","companionNickname":"獨角龍","era":"經典篇"},{"number":35,"name":"鄒潤","nickname":"獨角龍","title":"獨角龍疏渠・百田安灌","focus":"農渠分水與旱澇調度","icon":"🚜","kind":"civic","companion":"陶宗旺","companionNickname":"九尾龜","era":"制度續篇"},{"number":36,"name":"陶宗旺","nickname":"九尾龜","title":"九尾龜築路・百道安行","focus":"道路築養與坑洞通報","icon":"🛣️","kind":"transport","companion":"杜遷","companionNickname":"摸著天","era":"制度續篇"},{"number":37,"name":"杜遷","nickname":"摸著天","title":"摸著天量屋・百居安住","focus":"房屋丈量與居住安全","icon":"🏠","kind":"civic","companion":"宋萬","companionNickname":"雲裡金剛","era":"制度續篇"},{"number":38,"name":"宋萬","nickname":"雲裡金剛","title":"雲裡金剛巡坊・百鄰安守","focus":"鄰里巡守與弱戶關懷","icon":"🏘️","kind":"civic","companion":"朱貴","companionNickname":"旱地忽律","era":"制度續篇"},{"number":39,"name":"朱貴","nickname":"旱地忽律","title":"旱地忽律辨訊・百信安傳","focus":"消息核實與謠言止散","icon":"📨","kind":"civic","companion":"朱富","companionNickname":"笑面虎","era":"制度續篇"},{"number":40,"name":"朱富","nickname":"笑面虎","title":"笑面虎聽訴・百訴安解","focus":"申訴受理與調解追蹤","icon":"🗣️","kind":"justice","companion":"李雲","companionNickname":"青眼虎","era":"制度續篇"},{"number":41,"name":"李雲","nickname":"青眼虎","title":"青眼虎勘案・百案安查","focus":"現場勘驗與證物保全","icon":"🔍","kind":"justice","companion":"杜興","companionNickname":"鬼臉兒","era":"制度續篇"},{"number":42,"name":"杜興","nickname":"鬼臉兒","title":"鬼臉兒核契・百契安信","focus":"契約明示與違約救濟","icon":"🤝","kind":"justice","companion":"李應","companionNickname":"撲天雕","era":"制度續篇"},{"number":43,"name":"李應","nickname":"撲天雕","title":"撲天雕清產・百產安籍","focus":"財產清冊與權屬登記","icon":"🗂️","kind":"civic","companion":"朱仝","companionNickname":"美髯公","era":"制度續篇"},{"number":44,"name":"朱仝","nickname":"美髯公","title":"美髯公核戶・百戶安名","focus":"戶籍核名與身分補登","icon":"👨‍👩‍👧","kind":"civic","companion":"雷橫","companionNickname":"插翅虎","era":"制度續篇"},{"number":45,"name":"雷橫","nickname":"插翅虎","title":"插翅虎核役・百役安任","focus":"差役派任與工時保障","icon":"🪽","kind":"civic","companion":"穆春","companionNickname":"小遮攔","era":"制度續篇"},{"number":46,"name":"穆春","nickname":"小遮攔","title":"小遮攔核賦・百賦安徵","focus":"賦稅計算與弱戶減免","icon":"🧾","kind":"civic","companion":"穆弘","companionNickname":"沒遮攔","era":"制度續篇"},{"number":47,"name":"穆弘","nickname":"沒遮攔","title":"沒遮攔核債・百債安償","focus":"債務清冊與公平清償","icon":"💰","kind":"justice","companion":"薛永","companionNickname":"病大蟲","era":"制度續篇"},{"number":48,"name":"薛永","nickname":"病大蟲","title":"病大蟲核藝・百藝安演","focus":"街頭技藝與演出安全","icon":"🎪","kind":"trade","companion":"施恩","companionNickname":"金眼彪","era":"制度續篇"},{"number":49,"name":"施恩","nickname":"金眼彪","title":"金眼彪巡肆・百肆安營","focus":"店面租用與營業秩序","icon":"🏪","kind":"trade","companion":"李立","companionNickname":"催命判官","era":"制度續篇"},{"number":50,"name":"李立","nickname":"催命判官","title":"催命判官察店・百旅安宿","focus":"沿江客棧與旅商安全","icon":"🛏️","kind":"transport","companion":"李俊","companionNickname":"混江龍","era":"制度續篇"},{"number":51,"name":"李俊","nickname":"混江龍","title":"混江龍巡渡・百渡安航","focus":"渡船票價與風浪停航","icon":"🚤","kind":"water","companion":"童威","companionNickname":"出洞蛟","era":"制度續篇"},{"number":52,"name":"童威","nickname":"出洞蛟","title":"出洞蛟潛救・百溺安援","focus":"潛水救援與落水者定位","icon":"🤿","kind":"water","companion":"童猛","companionNickname":"翻江蜃","era":"百業聚義篇"},{"number":53,"name":"童猛","nickname":"翻江蜃","title":"翻江蜃撈沉・百舟安復","focus":"沉船打撈與航道復原","icon":"⚓","kind":"water","companion":"阮小二","companionNickname":"立地太歲","era":"百業聚義篇"},{"number":54,"name":"阮小二","nickname":"立地太歲","title":"立地太歲護漁・百漁安生","focus":"漁區界線與禁漁復育","icon":"🐟","kind":"water","companion":"張橫","companionNickname":"船火兒","era":"百業聚義篇"},{"number":55,"name":"張橫","nickname":"船火兒","title":"船火兒定港・百港安泊","focus":"碼頭泊位與夜航燈號","icon":"🛶","kind":"water","companion":"阮小五","companionNickname":"短命二郎","era":"百業聚義篇"},{"number":56,"name":"阮小五","nickname":"短命二郎","title":"短命二郎清汊・百汊安流","focus":"支流水道與淤積清理","icon":"🏞️","kind":"water","companion":"阮小七","companionNickname":"活閻羅","era":"百業聚義篇"},{"number":57,"name":"阮小七","nickname":"活閻羅","title":"活閻羅巡湖・百湖安治","focus":"湖區巡查與水域共治","icon":"🫧","kind":"water","companion":"楊雄","companionNickname":"病關索","era":"百業聚義篇"},{"number":58,"name":"楊雄","nickname":"病關索","title":"病關索巡獄・百囚安審","focus":"羈押登記與冤案覆核","icon":"⛓️","kind":"justice","companion":"石秀","companionNickname":"拼命三郎","era":"百業聚義篇"},{"number":59,"name":"石秀","nickname":"拼命三郎","title":"拼命三郎護證・百證安存","focus":"證人保護與證詞留存","icon":"🛡️","kind":"justice","companion":"柴進","companionNickname":"小旋風","era":"百業聚義篇"},{"number":60,"name":"柴進","nickname":"小旋風","title":"小旋風濟困・百困安助","focus":"急難救助與資源轉介","icon":"🌪️","kind":"civic","companion":"關勝","companionNickname":"大刀","era":"百業聚義篇"},{"number":61,"name":"關勝","nickname":"大刀","title":"大刀定軍・百軍安陣","focus":"軍令分層與撤退秩序","icon":"🗡️","kind":"military","companion":"秦明","companionNickname":"霹靂火","era":"百業聚義篇"},{"number":62,"name":"秦明","nickname":"霹靂火","title":"霹靂火控險・百火安防","focus":"火攻管制與營火安全","icon":"🔥","kind":"military","companion":"董平","companionNickname":"雙槍將","era":"百業聚義篇"},{"number":63,"name":"董平","nickname":"雙槍將","title":"雙槍將巡騎・百騎安馭","focus":"騎隊訓練與馬匹照護","icon":"⚔️","kind":"military","companion":"徐寧","companionNickname":"金槍手","era":"百業聚義篇"},{"number":64,"name":"徐寧","nickname":"金槍手","title":"金槍手校械・百械安操","focus":"兵械校驗與操作訓練","icon":"🔱","kind":"military","companion":"索超","companionNickname":"急先鋒","era":"百業聚義篇"},{"number":65,"name":"索超","nickname":"急先鋒","title":"急先鋒護遞・百驛安達","focus":"急件分級與驛路接力","icon":"🏇","kind":"transport","companion":"劉唐","companionNickname":"赤髮鬼","era":"百業聚義篇"},{"number":66,"name":"劉唐","nickname":"赤髮鬼","title":"赤髮鬼守夜・百夜安巡","focus":"夜間巡邏與暗巷照明","icon":"🌙","kind":"civic","companion":"史進","companionNickname":"九紋龍","era":"百業聚義篇"},{"number":67,"name":"史進","nickname":"九紋龍","title":"九紋龍練武・百武安教","focus":"武藝教學與演練防護","icon":"🐉","kind":"military","companion":"黃信","companionNickname":"鎮三山","era":"百業聚義篇"},{"number":68,"name":"黃信","nickname":"鎮三山","title":"鎮三山巡境・百境安界","focus":"山境界碑與越界糾紛","icon":"⛰️","kind":"civic","companion":"孫立","companionNickname":"病尉遲","era":"百業聚義篇"},{"number":69,"name":"孫立","nickname":"病尉遲","title":"病尉遲整隊・百隊安訓","focus":"隊伍編成與新兵訓練","icon":"🛡️","kind":"military","companion":"宣贊","companionNickname":"醜郡馬","era":"百業聚義篇"},{"number":70,"name":"宣贊","nickname":"醜郡馬","title":"醜郡馬核門・百門安防","focus":"城門通行與人車分流","icon":"🚪","kind":"military","companion":"郝思文","companionNickname":"井木犴","era":"百業聚義篇"},{"number":71,"name":"郝思文","nickname":"井木犴","title":"井木犴測寨・百寨安築","focus":"營寨測量與防風排水","icon":"📐","kind":"military","companion":"韓滔","companionNickname":"百勝將","era":"百業聚義篇"},{"number":72,"name":"韓滔","nickname":"百勝將","title":"百勝將巡哨・百哨安聯","focus":"哨站輪值與聯防通報","icon":"🚩","kind":"military","companion":"彭玘","companionNickname":"天目將","era":"百業聚義篇"},{"number":73,"name":"彭玘","nickname":"天目將","title":"天目將望敵・百望安警","focus":"瞭望標記與遠距預警","icon":"👁️","kind":"military","companion":"單廷珪","companionNickname":"聖水將","era":"百業聚義篇"},{"number":74,"name":"單廷珪","nickname":"聖水將","title":"聖水將治洪・百洪安導","focus":"洪水分洪與低地撤離","icon":"🌧️","kind":"water","companion":"魏定國","companionNickname":"神火將","era":"百業聚義篇"},{"number":75,"name":"魏定國","nickname":"神火將","title":"神火將控焰・百焰安熄","focus":"火場分區與危材隔離","icon":"🧯","kind":"military","companion":"歐鵬","companionNickname":"摩雲金翅","era":"百業聚義篇"},{"number":76,"name":"歐鵬","nickname":"摩雲金翅","title":"摩雲金翅巡空・百隼安訊","focus":"高處巡察與旗語傳訊","icon":"🦅","kind":"stealth","companion":"鄧飛","companionNickname":"火眼狻猊","era":"百業聚義篇"},{"number":77,"name":"鄧飛","nickname":"火眼狻猊","title":"火眼狻猊辨危・百危安除","focus":"危險辨識與缺失改善","icon":"🦁","kind":"civic","companion":"燕順","companionNickname":"錦毛虎","era":"百業聚義篇"},{"number":78,"name":"燕順","nickname":"錦毛虎","title":"錦毛虎護山・百山安行","focus":"山路導引與迷途搜救","icon":"🐯","kind":"wild","companion":"楊林","companionNickname":"錦豹子","era":"百業聚義篇"},{"number":79,"name":"楊林","nickname":"錦豹子","title":"錦豹子探路・百路安引","focus":"陌生道路與路標建置","icon":"🐆","kind":"transport","companion":"蔣敬","companionNickname":"神算子","era":"百業聚義篇"},{"number":80,"name":"蔣敬","nickname":"神算子","title":"神算子理帳・百帳安清","focus":"公共帳冊與預算公開","icon":"🧮","kind":"civic","companion":"呂方","companionNickname":"小溫侯","era":"百業聚義篇"},{"number":81,"name":"呂方","nickname":"小溫侯","title":"小溫侯護旗・百旗安序","focus":"旗號編碼與隊伍辨識","icon":"🔴","kind":"military","companion":"郭盛","companionNickname":"賽仁貴","era":"百業聚義篇"},{"number":82,"name":"郭盛","nickname":"賽仁貴","title":"賽仁貴校射・百射安練","focus":"射場界線與箭具回收","icon":"⚪","kind":"military","companion":"安道全","companionNickname":"神醫","era":"百業聚義篇"},{"number":83,"name":"安道全","nickname":"神醫","title":"神醫分診・百病安醫","focus":"分級診療與藥品追蹤","icon":"🩺","kind":"health","companion":"王英","companionNickname":"矮腳虎","era":"百業聚義篇"},{"number":84,"name":"王英","nickname":"矮腳虎","title":"矮腳虎查役・百差安派","focus":"短程差遣與弱勢代辦","icon":"📋","kind":"civic","companion":"鮑旭","companionNickname":"喪門神","era":"百業聚義篇"},{"number":85,"name":"鮑旭","nickname":"喪門神","title":"喪門神破障・百障安通","focus":"道路障礙與緊急清除","icon":"🚧","kind":"transport","companion":"樊瑞","companionNickname":"混世魔王","era":"百業聚義篇"},{"number":86,"name":"樊瑞","nickname":"混世魔王","title":"混世魔王辨術・百術安用","focus":"術法器具與迷信詐騙","icon":"🔮","kind":"justice","companion":"孔明","companionNickname":"毛頭星","era":"百業聚義篇"},{"number":87,"name":"孔明","nickname":"毛頭星","title":"毛頭星護童・百童安學","focus":"兒童照護與學舍安全","icon":"🧒","kind":"civic","companion":"孔亮","companionNickname":"獨火星","era":"百業聚義篇"},{"number":88,"name":"孔亮","nickname":"獨火星","title":"獨火星守燈・百燈安照","focus":"公共照明與燈油管理","icon":"🕯️","kind":"civic","companion":"項充","companionNickname":"八臂哪吒","era":"百業聚義篇"},{"number":89,"name":"項充","nickname":"八臂哪吒","title":"八臂哪吒護陣・百陣安轉","focus":"盾牌隊形與人群疏導","icon":"🛞","kind":"military","companion":"李袞","companionNickname":"飛天大聖","era":"百業聚義篇"},{"number":90,"name":"李袞","nickname":"飛天大聖","title":"飛天大聖架索・百索安渡","focus":"繩索吊運與高處作業","icon":"🪢","kind":"trade","companion":"馬麟","companionNickname":"鐵笛仙","era":"百業聚義篇"},{"number":91,"name":"馬麟","nickname":"鐵笛仙","title":"鐵笛仙傳令・百令安達","focus":"聲號傳令與靜默備援","icon":"🎶","kind":"civic","companion":"陳達","companionNickname":"跳澗虎","era":"百業聚義篇"},{"number":92,"name":"陳達","nickname":"跳澗虎","title":"跳澗虎巡橋・百橋安跨","focus":"橋梁巡檢與限重分流","icon":"🌉","kind":"transport","companion":"楊春","companionNickname":"白花蛇","era":"百業聚義篇"},{"number":93,"name":"楊春","nickname":"白花蛇","title":"白花蛇辨毒・百毒安防","focus":"毒物標示與誤食救治","icon":"🐍","kind":"health","companion":"鄭天壽","companionNickname":"白面郎君","era":"百業聚義篇"},{"number":94,"name":"鄭天壽","nickname":"白面郎君","title":"白面郎君核儀・百儀安禮","focus":"公共儀典與人群秩序","icon":"🎎","kind":"civic","companion":"宋清","companionNickname":"鐵扇子","era":"百業聚義篇"},{"number":95,"name":"宋清","nickname":"鐵扇子","title":"鐵扇子理宴・百宴安席","focus":"宴席名冊與飲食分流","icon":"🪭","kind":"trade","companion":"龔旺","companionNickname":"花項虎","era":"百業聚義篇"},{"number":96,"name":"龔旺","nickname":"花項虎","title":"花項虎護傷・百傷安救","focus":"外傷止血與轉送標記","icon":"🩹","kind":"health","companion":"丁得孫","companionNickname":"中箭虎","era":"百業聚義篇"},{"number":97,"name":"丁得孫","nickname":"中箭虎","title":"中箭虎辨箭・百箭安療","focus":"箭傷處置與毒物辨識","icon":"🏹","kind":"health","companion":"李忠","companionNickname":"打虎將","era":"百業聚義篇"},{"number":98,"name":"李忠","nickname":"打虎將","title":"打虎將巡獵・百獸安界","focus":"獵區界線與野獸避讓","icon":"🐾","kind":"wild","companion":"周通","companionNickname":"小霸王","era":"百業聚義篇"},{"number":99,"name":"周通","nickname":"小霸王","title":"小霸王止婚鬧・百婚安盟","focus":"婚約自主與宴場安全","icon":"💍","kind":"justice","companion":"蔡福","companionNickname":"鐵臂膊","era":"百業聚義篇"},{"number":100,"name":"蔡福","nickname":"鐵臂膊","title":"鐵臂膊整獄・百刑安法","focus":"刑具登記與行刑覆核","icon":"🔗","kind":"justice","companion":"蔡慶","companionNickname":"一枝花","era":"百業聚義篇"},{"number":101,"name":"蔡慶","nickname":"一枝花","title":"一枝花護囚・百赦安歸","focus":"釋囚交接與返鄉安置","icon":"🌸","kind":"justice","companion":"焦挺","companionNickname":"沒面目","era":"百業聚義篇"},{"number":102,"name":"焦挺","nickname":"沒面目","title":"沒面目校力・百力安役","focus":"搬運量能與工役輪班","icon":"💪","kind":"trade","companion":"石勇","companionNickname":"石將軍","era":"百業聚義篇"},{"number":103,"name":"石勇","nickname":"石將軍","title":"石將軍巡賭・百局安禁","focus":"賭局取締與債務救援","icon":"🪨","kind":"justice","companion":"王定六","companionNickname":"活閃婆","era":"百業聚義篇"},{"number":104,"name":"王定六","nickname":"活閃婆","title":"活閃婆護轉・百客安乘","focus":"轉乘接駁與行李認領","icon":"⚡","kind":"transport","companion":"郁保四","companionNickname":"險道神","era":"百業聚義篇"},{"number":105,"name":"郁保四","nickname":"險道神","title":"險道神護幟・百幟安行","focus":"大型旗幟與隊列通行","icon":"🏳️","kind":"military","companion":"白勝","companionNickname":"白日鼠","era":"百業聚義篇"},{"number":106,"name":"白勝","nickname":"白日鼠","title":"白日鼠辨贓・百贓安還","focus":"失物辨識與贓物返還","icon":"🐭","kind":"justice","companion":"時遷","companionNickname":"鼓上蚤","era":"百業聚義篇"},{"number":107,"name":"時遷","nickname":"鼓上蚤","title":"鼓上蚤探險・百竊安防","focus":"夜間防竊與屋頂巡查","icon":"🐜","kind":"stealth","companion":"段景住","companionNickname":"金毛犬","era":"百業聚義篇"},{"number":108,"name":"段景住","nickname":"金毛犬","title":"金毛犬護馬・百畜安歸","focus":"馬匹登記與走失尋回","icon":"🐕","kind":"wild","companion":"吳用","companionNickname":"智多星","era":"百業聚義篇"}];
+  if (typeof window !== 'undefined') window.LIANGSHAN_CHAPTERS = chapters;
+  if (typeof module !== 'undefined' && module.exports) module.exports = chapters;
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+
+  const records = {
+    1:{hero:'武松',activeName:'景陽伏虎連斬',activeText:'連斬三次；擊倒目標時立即追擊氣血最低的敵人。',passiveName:'打虎餘威',passiveText:'擊倒敵人後回復豪氣並提高暴擊。',cooldown:2,mechanic:'tiger_chain',stats:{crit:.08}},
+    2:{hero:'魯達',activeName:'倒拔垂楊震嶽',activeText:'重擊全敵並為全隊建立護盾；有機率震懾。',passiveName:'禪杖護眾',passiveText:'護盾破裂時震傷全體敵人。',cooldown:3,mechanic:'monk_quake',stats:{hp:1.08}},
+    3:{hero:'林沖',activeName:'風雪回馬槍',activeText:'無視部分防禦，進入高機率反擊姿態。',passiveName:'豹子頭守關',passiveText:'成功格擋後必定反擊。',cooldown:2,mechanic:'spear_counter',stats:{counter:.18}},
+    4:{hero:'楊志',activeName:'青面護綱陣',activeText:'攻擊目標並保護氣血最低的隊友，提高其速度。',passiveName:'押綱不失',passiveText:'前排受傷時替氣血最低隊友分擔傷害。',cooldown:3,mechanic:'escort_guard',stats:{speed:8}},
+    5:{hero:'宋江',activeName:'呼保義聚眾令',activeText:'治療全隊、回復豪氣並提升合擊值。',passiveName:'及時雨',passiveText:'每個完整回合結束時治療氣血最低的隊友。',cooldown:4,mechanic:'benevolent_command',stats:{heal:1.15}},
+    6:{hero:'李逵',activeName:'黑旋風裂陣',activeText:'依自身已損氣血提高傷害，連續劈擊兩名敵人。',passiveName:'越戰越狂',passiveText:'氣血越低，攻擊與速度越高。',cooldown:2,mechanic:'berserk_cleave',stats:{lowHpDamage:.22}},
+    7:{hero:'扈三娘',activeName:'日月雙刀回旋',activeText:'快速攻擊全敵並施加流血，自身獲得閃避。',passiveName:'一丈青身法',passiveText:'每回合首次受到攻擊時有機率閃避。',cooldown:3,mechanic:'blade_dance',stats:{evade:.12}},
+    8:{hero:'呼延灼',activeName:'連環甲馬衝陣',activeText:'重創前排敵人並降低全敵速度。',passiveName:'雙鞭鐵騎',passiveText:'首輪行動前為全隊前排增加護盾。',cooldown:3,mechanic:'cavalry_charge',stats:{def:1.08}},
+    9:{hero:'盧俊義',activeName:'玉麒麟無雙勢',activeText:'對首領造成巨額傷害；非首領則追加一次攻擊。',passiveName:'河北無雙',passiveText:'對首領增傷，且不受首領反震的首次傷害。',cooldown:3,mechanic:'peerless_duel',stats:{bossDamage:.20}},
+    10:{hero:'公孫勝',activeName:'入雲龍五雷法',activeText:'雷擊全敵，隨機施加暈眩、遲緩或破甲。',passiveName:'御風行雷',passiveText:'施放技能有機率不進入冷卻。',cooldown:4,mechanic:'thunder_ritual',stats:{cooldownRefund:.18}},
+    11:{hero:'張清',activeName:'沒羽飛石連珠',activeText:'飛石三連擊，最後一擊必定暴擊。',passiveName:'百步飛石',passiveText:'攻擊後有機率使目標遲緩。',cooldown:2,mechanic:'stone_barrage',stats:{crit:.06}},
+    12:{hero:'花榮',activeName:'小李廣穿雲箭',activeText:'鎖定後排或術士，造成高額穿透傷害。',passiveName:'神箭定魂',passiveText:'對滿血敵人的第一擊必定暴擊。',cooldown:2,mechanic:'piercing_arrow',stats:{firstStrikeCrit:true}},
+    13:{hero:'瓊英',activeName:'瓊矢流星陣',activeText:'對隨機敵人投石五次，命中同一目標時傷害遞增。',passiveName:'流星飛石',passiveText:'每次暴擊提高下一次技能傷害。',cooldown:3,mechanic:'meteor_stones',stats:{skillRamp:.08}},
+    14:{hero:'燕青',activeName:'浪子擒拿破綻',activeText:'偷取目標增益，施加沉默並提高自身速度。',passiveName:'相撲巧勁',passiveText:'攻擊有負面狀態的敵人時提高傷害。',cooldown:3,mechanic:'grapple_steal',stats:{debuffDamage:.18}},
+    15:{hero:'張順',activeName:'浪裡白條翻江',activeText:'全敵水擊並使自身立即提前至下一回合前段。',passiveName:'水底神行',passiveText:'水戰或後排時速度與閃避提高。',cooldown:3,mechanic:'river_dash',stats:{speed:12,evade:.06}},
+    16:{hero:'戴宗',activeName:'神行甲馬急遞',activeText:'全隊神行並重排行動條，使最慢隊友立即行動。',passiveName:'日行八百',passiveText:'全隊基礎速度提高。',cooldown:4,mechanic:'initiative_shift',stats:{teamSpeed:6}},
+    17:{hero:'朱武',activeName:'神機軍陣轉位',activeText:'重置一名隊友的技能冷卻並為全隊補充豪氣。',passiveName:'陣圖推演',passiveText:'首領換階時全隊獲得護盾。',cooldown:4,mechanic:'tactical_reset',stats:{spRegen:8}},
+    18:{hero:'蕭讓',activeName:'聖手檄文封令',activeText:'封印目標技能並降低攻防；對首領改為延後行動。',passiveName:'筆落成令',passiveText:'首次施加控制時延長一回合。',cooldown:3,mechanic:'edict_seal',stats:{status:.08}},
+    19:{hero:'裴宣',activeName:'鐵面明法斷罪',activeText:'依目標負面狀態數量增加傷害，清除其增益。',passiveName:'賞罰分明',passiveText:'擊倒帶有三種以上負面狀態的敵人時全隊回氣。',cooldown:3,mechanic:'judgement',stats:{debuffDamage:.16}},
+    20:{hero:'樂和',activeName:'鐵叫子振軍曲',activeText:'全隊鼓舞、回復少量氣血並解除遲緩。',passiveName:'清音定心',passiveText:'全隊控制抗性提高。',cooldown:4,mechanic:'war_song',stats:{controlResist:.18}},
+    21:{hero:'金大堅',activeName:'玉臂金印鎮煞',activeText:'為一名隊友刻印護符，受到致命傷時保留 1 點氣血。',passiveName:'金石不磨',passiveText:'裝備套裝效果提高。',cooldown:5,mechanic:'saving_seal',stats:{setBonus:1.10}},
+    22:{hero:'孟康',activeName:'玉幡竿破浪舟',activeText:'撞擊全敵並依隊伍護盾值增加傷害。',passiveName:'造船巧匠',passiveText:'全隊護盾效果提高。',cooldown:3,mechanic:'ramming_ship',stats:{shieldBonus:1.18}},
+    23:{hero:'侯健',activeName:'通臂猿錦甲術',activeText:'為全隊修補護甲，提高防禦並解除破甲。',passiveName:'巧手裁甲',passiveText:'防具提供的屬性提高。',cooldown:4,mechanic:'armor_mend',stats:{armorBonus:1.12}},
+    24:{hero:'湯隆',activeName:'金錢豹子鍛兵',activeText:'強化全隊武器三回合，攻擊與暴擊提高。',passiveName:'鐵砧火星',passiveText:'武器提供的屬性提高。',cooldown:4,mechanic:'weapon_temper',stats:{weaponBonus:1.12}},
+    25:{hero:'凌振',activeName:'轟天雷震城砲',activeText:'蓄力砲擊全敵，對護盾與召喚物傷害加倍。',passiveName:'火砲校準',passiveText:'每隔三回合下一次技能必定暴擊。',cooldown:4,mechanic:'cannon_blast',stats:{shieldDamage:1.8}},
+    26:{hero:'皇甫端',activeName:'紫髯伯療馬方',activeText:'大幅治療氣血最低隊友並賦予持續回復。',passiveName:'獸醫仁心',passiveText:'戰鬥勝利後額外恢復全隊。',cooldown:3,mechanic:'regeneration',stats:{heal:1.20}},
+    27:{hero:'曹正',activeName:'操刀鬼庖解斬',activeText:'精準攻擊弱點，對破甲敵人必定暴擊並延長流血。',passiveName:'庖丁解骨',passiveText:'對流血敵人提高暴擊傷害。',cooldown:2,mechanic:'butcher_cut',stats:{bleedDamage:.22}},
+    28:{hero:'孫二娘',activeName:'母夜叉麻翻酒',activeText:'對全敵施加中毒與遲緩，首領受到的控制時間減半。',passiveName:'十字坡伏客',passiveText:'首輪攻擊有機率使敵人無法行動。',cooldown:4,mechanic:'poison_feast',stats:{firstStun:.12}},
+    29:{hero:'張青',activeName:'菜園子暗標襲',activeText:'從後排奇襲氣血最低敵人，擊倒時隱匿並提前行動。',passiveName:'菜園伏擊',passiveText:'對氣血低於一半的敵人增傷。',cooldown:2,mechanic:'ambush_mark',stats:{execute:.18}},
+    30:{hero:'顧大嫂',activeName:'母大蟲登州號',activeText:'呼集援手，治療全隊並補充一份章回藥品。',passiveName:'登州豪膽',passiveText:'隊友陣亡時立即獲得合擊值。',cooldown:5,mechanic:'reinforcement_call',stats:{comboOnDown:25}},
+    31:{hero:'孫新',activeName:'小尉遲雙鉤護店',activeText:'嘲諷敵軍並反擊下一次攻擊，保護後排。',passiveName:'店門護陣',passiveText:'後排受到的傷害降低。',cooldown:3,mechanic:'hook_guard',stats:{backDamageTaken:.88}},
+    32:{hero:'解珍',activeName:'兩頭蛇獵網',activeText:'束縛目標並對其他敵人施加流血。',passiveName:'山林獵首',passiveText:'對野獸、召喚物與首領援兵增傷。',cooldown:3,mechanic:'hunter_net',stats:{minionDamage:.20}},
+    33:{hero:'解寶',activeName:'雙尾蠍毒矢',activeText:'施加劇毒，目標每次行動都會受到傷害。',passiveName:'毒蠍追跡',passiveText:'中毒敵人死亡時毒性擴散。',cooldown:3,mechanic:'venom_arrow',stats:{poisonSpread:true}},
+    34:{hero:'鄒淵',activeName:'出林龍泉脈護陣',activeText:'清除全隊持續傷害並依清除數量建立護盾。',passiveName:'泉脈回流',passiveText:'每次解除負面狀態時回復豪氣。',cooldown:4,mechanic:'spring_cleanse',stats:{cleanseSp:12}},
+    35:{hero:'鄒潤',activeName:'獨角龍突額',activeText:'強制撞退目標行動位置並造成暈眩。',passiveName:'獨角硬闖',passiveText:'免疫每場戰鬥第一次暈眩。',cooldown:3,mechanic:'horn_charge',stats:{stunImmuneOnce:true}},
+    36:{hero:'陶宗旺',activeName:'九尾龜築壘',activeText:'建立可承受多次攻擊的土壘並提升全隊防禦。',passiveName:'土木總管',passiveText:'梁山建築每級都略微提高自身能力。',cooldown:4,mechanic:'earthworks',stats:{baseScale:.012}}
+  };
+
+  const get = number => records[Number(number)] || null;
+
+  function execute(number, c) {
+    const r = get(number);
+    if (!r || !c) return '';
+    const a = c.actor, t = c.target;
+    const hit = (target, mult, opts={}) => c.hit(target, mult, opts);
+    const enemies = () => c.enemies().filter(x => x.alive);
+    const allies = () => c.allies().filter(x => x.alive);
+    const low = () => allies().sort((x,y)=>x.hp/x.maxHp-y.hp/y.maxHp)[0];
+    let note = '';
+    switch (r.mechanic) {
+      case 'tiger_chain': {
+        let total=0; for(let i=0;i<3&&t.alive;i++) total+=hit(t,.48+i*.08,{crit:i===2});
+        if(!t.alive){const next=enemies().sort((x,y)=>x.hp-y.hp)[0]; if(next) total+=hit(next,.72,{pierce:true}); a.sp=Math.min(a.maxSp,a.sp+45);}
+        note=`三斬共 ${total}`; break;
+      }
+      case 'monk_quake': {let total=0; enemies().forEach(e=>{total+=hit(e,.72); if(c.random()<.25)c.status(e,'stun',1,1);}); allies().forEach(x=>c.shield(x,70+a.level*5)); note=`震嶽 ${total}，全隊護盾`; break;}
+      case 'spear_counter': {const d=hit(t,1.28,{pierce:true}); c.status(a,'counter',2,.8); c.shield(a,90+a.level*4); note=`回馬槍 ${d}，進入反擊`; break;}
+      case 'escort_guard': {const d=hit(t,.95); const x=low(); if(x){c.shield(x,120+a.level*5); c.status(x,'haste',2,18); c.status(x,'guarded',2,.35);} note=`護綱 ${d}，護衛 ${x?.name||''}`; break;}
+      case 'benevolent_command': {allies().forEach(x=>c.heal(x,a.atk*.55)); c.teamSp(38); c.combo(34); note='全隊治療、回氣與聚義'; break;}
+      case 'berserk_cleave': {const missing=1-a.hp/a.maxHp; let total=0; enemies().slice(0,2).forEach(e=>total+=hit(e,.82+missing*.9,{crit:missing>.55})); note=`狂斬 ${total}`; break;}
+      case 'blade_dance': {let total=0; enemies().forEach(e=>{total+=hit(e,.58);c.status(e,'bleed',3,24+a.level);}); c.status(a,'evade',2,.28); note=`回旋 ${total}，附加流血`; break;}
+      case 'cavalry_charge': {let total=0; enemies().forEach(e=>{total+=hit(e,e.type==='boss'?.82:1.02);c.status(e,'slow',2,18);}); note=`鐵騎衝陣 ${total}`; break;}
+      case 'peerless_duel': {let d=hit(t,t.type==='boss'?1.75:1.25,{pierce:true,crit:t.type==='boss'}); if(t.type!=='boss'&&t.alive)d+=hit(t,.65,{pierce:true}); note=`無雙決鬥 ${d}`; break;}
+      case 'thunder_ritual': {let total=0; const effects=['stun','slow','armorBreak']; enemies().forEach((e,i)=>{total+=hit(e,.68,{pierce:true}); const k=effects[(i+number)%effects.length]; c.status(e,k,k==='stun'?1:3,k==='stun'?1:22);}); note=`五雷齊落 ${total}`; break;}
+      case 'stone_barrage': {let total=0; for(let i=0;i<3&&t.alive;i++)total+=hit(t,.42+i*.08,{crit:i===2}); note=`飛石連珠 ${total}`; break;}
+      case 'piercing_arrow': {const priority=enemies().find(e=>e.type==='caster'||e.type==='ranged')||t; const d=hit(priority,1.55,{pierce:true,crit:priority.hp===priority.maxHp}); note=`穿雲箭 ${d}`; break;}
+      case 'meteor_stones': {let total=0,counts={}; for(let i=0;i<5;i++){const list=enemies();if(!list.length)break;const e=list[Math.floor(c.random()*list.length)];counts[e.id]=(counts[e.id]||0)+1;total+=hit(e,.32+counts[e.id]*.09,{crit:counts[e.id]>=3});} note=`流星五投 ${total}`; break;}
+      case 'grapple_steal': {const d=hit(t,.92,{pierce:true}); const buff=['haste','power','precision'].find(k=>t.statuses?.[k]); if(buff){delete t.statuses[buff];c.status(a,buff,2,18);} c.status(t,'silence',1,1); c.status(a,'haste',2,20); note=`擒拿 ${d}，奪勢封技`; break;}
+      case 'river_dash': {let total=0;enemies().forEach(e=>total+=hit(e,.68));c.status(a,'haste',3,26);c.requeue(a.id,999);note=`翻江 ${total}，提前行動`;break;}
+      case 'initiative_shift': {allies().forEach(x=>c.status(x,'haste',2,22));const x=allies().sort((p,q)=>p.speed-q.speed)[0];if(x)c.requeue(x.id,998);note=`全隊神行，${x?.name||''}提前`;break;}
+      case 'tactical_reset': {const x=allies().sort((p,q)=>(q.cooldowns?.skill||0)-(p.cooldowns?.skill||0))[0];if(x){x.cooldowns={skill:0,system:Math.max(0,(x.cooldowns?.system||0)-1)};}c.teamSp(48);c.combo(20);note=`重整 ${x?.name||''} 冷卻並回氣`;break;}
+      case 'edict_seal': {const d=hit(t,.72,{pierce:true});c.status(t,t.type==='boss'?'slow':'silence',t.type==='boss'?2:1,t.type==='boss'?30:1);c.status(t,'weaken',3,24);c.status(t,'armorBreak',3,24);note=`檄文封令 ${d}`;break;}
+      case 'judgement': {const debuffs=Object.keys(t.statuses||{}).filter(k=>['burn','poison','bleed','slow','weaken','armorBreak','silence','stun'].includes(k)).length;const d=hit(t,1+debuffs*.22,{pierce:debuffs>=2,crit:debuffs>=4});['haste','power','precision'].forEach(k=>delete t.statuses?.[k]);note=`斷罪 ${d}（${debuffs} 項罪證）`;break;}
+      case 'war_song': {allies().forEach(x=>{c.heal(x,a.atk*.28);c.status(x,'power',3,18);if(x.statuses)delete x.statuses.slow;});c.teamSp(24);note='振軍曲：鼓舞、治療、解緩';break;}
+      case 'saving_seal': {const x=low();if(x){c.status(x,'savingSeal',4,1);c.shield(x,80+a.level*4);}note=`金印護住 ${x?.name||''}`;break;}
+      case 'ramming_ship': {const shield=allies().reduce((s,x)=>s+(x.shield||0),0);let total=0;enemies().forEach(e=>total+=hit(e,.58+Math.min(.65,shield/1800),{pierce:shield>400}));note=`破浪舟撞擊 ${total}`;break;}
+      case 'armor_mend': {allies().forEach(x=>{delete x.statuses?.armorBreak;c.shield(x,65+a.level*4);c.status(x,'fortify',3,20);});note='全隊修甲與護盾';break;}
+      case 'weapon_temper': {allies().forEach(x=>{c.status(x,'power',3,22);c.status(x,'precision',3,12);});note='全隊兵刃淬火';break;}
+      case 'cannon_blast': {let total=0;enemies().forEach(e=>total+=hit(e,e.shield>0?1.55:1.02,{pierce:e.type==='minion',crit:c.battle.round%3===0}));note=`震城砲 ${total}`;break;}
+      case 'regeneration': {const x=low();if(x){c.heal(x,a.atk*1.35);c.status(x,'regen',4,Math.round(a.atk*.22));}note=`療馬方救治 ${x?.name||''}`;break;}
+      case 'butcher_cut': {const hasBreak=!!t.statuses?.armorBreak;const d=hit(t,hasBreak?1.48:1.08,{pierce:hasBreak,crit:hasBreak});const old=t.statuses?.bleed;if(old)old.duration+=2;else c.status(t,'bleed',3,28+a.level);note=`庖解斬 ${d}`;break;}
+      case 'poison_feast': {enemies().forEach(e=>{c.status(e,'poison',4,24+a.level);c.status(e,'slow',3,16);});note='全敵麻毒與遲緩';break;}
+      case 'ambush_mark': {const x=enemies().sort((p,q)=>p.hp-q.hp)[0]||t;const d=hit(x,x.hp/x.maxHp<.5?1.65:1.15,{crit:x.hp/x.maxHp<.5});if(!x.alive){c.status(a,'evade',2,.45);c.requeue(a.id,997);}note=`暗標奇襲 ${d}`;break;}
+      case 'reinforcement_call': {allies().forEach(x=>c.heal(x,a.atk*.48));c.combo(42);c.addMedicine(1);note='援手抵達：治療、合擊、補藥';break;}
+      case 'hook_guard': {const d=hit(t,.76);c.status(a,'taunt',2,1);c.status(a,'counter',2,.72);allies().filter(x=>x.row==='back').forEach(x=>c.shield(x,90));note=`雙鉤護陣 ${d}`;break;}
+      case 'hunter_net': {const d=hit(t,.86);c.status(t,'stun',1,1);enemies().filter(e=>e!==t).forEach(e=>c.status(e,'bleed',3,22+a.level));note=`獵網束敵 ${d}`;break;}
+      case 'venom_arrow': {const d=hit(t,1.02,{pierce:true});c.status(t,'actionPoison',4,30+a.level);note=`毒矢 ${d}，行動即受毒傷`;break;}
+      case 'spring_cleanse': {let cleared=0;allies().forEach(x=>{for(const k of ['burn','poison','bleed','slow','weaken','armorBreak','silence'])if(x.statuses?.[k]){delete x.statuses[k];cleared++;}});allies().forEach(x=>c.shield(x,45+cleared*25));c.teamSp(cleared*8);note=`清除 ${cleared} 項危害並築泉盾`;break;}
+      case 'horn_charge': {const d=hit(t,1.15,{pierce:true});c.status(t,'stun',1,1);c.requeue(t.id,-999);note=`突額撞退 ${d}`;break;}
+      case 'earthworks': {allies().forEach(x=>{c.shield(x,105+a.level*5);c.status(x,'fortify',3,24);});note='築壘：全隊護盾與防禦';break;}
+      default: note='專屬戰法發動';
+    }
+    return note;
+  }
+
+  window.LS74Tiangang = {records,get,execute,count:Object.keys(records).length};
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const SCHEMA_VERSION = 4;
+  const REQUIRED_TOP_LEVEL = ['version','silver','completed','inventory','heroes','formations','base'];
+
+  function canonical(value) {
+    if (Array.isArray(value)) return value.map(canonical);
+    if (value && typeof value === 'object') {
+      return Object.keys(value).sort().reduce((out,key) => {
+        if (!['updatedAt','lastBackupAt','checksum'].includes(key)) out[key] = canonical(value[key]);
+        return out;
+      }, {});
+    }
+    return value;
+  }
+
+  async function checksum(value) {
+    const text = JSON.stringify(canonical(value));
+    if (globalThis.crypto?.subtle) {
+      const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return [...new Uint8Array(bytes)].map(x => x.toString(16).padStart(2,'0')).join('');
+    }
+    let h = 2166136261;
+    for (let i=0;i<text.length;i++) { h ^= text.charCodeAt(i); h = Math.imul(h,16777619); }
+    return `fnv1a-${(h>>>0).toString(16).padStart(8,'0')}`;
+  }
+
+  function validateState(state) {
+    const errors = [];
+    if (!state || typeof state !== 'object') errors.push('存檔不是物件。');
+    else {
+      for (const key of REQUIRED_TOP_LEVEL) if (!(key in state)) errors.push(`缺少欄位：${key}`);
+      if (state.completed && typeof state.completed !== 'object') errors.push('completed 格式錯誤。');
+      if (state.heroes && typeof state.heroes !== 'object') errors.push('heroes 格式錯誤。');
+      if (state.inventory && !Array.isArray(state.inventory.items)) errors.push('inventory.items 格式錯誤。');
+      if (state.formations && !Array.isArray(state.formations)) errors.push('formations 格式錯誤。');
+      if (Number(state.silver) < 0) errors.push('銀兩不可為負數。');
+    }
+    return {ok:errors.length===0,errors};
+  }
+
+  function validateExport(payload) {
+    if (!payload || typeof payload !== 'object') return {ok:false,errors:['匯入內容不是有效物件。']};
+    const state = payload.state || payload;
+    const result = validateState(state);
+    return {...result,state,prefs:payload.prefs||{},version:payload.version||state.version||'未知'};
+  }
+
+  function compare(localState, cloudState) {
+    const l = new Date(localState?.updatedAt||0).getTime();
+    const c = new Date(cloudState?.updatedAt||0).getTime();
+    const localCompleted = Object.keys(localState?.completed||{}).length;
+    const cloudCompleted = Object.keys(cloudState?.completed||{}).length;
+    let recommendation = 'local';
+    if (c > l + 1000 || cloudCompleted > localCompleted) recommendation = 'cloud';
+    if (l === c && localCompleted === cloudCompleted) recommendation = 'same';
+    return {localUpdatedAt:localState?.updatedAt||'',cloudUpdatedAt:cloudState?.updatedAt||'',localCompleted,cloudCompleted,recommendation};
+  }
+
+  window.LS74SaveSchema = {SCHEMA_VERSION,checksum,validateState,validateExport,compare,canonical};
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const CONFIG_KEY = 'liangshan-v74-firebase-config';
+  const SESSION_KEY = 'liangshan-v74-firebase-session';
+  let config = null;
+  let session = null;
+  const safeLocal={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},remove:k=>{try{localStorage.removeItem(k)}catch{}}};
+  const safeSession={get:k=>{try{return sessionStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch{}},remove:k=>{try{sessionStorage.removeItem(k)}catch{}}};
+
+  function load() {
+    try { config = JSON.parse(safeLocal.get(CONFIG_KEY)||'null'); } catch { config = null; }
+    try { session = JSON.parse(safeSession.get(SESSION_KEY)||'null'); } catch { session = null; }
+  }
+  load();
+
+  function validConfig(c) { return Boolean(c?.apiKey && c?.projectId); }
+  function configure(c) {
+    if (!validConfig(c)) throw new Error('Firebase 設定需包含 apiKey 與 projectId。');
+    config = {apiKey:String(c.apiKey).trim(),projectId:String(c.projectId).trim(),authDomain:String(c.authDomain||'').trim()};
+    safeLocal.set(CONFIG_KEY,JSON.stringify(config));
+    return config;
+  }
+  function clearConfig(){ config=null;session=null;safeLocal.remove(CONFIG_KEY);safeSession.remove(SESSION_KEY); }
+  function authUrl(path){ if(!validConfig(config))throw new Error('尚未設定 Firebase。'); return `https://identitytoolkit.googleapis.com/v1/accounts:${path}?key=${encodeURIComponent(config.apiKey)}`; }
+  async function request(url,options={}) {
+    const res = await fetch(url,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data?.error?.message||data?.error?.status||`HTTP ${res.status}`);
+    return data;
+  }
+  async function auth(path,email,password) {
+    const data = await request(authUrl(path),{method:'POST',body:JSON.stringify({email,password,returnSecureToken:true})});
+    session={uid:data.localId,email:data.email,idToken:data.idToken,refreshToken:data.refreshToken,expiresAt:Date.now()+Number(data.expiresIn||3600)*1000};
+    safeSession.set(SESSION_KEY,JSON.stringify(session));
+    return session;
+  }
+  const signUp = (email,password) => auth('signUp',email,password);
+  const signIn = (email,password) => auth('signInWithPassword',email,password);
+  function signOut(){session=null;safeSession.remove(SESSION_KEY);}
+  function requireSession(){if(!session?.idToken)throw new Error('請先登入 Firebase 雲端存檔。');return session;}
+  function docUrl(){const s=requireSession();return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(config.projectId)}/databases/(default)/documents/users/${encodeURIComponent(s.uid)}/saves/main`;}
+  function encodeDoc(payload,checksum,version){return{fields:{payload:{stringValue:JSON.stringify(payload)},checksum:{stringValue:checksum||''},version:{stringValue:version||''},updatedAt:{timestampValue:new Date().toISOString()}}};}
+  function decodeDoc(doc){const f=doc?.fields||{};if(!f.payload?.stringValue)return null;return{payload:JSON.parse(f.payload.stringValue),checksum:f.checksum?.stringValue||'',version:f.version?.stringValue||'',updatedAt:f.updatedAt?.timestampValue||doc.updateTime||''};}
+  async function upload(payload,checksum,version){const s=requireSession();const data=await request(docUrl(),{method:'PATCH',headers:{Authorization:`Bearer ${s.idToken}`},body:JSON.stringify(encodeDoc(payload,checksum,version))});return decodeDoc(data);}
+  async function download(){const s=requireSession();const res=await fetch(docUrl(),{headers:{Authorization:`Bearer ${s.idToken}`}});if(res.status===404)return null;const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data?.error?.message||`HTTP ${res.status}`);return decodeDoc(data);}
+  function getStatus(){return{configured:validConfig(config),config:config?{projectId:config.projectId,apiKeyMasked:`${config.apiKey.slice(0,4)}…${config.apiKey.slice(-3)}`} : null,signedIn:Boolean(session?.idToken),email:session?.email||'',uid:session?.uid||''};}
+  window.LS74Cloud = {configure,clearConfig,signUp,signIn,signOut,upload,download,getStatus,getConfig:()=>config};
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const towerModifiers = [
+    {key:'swift',name:'疾風層',text:'敵方速度提高 12%。',enemySpeed:1.12},
+    {key:'iron',name:'鐵壁層',text:'敵方防禦提高 18%。',enemyDef:1.18},
+    {key:'venom',name:'毒霧層',text:'我方開戰受到中毒。',allyPoison:18},
+    {key:'fury',name:'狂怒層',text:'敵方攻擊提高 15%。',enemyAtk:1.15},
+    {key:'seal',name:'封技層',text:'我方首輪技能冷卻增加一回合。',cooldown:1},
+    {key:'horde',name:'群敵層',text:'額外增加一名敵人。',extraEnemy:1}
+  ];
+  function towerFloor(floor){const n=Math.max(1,Number(floor)||1);return{floor:n,chapter:(n*7-1)%108+1,modifier:towerModifiers[(n-1)%towerModifiers.length],scale:1+Math.min(2.6,(n-1)*.035),reward:{silver:180+n*26,essence:n%5===0?3:1}};}
+  const routes = [
+    {key:'northern',name:'北地糧道',icon:'🌾',text:'護送糧草穿越寒原。',chapter:4,battles:3,reward:{silver:1100,iron:12,wood:18,cloth:8,essence:2}},
+    {key:'river',name:'江州水路',icon:'⛵',text:'沿江掃除水賊與暗礁。',chapter:15,battles:3,reward:{silver:980,iron:8,wood:20,cloth:12,essence:3}},
+    {key:'mountain',name:'登州獵徑',icon:'🏹',text:'追查山林異獸與伏兵。',chapter:32,battles:4,reward:{silver:1280,iron:14,wood:12,cloth:14,essence:4}},
+    {key:'capital',name:'東京密探',icon:'🌙',text:'潛入京城取得密卷。',chapter:14,battles:4,reward:{silver:1500,iron:10,wood:10,cloth:20,essence:5}},
+    {key:'medical',name:'疫區救援',icon:'🩺',text:'護送藥材並救治傷患。',chapter:26,battles:3,reward:{silver:1050,iron:6,wood:12,cloth:24,essence:3}},
+    {key:'forge',name:'百工採礦',icon:'⚒️',text:'深入礦區奪回鍛造素材。',chapter:24,battles:5,reward:{silver:1750,iron:32,wood:16,cloth:12,essence:6}}
+  ];
+  const dispatchMissions = [
+    {key:'patrol',name:'巡山查哨',minutes:10,reward:{silver:180,wood:4}},
+    {key:'mine',name:'礦場採集',minutes:20,reward:{silver:260,iron:7}},
+    {key:'weave',name:'織坊協作',minutes:20,reward:{silver:240,cloth:7}},
+    {key:'escort',name:'護送商隊',minutes:35,reward:{silver:520,iron:4,wood:4,cloth:4}},
+    {key:'secret',name:'密探遠行',minutes:60,reward:{silver:900,essence:2}}
+  ];
+  window.LS74Endgame = {towerModifiers,towerFloor,routes,dispatchMissions};
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const trialTypes = [
+    {key:'evidence',name:'證詞比對',icon:'🔎',prompt:'三份證詞互相矛盾，先查哪一項最能確認真相？',options:['核對時間與地點','先處罰最可疑者','只聽官差說法'],best:0,success:'你找出關鍵時間差，敵方防禦下降。',fail:'線索不足，敵方有所準備。'},
+    {key:'route',name:'路線推演',icon:'🗺️',prompt:'前方有近路、官道與山徑，如何安排？',options:['斥候先探再走官道','全軍搶走近路','分散走三條路'],best:0,success:'路線安全，隊伍首輪速度提高。',fail:'隊形被拉長，敵人獲得先機。'},
+    {key:'formation',name:'軍陣配置',icon:'🛡️',prompt:'敵軍弓手居高臨下，應如何列陣？',options:['盾兵前列、快軍繞側','全軍密集正衝','後排先行'],best:0,success:'側翼成功壓制弓手。',fail:'前軍承受額外箭雨。'},
+    {key:'tide',name:'潮勢判讀',icon:'🌊',prompt:'潮水將轉，船隊該如何行動？',options:['先下錨確認風向','立刻全速追擊','分船逆流而上'],best:0,success:'船隊穩住陣腳，獲得護盾。',fail:'船身搖晃，全隊受到遲緩。'},
+    {key:'triage',name:'救護分診',icon:'🩺',prompt:'傷患同時送達，應優先處理誰？',options:['呼吸困難者','輕微擦傷者','先到者'],best:0,success:'分診正確，章回藥品增加。',fail:'醫療資源分配失衡。'},
+    {key:'debate',name:'民議公斷',icon:'📜',prompt:'百姓與商戶各執一詞，如何處置？',options:['公開規則並逐項查證','先安撫有勢力者','暫時不處理'],best:0,success:'眾人信服，銀兩獎勵提高。',fail:'民怨未平，首領攻擊提高。'},
+    {key:'forge',name:'工藝校驗',icon:'⚒️',prompt:'新鍛兵器出現裂紋，應先檢查？',options:['材料批次與火候紀錄','直接重新上漆','責怪使用者'],best:0,success:'找出材料問題，獲得額外鐵礦。',fail:'瑕疵未除，敵方護盾提高。'},
+    {key:'track',name:'足跡追蹤',icon:'🏹',prompt:'林中出現多組足跡，哪一組值得追查？',options:['新鮮且刻意掩蓋者','最明顯的大腳印','離營地最近者'],best:0,success:'伏兵位置曝光，首戰敵人減少。',fail:'誤入支路，首戰增加伏兵。'},
+    {key:'stealth',name:'潛行暗號',icon:'🌙',prompt:'守門人要求暗號，如何應對？',options:['觀察巡兵交接後模仿','立刻拔刀','隨便猜一個'],best:0,success:'無聲通過，首輪可震懾敵人。',fail:'警報響起，敵方速度提高。'},
+    {key:'rescue',name:'限時救援',icon:'⏱️',prompt:'火勢蔓延，先救哪一處？',options:['被火路包圍的百姓','尚能自行撤離者','先搬運財物'],best:0,success:'救援順序正確，全隊士氣提高。',fail:'錯失時機，章回評分上限降低。'},
+    {key:'defense',name:'守城調度',icon:'🏯',prompt:'敵軍集中攻擊東門，如何應變？',options:['預備隊增援並保留西門斥候','抽空所有城門兵力','直接棄城'],best:0,success:'守軍調度得當，全隊防禦提高。',fail:'其他城門出現漏洞。'},
+    {key:'supply',name:'糧草分配',icon:'🌾',prompt:'糧草不足三日，應如何安排？',options:['依任務優先並公開配給','將好糧全給前軍','隱瞞短缺'],best:0,success:'軍心穩定，遠征獎勵提高。',fail:'軍心不穩，豪氣回復降低。'}
+  ];
+  function trialForChapter(ch){return trialTypes[(Number(ch.number)-1)%trialTypes.length];}
+  function branchEnding(ch,run){const choice=run?.choice||'未選';const trial=trialForChapter(ch);const success=Boolean(run?.trialSuccess);const suffix=success?'善策定局':'險中補救';return{title:`${ch.nickname}${ch.name}・${suffix}`,text:success?`你在「${trial.name}」中判斷正確，並以「${choice}」方案完成${ch.focus}，百姓與梁山皆記下此功。`:`「${trial.name}」一度受挫，但眾英雄在決戰中挽回局勢；本回形成較艱難的分支結局。`,key:`${choice}:${trial.key}:${success?'success':'recovery'}`};}
+  window.LS74Content = {trialTypes,trialForChapter,branchEnding};
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  function apply(prefs={}) {
+    document.documentElement.style.setProperty('--user-font-scale',String(prefs.fontScale||1));
+    document.body.classList.toggle('high-contrast',Boolean(prefs.highContrast));
+    document.body.classList.toggle('reduce-motion',Boolean(prefs.reducedMotion));
+    document.body.classList.toggle('hide-keyboard-hints',prefs.keyboardHints===false);
+  }
+  function focusFirst(root=document){const x=root.querySelector('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]');x?.focus();}
+  function trapModal(event,root){if(event.key!=='Tab'||!root)return;const nodes=[...root.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')];if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}
+  window.LS74Accessibility={apply,focusFirst,trapModal};
+})();
+
+</script>
+<script>
 (() => {
   'use strict';
 
@@ -902,3 +1352,7 @@
     startBattle,battleAction,smartAction,resolveTrial,startSpecialBattle,reforgeItem,toggleItemLock,claimProduction,startDispatch,claimDispatch,cancelDispatch,renderEndgame,renderCloud,currentActor:()=>clone(currentActor()),forceBossHit:damage=>{const b=state.current?.battle;const boss=b?.enemies.find(e=>e.type==='boss');if(!boss)return null;applyHit(boss,damage,{pierce:true,source:'測試'});save(true);renderBattle();return clone(boss);},forceWinBattle:()=>{const b=state.current?.battle;if(!b)return false;b.enemies.forEach(e=>{e.hp=0;e.alive=false;});battleVictory();return true;},simulateUpdate:()=>showUpdateAvailable({waiting:{postMessage:()=>{}}}),createBackup,backupCount:async()=>{try{return(await idbAll('backups')).length;}catch{return 0;}},idbStatus:()=>({hydrated:idbHydrated,backend:state.saveMeta.backend}),schema:()=>({version:SaveSchema?.SCHEMA_VERSION,valid:SaveSchema?.validateState(state)}),trial:n=>clone(Content74?.trialForChapter(chapter(n))),endgameData:()=>clone({routes:EndgameData.routes,missions:EndgameData.dispatchMissions}),reset:()=>{storage.removeItem(SAVE_KEY);state=mergeState(freshState());save(true);screen='home';render();}
   };
 })();
+
+</script>
+</body>
+</html>

@@ -1,30 +1,24 @@
-# v7.3.0 PWA 驗收報告
+# v7.4.0 PWA 部署前驗收
 
-驗收日期：2026-06-17
+## 已完成
 
-## 驗收環境
+- `manifest.webmanifest` 名稱、圖示、`start_url` 與 `scope` 均使用相對路徑。
+- `service-worker.js` 通過 JavaScript 語法檢查。
+- 16 個預快取項目皆存在，沒有遺漏檔案。
+- Service Worker scope 設為 `./`，適合 GitHub Pages 專案子目錄。
+- 舊版快取會在 activate 階段刪除。
+- 更新前會建立存檔備份，再送出 `SKIP_WAITING`。
+- GitHub Pages Actions 工作流程已包含於 `.github/workflows/pages.yml`。
+- Windows ZIP 與單一 HTML 版皆由同一份原始碼產生。
 
-- Chromium 149（Linux headless）
-- HTTP localhost 安全來源
-- GitHub Project Pages 同型子路徑：`/Liangshan_v7.3.0/`
-- 390 × 844 手機視窗與 1280 × 900 桌面視窗
+## 尚需公開網站完成
 
-## 通過項目
+由於目前沒有使用者 GitHub 儲存庫的寫入權限，尚未能在實際公開網址驗證以下項目：
 
-- `manifest.webmanifest` 可正常取得。
-- 192 × 192 與 512 × 512 圖示可正常取得。
-- Service Worker 成功註冊。
-- Service Worker scope 正確落在 `/Liangshan_v7.3.0/`。
-- 快取 `liangshan-v7.3.0-awakening` 成功建立。
-- 重新載入後頁面由 Service Worker 接管。
-- 模擬離線後重新載入，遊戲仍可完整啟動。
-- 相對路徑在專案子目錄中可正常解析。
-- 390 × 844 手機版無水平溢位。
-- 測試期間無 JavaScript 錯誤。
-- GitHub Pages Actions workflow 已完成靜態部署設定。
+- GitHub Pages 公開 HTTPS 首次載入
+- Windows／Android 的 PWA 安裝提示
+- iPhone Safari 加到主畫面
+- 從 v7.4.0 更新到下一版時的真實 Service Worker 接管
+- 真實 Firebase 專案的跨裝置同步
 
-## 公開 GitHub Pages 狀態
-
-本發布環境沒有使用者 GitHub 儲存庫的寫入權限，因此無法直接推送並產生公開 Pages 網址。已完成部署前可驗證的子路徑、Service Worker、快取與離線行為，並提供可直接推送的工作流程。
-
-推送後請依 `DEPLOY_GITHUB_PAGES.md` 的「上線後 PWA 驗收」再確認公開網址。
+部署後可依 `DEPLOY_GITHUB_PAGES.md` 的清單完成最後驗收。

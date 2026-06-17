@@ -1,16 +1,13 @@
 {
-  "id": "./",
-  "name": "水滸英雄傳：梁山風雲 v7.3.0 梁山英雄覺醒與戰略回合版",
+  "name": "水滸英雄傳：梁山風雲 v7.4.0",
   "short_name": "梁山風雲",
-  "description": "108 回完整戰略養成 RPG，包含速度回合、英雄覺醒、分支技能、首領換階、多套編隊、套裝與 IndexedDB 備份。",
-  "start_url": "./index.html",
+  "description": "梁山遠征與雲端傳承版：108 回、天罡專屬技能、無盡塔、遠征與可選 Firebase 雲端存檔。",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#f3ead7",
+  "background_color": "#f1e3c6",
   "theme_color": "#8a3b22",
   "lang": "zh-Hant-TW",
-  "categories": ["games", "education"],
   "icons": [
     {"src":"./assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
     {"src":"./assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}

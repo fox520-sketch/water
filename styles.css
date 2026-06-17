@@ -110,3 +110,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .page-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:18px 0}.page-head h1{margin:.2em 0}.page-head p{margin:0;color:var(--muted);line-height:1.65}.muted{color:var(--muted)}
 .ending{text-align:center;padding:clamp(26px,6vw,62px);border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:var(--shadow)}.grade.huge{display:grid;place-items:center;width:120px;height:120px;margin:10px auto;border:5px solid var(--accent);border-radius:50%;font-size:64px;font-weight:950;color:var(--accent)}.achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;text-align:left;margin:20px auto;max-width:760px}
 @media(max-width:760px){.choice-grid,.achievement-grid{grid-template-columns:1fr}.branch-row{grid-template-columns:1fr}.branch-row>b{padding:8px}.page-head{align-items:stretch;flex-direction:column}.intel-panel{grid-template-columns:1fr}.pick-item{grid-template-columns:1fr}.backup-row{align-items:flex-start;flex-direction:column}.initiative-token{font-size:12px}.boss-phase-alert{font-size:14px}}
+
+/* v7.4.0 梁山遠征與雲端傳承版 */
+body{font-size:calc(16px * var(--user-font-scale,1))}
+.skip-link{position:fixed;left:12px;top:-80px;z-index:999;padding:10px 14px;border-radius:10px;background:var(--ink);color:var(--paper);font-weight:800}.skip-link:focus{top:10px}
+body.high-contrast{--bg:#000;--paper:#000;--paper-2:#111;--ink:#fff;--muted:#fff;--line:#fff;--accent:#ffdf00;--accent-2:#00e5ff;--good:#57ff9a;--warn:#ffd45c;--danger:#ff7777;--shadow:none}
+body.high-contrast .btn.primary,body.high-contrast .btn.good,body.high-contrast .btn.danger{color:#000}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+body.hide-keyboard-hints kbd{display:none}
+kbd{display:inline-grid;place-items:center;min-width:21px;padding:1px 5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--paper-2);font-size:.75em;color:var(--muted)}
+.btn.tiny{min-height:32px;padding:5px 9px;font-size:12px}
+.check-row{display:flex;gap:9px;align-items:center;padding:9px 0}.check-row input{width:20px;height:20px}
+.craft-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:14px 0}.craft-btn{flex-direction:column;border-radius:14px;white-space:normal}.craft-btn small{font-weight:500;color:var(--muted)}
+.six-slot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.equip-slot{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:6px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--paper-2)}.equip-slot span{font-size:12px;color:var(--muted)}.equip-slot b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.equipment-card.locked{box-shadow:inset 0 0 0 2px var(--warn)}
+.production-card{margin-bottom:16px}.dispatch-grid,.route-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.dispatch-card,.route-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--paper-2)}.route-card{display:flex;flex-direction:column}.route-card .btn{margin-top:auto}.route-icon{font-size:36px}.dispatch-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.endgame-card{display:flex;flex-direction:column}.endgame-card .btn{margin-top:auto}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare-grid section{padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--paper-2)}
+.branch-ending{max-width:780px;margin:16px auto;text-align:left;border:2px solid var(--accent)}
+.modal{max-height:90vh;overflow:auto}.modal label{display:block;margin:10px 0}.modal label.check-row{display:flex}
+.status-effect{display:inline-block;margin:2px;padding:3px 7px;border-radius:999px;border:1px solid var(--danger);font-size:12px;color:var(--danger)}.status-effect.good{border-color:var(--good);color:var(--good)}
+@media(max-width:1050px){.craft-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.route-grid,.dispatch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.craft-grid,.route-grid,.dispatch-grid,.six-slot-grid,.compare-grid{grid-template-columns:1fr}.dispatch-form{grid-template-columns:1fr}.equip-slot{grid-template-columns:48px 1fr auto}.grid.three,.grid.four{grid-template-columns:1fr}.top-actions{gap:5px}.nav{border-radius:14px}.chapter-toolbar{grid-template-columns:1fr}.chapter-grid{grid-template-columns:1fr}}
