@@ -1,0 +1,25 @@
+{
+  "completed": 19,
+  "legacy1": true,
+  "legacy34": true,
+  "sequel35": true,
+  "sequel51": {
+    "grade": "S",
+    "score": 96,
+    "actions": 0,
+    "defeats": 0,
+    "medicinesUsed": 0,
+    "achievements": [
+      "舊版完成紀錄"
+    ],
+    "completedAt": "2026-06-17T09:15:57.126Z",
+    "source": "v6.2.0 續篇"
+  },
+  "imported": 19,
+  "note": "承接經典篇 2 回；承接制度續篇 17 回",
+  "silver": 770,
+  "legacyBackup": true,
+  "sequelBackup": true,
+  "legacyUntouched": true,
+  "sequelUntouched": true
+}

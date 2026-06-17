@@ -1,24 +1,32 @@
 (() => {
   'use strict';
 
-  const VERSION = '6.2.0';
-  const SAVE_KEY = 'liangshan-rpg-sequel-v6';
-  const V61_BACKUP_KEY = 'liangshan-rpg-sequel-v6.1-backup';
-  const V60_BACKUP_KEY = 'liangshan-rpg-sequel-v6.0-backup';
-  const LEGACY_KEY = 'liangshan-rpg-save-v1';
-  const PREF_KEY = 'liangshan-rpg-sequel-prefs';
+  const VERSION = '7.0.0';
+  const SAVE_KEY = 'liangshan-rpg-complete-v7';
+  const PREF_KEY = 'liangshan-rpg-complete-v7-prefs';
+  const OLD_LEGACY_KEY = 'liangshan-rpg-save-v1';
+  const OLD_SEQUEL_KEY = 'liangshan-rpg-sequel-v6';
+  const OLD_BACKUP_PREFIX = 'liangshan-rpg-v7-migration-backup-';
+  const chapters = Array.isArray(window.LIANGSHAN_CHAPTERS) ? window.LIANGSHAN_CHAPTERS : [];
+  const app = document.querySelector('#app');
+  const modalRoot = document.querySelector('#modalRoot');
+  const toastRoot = document.querySelector('#toastRoot');
+  const memoryStorage = new Map();
   const $ = (selector, root = document) => root.querySelector(selector);
-  const app = $('#app');
-  const modalRoot = $('#modalRoot');
-  const toastRoot = $('#toastRoot');
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
   const clone = value => JSON.parse(JSON.stringify(value));
-  const memoryStorage = new Map();
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+  if (chapters.length !== 108) {
+    app.innerHTML = '<div class="empty"><h1>章回資料載入失敗</h1><p>請確認 chapters.js 與 game.js 位於同一資料夾。</p></div>';
+    return;
+  }
 
   const storage = (() => {
     try {
-      const probe = '__liangshan_v62_probe__';
+      const probe = '__liangshan_v70_probe__';
       localStorage.setItem(probe, '1');
       localStorage.removeItem(probe);
       return localStorage;
@@ -32,473 +40,860 @@
   })();
 
   const DIFFICULTIES = {
-    story: {name:'故事', hp:.78, atk:.84, reward:.9, text:'適合閱讀劇情，敵人氣血與攻勢較低。'},
-    standard: {name:'標準', hp:1, atk:1, reward:1, text:'依本章設計數值進行，攻守最均衡。'},
-    heroic: {name:'豪傑', hp:1.2, atk:1.14, reward:1.35, text:'敵軍更強，勝利可獲得較多銀兩。'}
+    story: {name:'故事', hp:.76, atk:.82, reward:.88, text:'敵方較弱，適合一路閱讀完整 108 回。'},
+    standard: {name:'標準', hp:1, atk:1, reward:1, text:'攻守均衡，適合一般遊玩。'},
+    heroic: {name:'豪傑', hp:1.22, atk:1.15, reward:1.38, text:'敵軍更強，勝利銀兩較多。'}
   };
 
-  const GEAR = {
-    rope: {name:'救生纜', icon:'🪢', text:'進入守勢時額外回復 45 氣血。'},
-    flag: {name:'風向旗', icon:'🚩', text:'「百渡安航」豪氣消耗由 125 降為 105。'},
-    seal: {name:'公示印', icon:'🪪', text:'每場戰鬥勝利銀兩獎勵增加 15%。'}
+  const GEARS = {
+    mirror: {name:'護心鏡', icon:'🛡️', text:'守勢時額外回復 45 氣血。'},
+    flag: {name:'軍略旗', icon:'🚩', text:'制度絕技豪氣消耗由 105 降為 85。'},
+    seal: {name:'公義印', icon:'🪪', text:'每場戰鬥勝利銀兩增加 15%。'}
   };
 
-  const CHAPTERS = [
-    [35,'獨角龍疏渠・百田安灌','鄒潤','陶宗旺'],
-    [36,'九尾龜築路・百道安行','陶宗旺','杜遷'],
-    [37,'摸著天量屋・百居安住','杜遷','宋萬'],
-    [38,'雲裡金剛巡坊・百鄰安守','宋萬','朱貴'],
-    [39,'旱地忽律辨訊・百信安傳','朱貴','朱富'],
-    [40,'笑面虎聽訴・百訴安解','朱富','李雲'],
-    [41,'青眼虎勘案・百案安查','李雲','杜興'],
-    [42,'鬼臉兒核契・百契安信','杜興','李應'],
-    [43,'撲天雕清產・百產安籍','李應','朱仝'],
-    [44,'美髯公核戶・百戶安名','朱仝','雷橫'],
-    [45,'插翅虎核役・百役安任','雷橫','穆春'],
-    [46,'小遮攔核賦・百賦安徵','穆春','穆弘'],
-    [47,'沒遮攔核債・百債安償','穆弘','薛永'],
-    [48,'病大蟲核藝・百藝安演','薛永','施恩'],
-    [49,'金眼彪巡肆・百肆安營','施恩','李立'],
-    [50,'催命判官察店・百旅安宿','李立','李俊'],
-    [51,'混江龍巡渡・百渡安航','李俊','童威']
-  ];
-
-  const ROSTER = [
-    '武松','魯達','林沖','楊志','宋江','李逵','扈三娘','呼延灼','盧俊義','公孫勝','張清','花榮','瓊英','燕青','張順','戴宗','朱武','蕭讓','裴宣','樂和','金大堅','孟康','侯健','湯隆','凌振','皇甫端','曹正','孫二娘','張青','顧大嫂','孫新','解珍','解寶','鄒淵','鄒潤','陶宗旺','杜遷','宋萬','朱貴','朱富','李雲','杜興','李應','朱仝','雷橫','穆春','穆弘','薛永','施恩','李立','李俊'
-  ];
-
-  const CLUES = [
-    {id:'registry', title:'船籍與掌舵', icon:'📜', text:'核對船名、船主、掌舵者、船工名冊與航線許可；冒名頂替、無照掌舵或私改航線均須停航查驗。'},
-    {id:'hull', title:'船體與載重', icon:'⚓', text:'檢查船板、纜繩、艙口、吃水線與救生器具；不得暗設夾艙、超載貨客或遮掩破損。'},
-    {id:'fare', title:'渡票與收費', icon:'🎫', text:'票價、貨資、保管費與退票規則須公開；禁收臨時加價、過江保護費與重複渡資。'},
-    {id:'weather', title:'水情與救援', icon:'🌊', text:'每日記錄水位、風勢與禁航訊號；遇翻船、失聯或傷病，立即通報水陸救援與安置。'}
-  ];
-
-  const STRATEGY = [
-    ['船籍掛牌','渡船掛出船名、掌舵者、核載人貨與准行航線，異動須重新驗看。'],
-    ['載重畫線','船身標示安全吃水線，旅客、牲口與貨物分區計重，超載即停航。'],
-    ['渡票明價','碼頭公示票價與退費，渡票一人一號，所有加收款項都須開據。'],
-    ['風浪停航','統一旗號、燈號與鐘聲；水急、濃霧或強風達標時立即封渡。'],
-    ['水陸救援','渡口、客棧、醫棚與巡船共用失聯名冊，啟動搜尋、救治、安置與追償。']
-  ];
-
-  const ENEMIES = {
-    patrol:{name:'霸渡攔船水手', icon:'槳', maxHp:805, hp:805, atk:79, def:27, reward:108, intro:'水手封住公渡碼頭，逼旅客改搭私船，不肯者便被扣下渡票與行囊。'},
-    guard:{name:'超載暗艙船幫', icon:'艙', maxHp:1015, hp:1015, atk:91, def:33, reward:154, intro:'船幫把旅客塞進暗艙，再以貨箱遮住吃水線；破舊纜繩旁竟沒有一件救生器具。'},
-    boss:{name:'私渡盟主與劫江水寇', icon:'寇', maxHp:1425, hp:1425, atk:103, def:40, reward:258, intro:'私渡盟主勾結水寇，偽造停航旗號引船入伏，並焚毀船籍與失聯紀錄。'}
+  const KIND = {
+    story: {
+      label:'英雄故事', action:'破局',
+      clue:['人物與動機','地勢與時機','百姓與財物','退路與救援'],
+      strategy:['辨明局勢','分清敵我','護住無辜','截斷惡計','留出歸路'],
+      enemy:['攔路惡徒','伏擊頭目','操局權豪']
+    },
+    justice: {
+      label:'公義查案', action:'斷案',
+      clue:['身分與案由','證據與程序','權利與告知','救濟與覆核'],
+      strategy:['建立案冊','封存證物','公開程序','停止侵害','覆核救濟'],
+      enemy:['阻案差役','毀證幫閒','枉法豪強']
+    },
+    military: {
+      label:'軍陣守備', action:'定陣',
+      clue:['編制與軍令','器械與地形','辨識與通訊','撤退與救護'],
+      strategy:['編定隊伍','丈量險要','統一號令','設立停戰線','整備救護隊'],
+      enemy:['亂令先鋒','奪械戰隊','擾民軍頭']
+    },
+    transport: {
+      label:'道路運輸', action:'護行',
+      clue:['路線與班次','載具與限量','票價與保管','事故與替代'],
+      strategy:['登記路線','標明限量','公開費用','設置停運線','安排替代運送'],
+      enemy:['攔路腳夫','黑價車幫','霸運總頭']
+    },
+    water: {
+      label:'水路安航', action:'分浪',
+      clue:['名冊與水情','船具與載重','訊號與停航','救援與安置'],
+      strategy:['建立水冊','標出水線','統一旗號','風浪停航','水陸聯援'],
+      enemy:['封渡水手','超載船幫','劫江水寨']
+    },
+    health: {
+      label:'醫護安生', action:'濟傷',
+      clue:['來源與症狀','分級與隔離','用藥與紀錄','轉送與追蹤'],
+      strategy:['建立名冊','分級處置','公開用法','停止危害','轉送追蹤'],
+      enemy:['阻醫惡徒','假藥牙行','害命黑主']
+    },
+    civic: {
+      label:'百業共治', action:'安民',
+      clue:['名冊與責任','標準與流程','公開與申訴','通報與改善'],
+      strategy:['建冊定責','畫線分區','公開規則','停用警戒','救濟改善'],
+      enemy:['攔辦幫閒','偽冊牙人','把持豪強']
+    },
+    trade: {
+      label:'交易百工', action:'驗真',
+      clue:['資格與來源','規格與價格','交付與憑證','退換與補償'],
+      strategy:['查明來源','統一規格','明示價格','停止危品','退換補償'],
+      enemy:['欺市伙計','造假行幫','壟斷東家']
+    },
+    wild: {
+      label:'山林百獸', action:'巡界',
+      clue:['範圍與季節','足跡與風險','禁限與告示','救援與復育'],
+      strategy:['畫定範圍','記錄足跡','公示禁限','封閉險區','救援復育'],
+      enemy:['越界獵手','設陷山幫','霸山頭領']
+    },
+    stealth: {
+      label:'潛行偵查', action:'探險',
+      clue:['身分與暗號','路線與時機','目標與證據','撤離與接應'],
+      strategy:['核對暗號','標出密路','留存證據','切斷追兵','安排接應'],
+      enemy:['巡哨耳目','暗路伏兵','密寨首領']
+    }
   };
 
-  const ACHIEVEMENTS = [
-    ['明辨舟契','完成四項渡航查驗。',s=>s.clues.length===4],
-    ['三戰連捷','全章未曾戰敗。',s=>s.runStats.defeats===0],
-    ['無藥破浪','全章未使用金瘡藥。',s=>s.runStats.medicinesUsed===0],
-    ['混江獨航','最終戰未呼叫童威援護。',s=>!s.runStats.bossCompanionUsed]
-  ];
-
-  const fresh = () => ({
-    version:VERSION,
-    updatedAt:new Date().toISOString(),
-    started:false,
-    complete:false,
-    scene:'home',
-    gear:'rope',
-    grade:'',
-    score:0,
-    hero:{name:'李俊', title:'混江龍・揭陽江水軍頭領', level:51, hp:1290, maxHp:1290, sp:890, maxSp:890, atk:136, def:79, guarding:false},
-    companion:{name:'童威', title:'出洞蛟・揭陽江水軍頭領', unlocked:false, used:false},
-    clues:[],
-    strategy:[],
-    flags:{battle1:false,battle2:false,boss:false,system:false},
-    inventory:[],
-    silver:330,
-    log:['第五十一回待命：李俊將巡查渡船、私渡與沿江航路安全。'],
-    battle:null,
-    achievements:[],
-    runStats:{actions:0,medicinesUsed:0,defeats:0,bossCompanionUsed:false},
-    previous:{detected:false,version:'',chapter50Complete:false,chapter49Complete:false,carriedSilver:0,achievements:0},
-    legacy:{detected:false,version:'',chapter48Complete:false,chapter34Complete:false}
+  const freshState = () => ({
+    version: VERSION,
+    updatedAt: new Date().toISOString(),
+    silver: 500,
+    selected: 1,
+    unlocked: 1,
+    completed: {},
+    current: null,
+    migration: {done:false, legacy:false, sequel:false, imported:[], note:'尚未檢查舊存檔。'}
   });
 
-  let state = loadState();
+  const freshPrefs = () => ({theme:'ink', difficulty:'standard', gear:'mirror', sound:true, speech:false});
+
   let prefs = loadPrefs();
+  let state = loadState();
   let screen = 'home';
+  let chapterSearch = '';
+  let chapterEra = 'all';
   let deferredPrompt = null;
-  let audio = null;
-  let speechOn = false;
+  let audioContext = null;
   let battleBusy = false;
 
-  function loadPrefs(){
-    try{
-      const raw=JSON.parse(storage.getItem(PREF_KEY)||'{}');
-      const merged={theme:'ink',sound:true,difficulty:'standard',...raw};
-      if(!DIFFICULTIES[merged.difficulty])merged.difficulty='standard';
+  function loadPrefs() {
+    try {
+      const raw = JSON.parse(storage.getItem(PREF_KEY) || 'null');
+      const merged = {...freshPrefs(), ...(raw || {})};
+      if (!DIFFICULTIES[merged.difficulty]) merged.difficulty = 'standard';
+      if (!GEARS[merged.gear]) merged.gear = 'mirror';
+      if (!['ink','dark','paper'].includes(merged.theme)) merged.theme = 'ink';
       return merged;
-    }catch{return {theme:'ink',sound:true,difficulty:'standard'}}
-  }
-  function savePrefs(){storage.setItem(PREF_KEY,JSON.stringify(prefs))}
-
-  function detectLegacy(target){
-    try{
-      const old=JSON.parse(storage.getItem(LEGACY_KEY)||'null');
-      if(!old)return target;
-      target.legacy={detected:true,version:old.version||old.gameVersion||'舊版',chapter48Complete:!!old.flags?.chapter48Complete,chapter34Complete:!!old.flags?.chapter34Complete};
-    }catch{}
-    return target;
+    } catch { return freshPrefs(); }
   }
 
-  function detectPreviousBackup(target){
-    try{
-      const old=JSON.parse(storage.getItem(V61_BACKUP_KEY)||'null');
-      if(old){
-        target.previous={
-          detected:true,
-          version:old.version||'6.1.0',
-          chapter50Complete:!!old.complete,
-          chapter49Complete:!!old.previous?.chapter49Complete,
-          carriedSilver:Math.min(200,Math.max(0,Math.floor((old.silver||0)*.25))),
-          achievements:Array.isArray(old.achievements)?old.achievements.length:0
-        };
-      }
-    }catch{}
-    return target;
+  function mergeState(raw) {
+    const base = freshState();
+    const merged = {...base, ...raw};
+    merged.version = VERSION;
+    merged.completed = raw?.completed && typeof raw.completed === 'object' ? raw.completed : {};
+    merged.migration = {...base.migration, ...(raw?.migration || {})};
+    merged.selected = clamp(Number(raw?.selected) || 1, 1, 108);
+    merged.unlocked = clamp(Number(raw?.unlocked) || 1, 1, 108);
+    if (raw?.current?.chapter) merged.current = normalizeRun(raw.current);
+    return merged;
   }
 
-  function migratePrevious(raw){
-    const isV61=raw.version==='6.1.0'||raw.hero?.name==='李立';
-    const backupKey=isV61?V61_BACKUP_KEY:V60_BACKUP_KEY;
-    try{if(!storage.getItem(backupKey))storage.setItem(backupKey,JSON.stringify(raw))}catch{}
-    const base=fresh();
-    const carried=Math.min(200,Math.max(0,Math.floor((raw.silver||0)*.25)));
-    base.previous={
-      detected:true,
-      version:raw.version||'前版',
-      chapter50Complete:isV61&&!!raw.complete,
-      chapter49Complete:!!raw.previous?.chapter49Complete||(!isV61&&!!raw.complete),
-      carriedSilver:carried,
-      achievements:Array.isArray(raw.achievements)?raw.achievements.length:0
-    };
-    if(raw.complete){
-      base.silver+=carried;
-      base.inventory.push(isV61?'水泊百旅安宿約（前回承接）':'水泊百肆安營約（前回承接）');
-      base.log.unshift(`承接 ${base.previous.version} 完成紀錄與銀兩 ${carried}。`);
+  function loadState() {
+    try {
+      const raw = JSON.parse(storage.getItem(SAVE_KEY) || 'null');
+      if (raw && raw.version) return mergeState(raw);
+    } catch {}
+    return freshState();
+  }
+
+  function save(silent = true) {
+    state.updatedAt = new Date().toISOString();
+    state.version = VERSION;
+    storage.setItem(SAVE_KEY, JSON.stringify(state));
+    storage.setItem(PREF_KEY, JSON.stringify(prefs));
+    if (!silent) { toast('完整章回進度已收入本機存檔。', 'good'); tone('save'); }
+  }
+
+  function markImported(number, grade = 'A', score = 82, source = '舊版承接') {
+    const key = String(number);
+    if (!state.completed[key] || Number(state.completed[key].score || 0) < score) {
+      state.completed[key] = {
+        grade, score, actions:0, defeats:0, medicinesUsed:0,
+        achievements:['舊版完成紀錄'], completedAt:new Date().toISOString(), source
+      };
     }
-    return detectLegacy(base);
+    if (!state.migration.imported.includes(number)) state.migration.imported.push(number);
+    state.unlocked = Math.max(state.unlocked, Math.min(108, number + 1));
   }
 
-  function mergeCurrent(raw){
-    const base=fresh();
-    const merged={
-      ...base,...raw,
-      hero:{...base.hero,...raw.hero},
-      companion:{...base.companion,...raw.companion},
-      flags:{...base.flags,...raw.flags},
-      runStats:{...base.runStats,...raw.runStats},
-      previous:{...base.previous,...raw.previous},
-      legacy:{...base.legacy,...raw.legacy}
-    };
-    merged.version=VERSION;
-    if(!GEAR[merged.gear])merged.gear='rope';
-    if(!Array.isArray(merged.clues))merged.clues=[];
-    if(!Array.isArray(merged.strategy))merged.strategy=[];
-    if(!Array.isArray(merged.inventory))merged.inventory=[];
-    if(!Array.isArray(merged.achievements))merged.achievements=[];
-    return detectLegacy(detectPreviousBackup(merged));
-  }
-
-  function loadState(){
-    try{
-      const raw=JSON.parse(storage.getItem(SAVE_KEY)||'null');
-      if(raw?.hero){
-        if(raw.version==='6.1.0'||raw.version==='6.0.0'||raw.hero.name==='李立'||raw.hero.name==='施恩')return migratePrevious(raw);
-        return mergeCurrent(raw);
+  function migrateOldSaves() {
+    if (state.migration.done) return;
+    const notes = [];
+    try {
+      const legacyRaw = storage.getItem(OLD_LEGACY_KEY);
+      if (legacyRaw) {
+        storage.setItem(`${OLD_BACKUP_PREFIX}legacy`, legacyRaw);
+        const legacy = JSON.parse(legacyRaw);
+        let count = 0;
+        for (let n = 1; n <= 34; n++) {
+          if (legacy?.flags?.[`chapter${n}Complete`]) { markImported(n, 'A', 84, 'v4.5.0 經典篇'); count++; }
+        }
+        if (count) {
+          state.migration.legacy = true;
+          notes.push(`承接經典篇 ${count} 回`);
+          state.silver += Math.min(500, Math.max(0, Number(legacy?.silver || legacy?.inventory?.silver || 0) * .1));
+        }
       }
-    }catch{}
-    return detectLegacy(detectPreviousBackup(fresh()));
+    } catch (error) { notes.push('經典篇存檔格式無法承接'); }
+
+    try {
+      const sequelRaw = storage.getItem(OLD_SEQUEL_KEY);
+      if (sequelRaw) {
+        storage.setItem(`${OLD_BACKUP_PREFIX}v6.2.0`, sequelRaw);
+        const old = JSON.parse(sequelRaw);
+        let count = 0;
+        if (old?.complete && (old?.version === '6.2.0' || old?.hero?.name === '李俊')) {
+          for (let n = 35; n <= 51; n++) {
+            const grade = n === 51 && old.grade ? old.grade : 'A';
+            const score = n === 51 && old.score ? Number(old.score) : 84;
+            markImported(n, grade, score, 'v6.2.0 續篇'); count++;
+          }
+        } else {
+          if (old?.previous?.chapter49Complete) { markImported(49, 'A', 84, 'v6 前回'); count++; }
+          if (old?.previous?.chapter50Complete) { markImported(50, 'A', 84, 'v6.1.0'); count++; }
+          if (old?.complete) { markImported(51, old.grade || 'A', Number(old.score || 84), 'v6.2.0'); count++; }
+        }
+        if (count) {
+          state.migration.sequel = true;
+          notes.push(`承接制度續篇 ${count} 回`);
+          state.silver += Math.min(500, Math.floor(Number(old?.silver || 0) * .25));
+        }
+      }
+    } catch (error) { notes.push('續篇存檔格式無法承接'); }
+
+    state.silver = Math.round(state.silver);
+    state.migration.done = true;
+    state.migration.imported.sort((a,b) => a-b);
+    state.migration.note = notes.length ? notes.join('；') : '未發現可承接的舊存檔，已建立全新完整章回進度。';
+    state.selected = firstIncomplete();
+    save(true);
   }
 
-  function importState(raw){
-    if(!raw?.hero)throw new Error('invalid');
-    if(raw.version==='6.1.0'||raw.version==='6.0.0'||raw.hero.name==='李立'||raw.hero.name==='施恩')return migratePrevious(raw);
-    return mergeCurrent(raw);
+  function normalizeRun(raw) {
+    const chapter = clamp(Number(raw.chapter) || 1, 1, 108);
+    const base = makeRun(chapter);
+    const merged = {
+      ...base, ...raw,
+      hero:{...base.hero, ...(raw.hero || {})},
+      companion:{...base.companion, ...(raw.companion || {})},
+      stats:{...base.stats, ...(raw.stats || {})},
+      battles:{...base.battles, ...(raw.battles || {})}
+    };
+    merged.clues = Array.isArray(raw.clues) ? raw.clues.filter(x => [0,1,2,3].includes(Number(x))).map(Number) : [];
+    merged.strategies = Array.isArray(raw.strategies) ? raw.strategies.filter(x => [0,1,2,3,4].includes(Number(x))).map(Number) : [];
+    merged.medicines = clamp(Number(raw.medicines) || 0, 0, 9);
+    merged.gear = GEARS[raw.gear] ? raw.gear : prefs.gear;
+    merged.difficulty = DIFFICULTIES[raw.difficulty] ? raw.difficulty : prefs.difficulty;
+    return merged;
   }
 
-  function save(silent=false){
-    state.updatedAt=new Date().toISOString();
-    state.version=VERSION;
-    storage.setItem(SAVE_KEY,JSON.stringify(state));
-    if(!silent){toast('第五十一回進度已收入本機存檔。');tone('save')}
+  function firstIncomplete() {
+    for (let n = 1; n <= 108; n++) if (!state.completed[String(n)]) return n;
+    return 108;
   }
 
-  function reset(){
-    storage.removeItem(SAVE_KEY);
-    state=detectLegacy(detectPreviousBackup(fresh()));
-    screen='home';
+  function chapter(number) { return chapters[number - 1]; }
+  function currentChapter() { return state.current ? chapter(state.current.chapter) : chapter(state.selected); }
+  function kindData(ch) { return KIND[ch.kind] || KIND.civic; }
+  function completionCount() { return Object.keys(state.completed).filter(k => state.completed[k]).length; }
+  function sCount() { return Object.values(state.completed).filter(item => item?.grade === 'S').length; }
+  function totalScore() { return Object.values(state.completed).reduce((sum, item) => sum + Number(item?.score || 0), 0); }
+  function pct(value, max) { return clamp(Math.round((value / Math.max(1, max)) * 100), 0, 100); }
+
+  function heroStats(number) {
+    return {
+      maxHp: 880 + number * 8,
+      maxSp: 600 + number * 4,
+      atk: 91 + Math.round(number * .9),
+      def: 47 + Math.round(number * .46)
+    };
+  }
+
+  function makeRun(number) {
+    const ch = chapter(number);
+    const stats = heroStats(number);
+    return {
+      chapter:number,
+      startedAt:new Date().toISOString(),
+      clues:[], strategies:[], battles:{0:false,1:false,2:false},
+      hero:{hp:stats.maxHp,maxHp:stats.maxHp,sp:stats.maxSp,maxSp:stats.maxSp,atk:stats.atk,def:stats.def,guarding:false},
+      companion:{name:ch.companion,nickname:ch.companionNickname,unlocked:false},
+      medicines:2,
+      silverEarned:0,
+      gear:prefs.gear,
+      difficulty:prefs.difficulty,
+      battle:null,
+      stats:{actions:0,defeats:0,medicinesUsed:0,bossCompanionUsed:false},
+      complete:false, grade:'', score:0, achievements:[], log:[`第 ${number} 回「${ch.title}」開始。`]
+    };
+  }
+
+  function startChapter(number, forceNew = false) {
+    const n = clamp(Number(number), 1, 108);
+    state.selected = n;
+    if (forceNew || !state.current || state.current.chapter !== n || state.current.complete) state.current = makeRun(n);
+    screen = 'chapter';
+    save(true);
     render();
-    toast('已重設 v6.2.0 第五十一回；前回備份與經典篇存檔未受影響。');
+    window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  function esc(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
-  function pct(a,b){return clamp(Math.round(a/b*100),0,100)}
-  function toast(message){const node=document.createElement('div');node.className='toast';node.textContent=message;toastRoot.append(node);setTimeout(()=>node.remove(),3200)}
-  function tone(kind){
-    if(!prefs.sound)return;
-    try{
-      audio ||= new (window.AudioContext||window.webkitAudioContext)();
-      const oscillator=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;
-      const tones={hit:[150,.08],hurt:[85,.11],skill:[430,.14],victory:[690,.24],save:[520,.09],guard:[280,.08],companion:[590,.16],achievement:[770,.2],gear:[620,.1]};
-      const [frequency,duration]=tones[kind]||[360,.08];
-      oscillator.frequency.setValueAtTime(frequency,now);
-      if(kind==='victory'||kind==='achievement')oscillator.frequency.exponentialRampToValueAtTime(frequency*1.5,now+duration);
-      gain.gain.setValueAtTime(.0001,now);
-      gain.gain.exponentialRampToValueAtTime(.07,now+.01);
-      gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
-      oscillator.connect(gain).connect(audio.destination);
-      oscillator.start();oscillator.stop(now+duration+.02);
-    }catch{}
-  }
-  function log(message){state.log.unshift(message);state.log=state.log.slice(0,32)}
-  function speak(text){if(!('speechSynthesis'in window))return toast('此瀏覽器不支援語音朗讀。');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));utterance.lang='zh-TW';utterance.rate=.9;speechSynthesis.speak(utterance)}
-  function difficulty(){return DIFFICULTIES[prefs.difficulty]||DIFFICULTIES.standard}
-  function activeGear(){return GEAR[state.gear]||GEAR.rope}
-
-  function previousText(){
-    if(!state.previous.detected)return '未偵測到 v6.1.0 紀錄；仍可直接遊玩第五十一回。';
-    const done=state.previous.chapter50Complete?'第五十回已完成':'第五十回尚未完成';
-    const carry=state.previous.chapter50Complete?`，本回承接銀兩 ${state.previous.carriedSilver} 與前回成就 ${state.previous.achievements} 項`:'，未承接完成獎勵';
-    return `偵測到 ${state.previous.version}：${done}${carry}。`;
-  }
-  function legacyText(){if(!state.legacy.detected)return '未偵測到經典篇存檔。';return `另偵測到 ${state.legacy.version} 經典篇存檔；新版不會覆寫。`}
-
-  function header(title,sub=''){return `<div class="chapter-banner"><div class="eyebrow">第五十一回・續篇</div><h1>${esc(title)}</h1>${sub?`<p>${esc(sub)}</p>`:''}</div>`}
-  function hud(){
-    const hero=state.hero,gear=activeGear();
-    return `<div class="hud"><section class="card"><div class="portrait"><div class="avatar">俊</div><div><span class="tag">第 51 名主角</span><h3>${esc(hero.name)}</h3><p>${esc(hero.title)}</p></div></div></section><section class="card"><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(hero.hp,hero.maxHp)}%"></i></div><b>${hero.hp}/${hero.maxHp}</b></div><div class="statline"><span>豪氣</span><div class="bar sp"><i style="width:${pct(hero.sp,hero.maxSp)}%"></i></div><b>${hero.sp}/${hero.maxSp}</b></div></section><section class="card"><p><b>銀兩：</b>${state.silver}</p><p><b>同伴：</b>${state.companion.unlocked?'童威已加入':'尚未會合'}</p><p><b>行舟裝備：</b>${gear.icon} ${gear.name}</p></section></div>`;
-  }
-  function nav(){return `<div class="actions"><button class="btn small" data-act="home">首頁</button><button class="btn small" data-act="chapter">章回</button><button class="btn small" data-act="roster">英雄譜</button><button class="btn small" data-act="timeline">章回錄</button><button class="btn small" data-act="save">存檔</button><button class="btn small" data-act="manage">存檔管理</button></div>`}
-  function difficultyPicker(){return `<div class="difficulty-picker">${Object.entries(DIFFICULTIES).map(([id,item])=>`<button class="btn difficulty-option ${prefs.difficulty===id?'active':''}" data-difficulty="${id}">${prefs.difficulty===id?'<span class="checkmark">✓</span>':''}<strong>${item.name}難度</strong><span>${item.text}</span></button>`).join('')}</div>`}
-  function gearPicker(){return `<div class="gear-picker">${Object.entries(GEAR).map(([id,item])=>`<button class="btn gear-option ${state.gear===id?'active':''}" data-gear="${id}" ${state.battle?'disabled':''}>${state.gear===id?'<span class="checkmark">✓</span>':''}<span class="gear-icon">${item.icon}</span><strong>${item.name}</strong><span>${item.text}</span></button>`).join('')}</div>`}
-
-  function renderHome(){
-    screen='home';
-    const action=state.complete?'<button class="btn primary" data-act="continue">查看第五十一回結算</button>':state.started?'<button class="btn primary" data-act="continue">繼續第五十一回</button>':'<button class="btn primary" data-act="start">開始第五十一回</button>';
-    app.innerHTML=`${header('混江龍巡渡・百渡安航','李俊升格主角，出洞蛟童威破浪助陣')}<section class="hero"><div class="eyebrow">《水滸英雄傳：梁山風雲》v6.2.0</div><h1>船有籍、渡有價，風浪有禁，落水有援</h1><p>第五十回整頓沿江客棧後，李俊追查私渡、超載與劫江水寇。玩家將查驗船籍、船體、渡票與水情，建立水泊百渡安航制度。</p><div class="actions">${action}<button class="btn" data-act="roster">五十一英雄譜</button><button class="btn" data-act="timeline">章回錄</button><button class="btn" data-act="manage">存檔管理</button><a class="btn" href="previous-v6.1.0/index.html">重遊第五十回</a><a class="btn" href="legacy-v4.5.0/index.html">開啟經典篇</a></div></section><div class="grid two" style="margin-top:16px"><section class="card ${state.previous.detected?'success':'warning'}"><h3>前回安全承接</h3><p>${esc(previousText())}</p><p class="muted">${esc(legacyText())}</p></section><section class="card"><h3>v6.2.0 新增</h3><p><span class="tag">第 51 名主角：李俊</span><span class="tag">新同伴：童威</span><span class="tag">行舟裝備</span><span class="tag">章回評級</span><span class="tag">三場新戰鬥</span></p><p class="muted">第五十回、第四十九回與經典篇均保留獨立入口；支援手機、離線 PWA、三種顯示模式、語音與 JSON 存檔。</p></section></div><section class="card" style="margin-top:16px"><h3>選擇本章難度</h3><p class="muted">可在非戰鬥狀態切換；已開始的戰鬥維持原數值。</p>${difficultyPicker()}</section><section class="card" style="margin-top:16px"><h3>選擇行舟裝備</h3><p class="muted">三種裝備各有不同效果，章回進行中仍可在非戰鬥狀態調整。</p>${gearPicker()}</section>`;
-    app.focus();
+  function clueData(ch) {
+    const data = kindData(ch);
+    return data.clue.map((title, index) => ({
+      title,
+      icon:['📋','📏','📢','🆘'][index],
+      text:[
+        `核對「${ch.focus}」涉及的人員、區域、時段與負責者，先把責任寫入可查名冊。`,
+        `逐項檢查器具、環境、數量與界線，所有異常都要留下位置與證據。`,
+        `把費用、限制、停止條件與申訴方式公開，不能只靠口頭傳令。`,
+        `遇到受傷、失聯、財物受損或重大危險時，立即通報、安置並追蹤改善。`
+      ][index]
+    }));
   }
 
-  function startChapter(resetRun=false){
-    if(resetRun){
-      const previous=clone(state.previous),legacy=clone(state.legacy),gear=state.gear;
-      state=fresh();state.previous=previous;state.legacy=legacy;state.gear=gear;
-      if(previous.chapter50Complete){state.silver+=previous.carriedSilver;state.inventory.push('水泊百旅安宿約（前回承接）')}
+  function strategyData(ch) {
+    const data = kindData(ch);
+    return data.strategy.map((title, index) => ({
+      title,
+      text:[
+        `為「${ch.focus}」建立統一名冊、編號與責任分工。`,
+        `把安全範圍、數量上限、動線與危險區域清楚標示。`,
+        `公開規則、費用、聯絡窗口與異常紀錄，讓眾人都能查驗。`,
+        `達到危險標準時立即停止作業、封鎖現場並發出一致警號。`,
+        `串聯梁山、村寨、醫棚與巡隊，完成救援、補償及後續改善。`
+      ][index]
+    }));
+  }
+
+  function chapterIntro(ch) {
+    const intros = {
+      story:`${ch.nickname}${ch.name}奉命走入事件核心。這一回以「${ch.focus}」為主線，不只要擊敗眼前強敵，也要辨清人物動機、保住無辜百姓，讓勝利留下可長久遵循的規矩。`,
+      justice:`${ch.nickname}${ch.name}接下梁山公議堂的木牌，查辦「${ch.focus}」。案情若只靠威勢處理，冤屈仍會重演；必須把證據、程序、告知與救濟一一寫清。`,
+      military:`${ch.nickname}${ch.name}整點人馬，面對「${ch.focus}」。本回強調軍令、器械、通訊與撤退救護，取勝同時不得擾民、棄傷或亂用兵械。`,
+      transport:`${ch.nickname}${ch.name}巡查「${ch.focus}」。道路、驛站與載具一旦被豪強壟斷，旅人便無路可走；本回要建立可查、可停、可替代的安全運送制度。`,
+      water:`${ch.nickname}${ch.name}領水軍查驗「${ch.focus}」。水勢無常，更不能讓黑船、超載與假旗號趁險取利；本回須同時整治船冊、水線、停航與救援。`,
+      health:`${ch.nickname}${ch.name}協同醫棚處理「${ch.focus}」。辨明來源、分級處置、用藥留錄與轉送追蹤缺一不可，不能讓假藥與延誤再奪人性命。`,
+      civic:`${ch.nickname}${ch.name}主持「${ch.focus}」的制度整頓。梁山不只要有英雄，也要有人人看得懂、查得到、能申訴、可改善的日常規則。`,
+      trade:`${ch.nickname}${ch.name}走入市集與作坊，查驗「${ch.focus}」。來源、規格、價格、憑證與補償必須相互對得上，才能讓百業公平運轉。`,
+      wild:`${ch.nickname}${ch.name}深入山林，處理「${ch.focus}」。山川百獸不是任人掠取之物，必須劃界、巡查、救援並留下復育空間。`,
+      stealth:`${ch.nickname}${ch.name}改裝潛行，暗查「${ch.focus}」。暗號、路線、證據與接應若有一環出錯，便會牽連無辜；本回要以巧取勝，不以濫殺收場。`
+    };
+    return intros[ch.kind] || intros.civic;
+  }
+
+  function skillNames(ch) {
+    const data = kindData(ch);
+    const second = ch.title.includes('・') ? ch.title.split('・')[1] : `${data.label}安定`;
+    return {
+      attack:`${ch.nickname}進擊`,
+      skill:`${ch.nickname}${data.action}`,
+      system:second,
+      companion:`${ch.companionNickname}・${ch.companion}援護`
+    };
+  }
+
+  function enemyFor(ch, stage, difficultyKey, gearKey) {
+    const data = kindData(ch);
+    const difficulty = DIFFICULTIES[difficultyKey] || DIFFICULTIES.standard;
+    const scale = 1 + (ch.number - 1) * .0105;
+    const baseHp = [500,710,970][stage];
+    const baseAtk = [49,59,70][stage] + ch.number * .15;
+    const baseDef = [15,22,30][stage] + ch.number * .09;
+    const baseReward = [58,92,148][stage] + ch.number * 2.2;
+    const rewardGear = gearKey === 'seal' ? 1.15 : 1;
+    const name = stage === 2 ? `${data.enemy[stage]}・${ch.focus}黑主` : `${data.enemy[stage]}・${ch.focus}`;
+    return {
+      name,
+      icon:[ch.icon,'⚠️','👹'][stage],
+      maxHp:Math.round(baseHp * scale * difficulty.hp),
+      hp:Math.round(baseHp * scale * difficulty.hp),
+      atk:Math.round(baseAtk * scale * difficulty.atk),
+      def:Math.round(baseDef * (1 + (ch.number - 1) * .003)),
+      reward:Math.round(baseReward * difficulty.reward * rewardGear),
+      intro:[
+        `第一道阻力封住現場，拒絕交出名冊與查驗紀錄。`,
+        `第二股勢力偽造規則、藏匿缺失，企圖讓整頓半途而廢。`,
+        `幕後黑主操控「${ch.focus}」，準備毀去全部證據與救援線。`
+      ][stage]
+    };
+  }
+
+  function startBattle(stage) {
+    const run = state.current;
+    if (!run || run.battle) return;
+    const ch = currentChapter();
+    const s = Number(stage);
+    if (run.clues.length < 4 || run.strategies.length < 5) return toast('先完成四項查驗與五階段軍略。','warn');
+    if (s > 0 && !run.battles[String(s - 1)]) return toast('必須依序完成前一場戰鬥。','warn');
+    if (run.battles[String(s)]) return toast('這一場已經勝利。','good');
+    run.hero.hp = run.hero.maxHp;
+    run.hero.sp = run.hero.maxSp;
+    run.hero.guarding = false;
+    run.battle = {
+      stage:s,
+      turn:1,
+      actions:0,
+      companionUsed:false,
+      difficulty:run.difficulty,
+      gear:run.gear,
+      enemy:enemyFor(ch, s, run.difficulty, run.gear),
+      log:[`迎戰：${enemyFor(ch, s, run.difficulty, run.gear).name}`]
+    };
+    screen = 'battle';
+    save(true);
+    render();
+    tone('battle');
+  }
+
+  function battleAction(action) {
+    if (battleBusy || !state.current?.battle) return;
+    battleBusy = true;
+    const run = state.current;
+    const ch = currentChapter();
+    const names = skillNames(ch);
+    const battle = run.battle;
+    const hero = run.hero;
+    const enemy = battle.enemy;
+    const systemCost = battle.gear === 'flag' ? 85 : 105;
+    let damage = 0;
+    let acted = false;
+    hero.guarding = false;
+
+    if (action === 'attack') {
+      acted = true;
+      damage = Math.max(24, hero.atk + rand(-12, 21) - Math.round(enemy.def * .55));
+      enemy.hp -= damage;
+      battle.log.unshift(`${ch.name}施展「${names.attack}」，造成 ${damage} 點傷害。`);
+      tone('hit');
     }
-    state.started=true;state.scene='orders';screen='chapter';save(true);renderChapter();
-  }
-
-  function renderChapter(){
-    screen='chapter';
-    if(state.complete)return renderEnding();
-    if(state.battle)return renderBattle();
-    const scene=state.scene;
-    let art='⛵',title='梁山水寨傳令',text='',choices=[];
-    if(scene==='orders'){
-      art='📜';title='宋江傳下百渡安航令';
-      text=`<p>沿江客棧新規才上路，渡口便接連發生私船攬客、超載翻覆與旅貨失蹤。有人故意升起假停航旗，再逼旅客改搭高價私渡。</p><p>李俊望著江圖道：「水路若只靠膽大，便會拿百姓性命試浪。船要有籍、價要公開、風浪要知進退。」</p>`;
-      choices=[['前往揭陽江公渡巡查','arrive']];
-    }else if(scene==='arrive'){
-      art='🚣';title='揭陽公渡・霸渡攔船';
-      text=`<p>公渡碼頭被一群水手用長槳封住，牆上貼著偽造的停航告示。他們強迫旅客改搭無名私船，還把原渡票撕去。</p><p>李俊看一眼逆風飄動的旗號：「風從東來，旗卻向東倒。這停航令是假的。」</p>`;
-      choices=[[state.flags.battle1?'霸渡水手已退，登船查驗':'拆下假旗，迎戰霸渡水手',state.flags.battle1?'investigate':'battle1']];
-    }else if(scene==='investigate'){
-      art='🔎';title='渡船四項安全查驗';
-      text=`<p>霸渡只是外圍。私渡真正的漏洞藏在冒名船籍、暗艙超載、亂收渡資與偽造水情。請完成四項查驗。</p>`;
-    }else if(scene==='guard'){
-      art='⚓';title='暗艙超載・斷纜救人';
-      text=`<p>四項證據相互吻合：船幫以假停航令趕走公渡，再把旅客塞進無名船暗艙，刻意遮住吃水線並重複收費。</p><p>一艘超載私船正要離岸，舊纜已被拉裂，艙內傳出孩童哭聲。</p>`;
-      choices=[[state.flags.battle2?'船幫已敗，迎接童家水軍':'攔住超載私船，迎戰暗艙船幫',state.flags.battle2?'council':'battle2']];
-    }else if(scene==='council'){
-      art='🐉';title='出洞蛟童威潛水破艙';
-      text=`<p>出洞蛟童威自水下割開封死的逃生艙口，救出最後幾名旅客。他帶來下游截獲的假船牌與水寇分贓冊。</p><p>童威道：「水上出事，光從岸邊喊不夠。每一渡都要知道誰能下水、哪艘船能救、失聯往哪裡找。」</p>`;
-      choices=[['召開百渡安航軍議','strategy']];
-    }else if(scene==='strategy'){
-      art='🧭';title='五階段百渡安航軍略';
-      text=`<p>依序完成船籍、載重、票價、停航與水陸救援，讓每一艘渡船都有可追查、可停航、可救援的安全制度。</p>`;
-    }else if(scene==='boss'){
-      art='🔥';title='水寇焚籍・江心決戰';
-      text=`<p>安航制度公布後，私渡盟主失去冒名攬客與暗艙藏貨的空間。他勾結劫江水寇，趁夜焚毀船籍站，並用假燈號把巡船引向急流。</p><p>李俊分舟截江，童威潛水斷纜，百渡安航的最後一戰就在浪心。</p>`;
-      choices=[[state.flags.boss?'私渡盟主已敗，公布百渡新規':'迎戰私渡盟主與劫江水寇',state.flags.boss?'establish':'bossbattle']];
-    }else if(scene==='establish'){
-      art='🏮';title='水泊百渡安航制度';
-      text=`<p>沿江渡口掛上統一船牌、核載線、票價牌與風浪旗。巡船、客棧、醫棚與水寨共用失聯名冊，每日演練落水救援。</p><p>李俊把假停航旗沉入江中，換上新旗：「紅旗停渡，白燈求援；不拿性命賭風浪。」</p>`;
-      choices=[['完成第五十一回，立下水泊百渡安航約','finish']];
+    if (action === 'skill' && hero.sp >= 60) {
+      acted = true;
+      hero.sp -= 60;
+      damage = Math.max(60, Math.round(hero.atk * 1.72) + rand(10, 34) - Math.round(enemy.def * .42));
+      enemy.hp -= damage;
+      enemy.atk = Math.max(22, enemy.atk - 5);
+      battle.log.unshift(`「${names.skill}」造成 ${damage} 點傷害，並削弱敵方攻勢。`);
+      tone('skill');
     }
-    app.innerHTML=`${header(title,'混江龍李俊主理・出洞蛟童威助陣')}${nav()}${hud()}<section class="card scene"><div class="scene-art">${art}</div><div class="scene-text">${text}</div>${scene==='investigate'?renderClues():scene==='strategy'?renderStrategy():`<div class="scene-choices">${choices.map(([label,action])=>`<button class="btn primary" data-act="${action}">${label}</button>`).join('')}</div>`}</section><section class="card" style="margin-top:14px"><h3>行動紀錄</h3><div class="log">${state.log.map(item=>`<div>${esc(item)}</div>`).join('')}</div></section>`;
-  }
+    if (action === 'system' && hero.sp >= systemCost) {
+      acted = true;
+      hero.sp -= systemCost;
+      damage = Math.max(95, Math.round(hero.atk * 2.18) + rand(20, 48) - Math.round(enemy.def * .3));
+      enemy.hp -= damage;
+      hero.hp = clamp(hero.hp + 58, 0, hero.maxHp);
+      battle.log.unshift(`制度絕技「${names.system}」造成 ${damage} 點傷害，並回復 58 氣血。`);
+      tone('skill');
+    }
+    if (action === 'guard') {
+      acted = true;
+      hero.guarding = true;
+      hero.sp = clamp(hero.sp + 44, 0, hero.maxSp);
+      const heal = battle.gear === 'mirror' ? 45 : 0;
+      hero.hp = clamp(hero.hp + heal, 0, hero.maxHp);
+      battle.log.unshift(`${ch.name}守住百姓與證冊，回復 44 豪氣${heal ? `、${heal} 氣血` : ''}。`);
+      tone('guard');
+    }
+    if (action === 'companion' && !battle.companionUsed) {
+      acted = true;
+      battle.companionUsed = true;
+      damage = Math.max(120, Math.round(hero.atk * 1.55) + rand(22, 52) - Math.round(enemy.def * .25));
+      enemy.hp -= damage;
+      enemy.def = Math.max(8, enemy.def - 10);
+      hero.hp = clamp(hero.hp + 35, 0, hero.maxHp);
+      if (battle.stage === 2) run.stats.bossCompanionUsed = true;
+      battle.log.unshift(`${ch.companion}施展「${names.companion}」，造成 ${damage} 點傷害並降低敵方防禦。`);
+      tone('companion');
+    }
+    if (action === 'medicine' && run.medicines > 0) {
+      acted = true;
+      run.medicines--;
+      run.stats.medicinesUsed++;
+      hero.hp = clamp(hero.hp + 300, 0, hero.maxHp);
+      battle.log.unshift(`${ch.name}使用金瘡藥，回復 300 氣血。`);
+      tone('save');
+    }
+    if (!acted) { battleBusy = false; return; }
 
-  function renderClues(){
-    return `<div class="investigation">${CLUES.map(clue=>{const done=state.clues.includes(clue.id);return `<button class="btn evidence ${done?'done':''}" data-clue="${clue.id}" ${done?'disabled':''}><span class="check">${done?'✓':clue.icon}</span><strong>${clue.title}</strong><span>${clue.text}</span></button>`}).join('')}</div><div class="scene-choices">${state.clues.length===4?'<button class="btn primary" data-act="guard">證據齊全，攔截超載暗艙船</button>':'<button class="btn" disabled>尚需完成四項查驗</button>'}</div>`;
-  }
-
-  function inspect(id){
-    if(state.clues.includes(id))return;
-    const clue=CLUES.find(item=>item.id===id);if(!clue)return;
-    state.clues.push(id);state.silver+=15;log(`完成查驗：${clue.title}。`);tone('save');save(true);renderChapter();toast(`取得線索：${clue.title}（${state.clues.length}/4）`);
-  }
-
-  function renderStrategy(){
-    return `<div class="strategy-track">${STRATEGY.map((item,index)=>{const done=state.strategy.includes(index);const enabled=index===0||state.strategy.includes(index-1);return `<article class="strategy-step ${done?'done':''}"><span class="step-no">${done?'✓':index+1}</span><div><b>${item[0]}</b><p class="muted">${item[1]}</p></div><button class="btn small" data-strategy="${index}" ${done||!enabled?'disabled':''}>${done?'完成':'執行'}</button></article>`}).join('')}</div><div class="scene-choices">${state.strategy.length===5?'<button class="btn primary" data-act="boss">軍略完成，守護船籍公示站</button>':'<button class="btn" disabled>依序完成五階段軍略</button>'}</div>`;
-  }
-
-  function doStrategy(index){
-    if(state.strategy.includes(index)||(index>0&&!state.strategy.includes(index-1)))return;
-    state.strategy.push(index);state.hero.hp=clamp(state.hero.hp+70,0,state.hero.maxHp);state.hero.sp=clamp(state.hero.sp+80,0,state.hero.maxSp);log(`百渡軍略完成：${STRATEGY[index][0]}。`);save(true);renderChapter();tone('skill');
-  }
-
-  function beginBattle(type){
-    const enemy=clone(ENEMIES[type]),currentDifficulty=difficulty();
-    enemy.maxHp=Math.round(enemy.maxHp*currentDifficulty.hp);enemy.hp=enemy.maxHp;enemy.atk=Math.round(enemy.atk*currentDifficulty.atk);enemy.reward=Math.round(enemy.reward*currentDifficulty.reward);
-    if(state.gear==='seal')enemy.reward=Math.round(enemy.reward*1.15);
-    state.battle={type,enemy,turn:1,actions:0,log:[enemy.intro],companionUsed:false,difficulty:prefs.difficulty,gear:state.gear};
-    state.hero.guarding=false;screen='chapter';save(true);renderBattle();tone('hurt');
-  }
-
-  function renderBattle(){
-    const battle=state.battle,hero=state.hero,enemy=battle.enemy,currentDifficulty=DIFFICULTIES[battle.difficulty]||difficulty(),gear=GEAR[battle.gear]||activeGear();
-    const sweepCost=battle.gear==='flag'?105:125;
-    app.innerHTML=`${header(`戰鬥：${enemy.name}`,enemy.intro)}${nav()}<div class="battle-grid"><section id="heroFighter" class="fighter"><div class="fighter-head"><div class="portrait"><div class="avatar">俊</div><div><h3>${hero.name}</h3><span class="tag">攻 ${hero.atk}</span><span class="tag">防 ${hero.def}</span></div></div><span>${hero.guarding?'🛡️ 守勢':''}</span></div><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(hero.hp,hero.maxHp)}%"></i></div><b>${hero.hp}/${hero.maxHp}</b></div><div class="statline"><span>豪氣</span><div class="bar sp"><i style="width:${pct(hero.sp,hero.maxSp)}%"></i></div><b>${hero.sp}/${hero.maxSp}</b></div><div class="battle-actions"><button class="btn" data-battle="attack">混江水戰</button><button class="btn primary" data-battle="skill" ${hero.sp<70?'disabled':''}>混江龍分浪（70）</button><button class="btn" data-battle="sweep" ${hero.sp<sweepCost?'disabled':''}>百渡安航（${sweepCost}）</button><button class="btn" data-battle="guard">護住船籍</button>${state.companion.unlocked?`<button class="btn good" data-battle="companion" ${battle.companionUsed?'disabled':''}>童威出洞援護</button>`:''}<button class="btn" data-battle="medicine" ${state.inventory.includes('medicine')?'':'disabled'}>使用金瘡藥</button></div><div class="battle-note">${currentDifficulty.name}難度・${gear.icon} ${gear.name}・本場獎勵 ${enemy.reward} 銀兩・已行動 ${battle.actions} 次</div></section><section id="enemyFighter" class="fighter enemy"><div class="fighter-head"><div class="portrait"><div class="avatar">${enemy.icon}</div><div><h3>${enemy.name}</h3><span class="tag">攻 ${enemy.atk}</span><span class="tag">防 ${enemy.def}</span></div></div><b>第 ${battle.turn} 合</b></div><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(enemy.hp,enemy.maxHp)}%"></i></div><b>${enemy.hp}/${enemy.maxHp}</b></div><p>${esc(enemy.intro)}</p></section></div><section class="card" style="margin-top:14px"><h3>戰況</h3><div class="log">${battle.log.map(item=>`<div>${esc(item)}</div>`).join('')}</div></section>`;
-  }
-
-  async function battleAction(action){
-    if(battleBusy||!state.battle)return;battleBusy=true;
-    const battle=state.battle,hero=state.hero,enemy=battle.enemy;
-    hero.guarding=false;let damage=0,acted=false;
-    const sweepCost=battle.gear==='flag'?105:125;
-    if(action==='attack'){acted=true;damage=Math.max(20,hero.atk+rand(-12,20)-enemy.def);enemy.hp-=damage;battle.log.unshift(`李俊順浪進擊，造成 ${damage} 點傷害。`);tone('hit')}
-    if(action==='skill'&&hero.sp>=70){acted=true;hero.sp-=70;damage=Math.max(62,Math.round(hero.atk*1.7)+rand(13,38)-enemy.def);enemy.hp-=damage;enemy.atk=Math.max(44,enemy.atk-6);battle.log.unshift(`「混江龍分浪」截斷敵船攻勢，造成 ${damage} 點傷害，敵方攻勢下降。`);tone('skill')}
-    if(action==='sweep'&&hero.sp>=sweepCost){acted=true;hero.sp-=sweepCost;damage=Math.max(100,Math.round(hero.atk*2.1)+rand(24,52)-Math.round(enemy.def*.58));enemy.hp-=damage;hero.hp=clamp(hero.hp+60,0,hero.maxHp);battle.log.unshift(`「百渡安航」封住私渡水路，造成 ${damage} 點傷害並回復 60 氣血。`);tone('skill')}
-    if(action==='guard'){acted=true;hero.guarding=true;hero.sp=clamp(hero.sp+46,0,hero.maxSp);let healed=0;if(battle.gear==='rope'){healed=45;hero.hp=clamp(hero.hp+healed,0,hero.maxHp)}battle.log.unshift(`李俊護住船籍與救援纜，進入守勢並回復 46 豪氣${healed?`、${healed} 氣血`:''}。`);tone('guard')}
-    if(action==='companion'&&state.companion.unlocked&&!battle.companionUsed){acted=true;battle.companionUsed=true;damage=218+rand(0,50);enemy.hp-=damage;enemy.def=Math.max(11,enemy.def-12);hero.hp=clamp(hero.hp+38,0,hero.maxHp);if(battle.type==='boss')state.runStats.bossCompanionUsed=true;battle.log.unshift(`童威施展「出洞蛟破纜」，造成 ${damage} 點傷害、降低敵方防禦並回復李俊 38 氣血。`);tone('companion')}
-    if(action==='medicine'&&state.inventory.includes('medicine')){acted=true;const at=state.inventory.indexOf('medicine');state.inventory.splice(at,1);hero.hp=clamp(hero.hp+300,0,hero.maxHp);state.runStats.medicinesUsed++;battle.log.unshift('李俊使用金瘡藥，回復 300 氣血。');tone('save')}
-    if(!acted){battleBusy=false;return}
-    battle.actions++;state.runStats.actions++;enemy.hp=Math.max(0,enemy.hp);renderBattle();await new Promise(resolve=>setTimeout(resolve,180));
-    if(enemy.hp<=0){battleWin();battleBusy=false;return}
-    const raw=Math.max(24,enemy.atk+rand(-9,18)-Math.round(hero.def*.45));
-    const taken=hero.guarding?Math.round(raw*.38):raw;
-    hero.hp=Math.max(0,hero.hp-taken);battle.log.unshift(`${enemy.name}反擊，李俊受到 ${taken} 點傷害。`);battle.turn++;tone('hurt');
-    if(hero.hp<=0){state.runStats.defeats++;hero.hp=Math.round(hero.maxHp*.72);hero.sp=Math.round(hero.maxSp*.75);battle.log.unshift('李俊力竭後由巡船弟兄救回，整補後可重新挑戰。');state.battle=null;toast('本場失利，已返回戰前整補。');save(true);battleBusy=false;renderChapter();return}
-    save(true);battleBusy=false;renderBattle();
-  }
-
-  function battleWin(){
-    const type=state.battle.type,enemy=state.battle.enemy;
-    state.silver+=enemy.reward;state.hero.hp=state.hero.maxHp;state.hero.sp=state.hero.maxSp;state.inventory.push('medicine');
-    if(type==='patrol'){state.flags.battle1=true;state.scene='investigate';log('擊退霸渡攔船水手，取得逆風假停航旗與撕毀渡票。')}
-    if(type==='guard'){state.flags.battle2=true;state.companion.unlocked=true;state.scene='council';log('擊敗超載暗艙船幫，救出艙內旅客；出洞蛟童威加入助陣。')}
-    if(type==='boss'){state.flags.boss=true;state.scene='establish';log('擊敗私渡盟主與劫江水寇，保住船籍、票價與失聯名冊。')}
-    state.battle=null;save(true);tone('victory');toast(`勝利！獲得銀兩 ${enemy.reward}，並補充一帖金瘡藥。`);renderChapter();
-  }
-
-  function computeAchievements(){state.achievements=ACHIEVEMENTS.filter(([, ,test])=>test(state)).map(([name])=>name)}
-  function computeGrade(){
-    let score=100;
-    score-=Math.max(0,state.runStats.actions-10)*2;
-    score-=state.runStats.defeats*18;
-    score-=state.runStats.medicinesUsed*12;
-    if(state.runStats.bossCompanionUsed)score-=8;
-    score=clamp(score,0,100);state.score=score;
-    state.grade=score>=94?'S':score>=84?'A':score>=72?'B':'C';
-  }
-
-  function finish(){
-    state.complete=true;state.flags.system=true;state.scene='ending';
-    for(const item of ['沿江渡船船籍冊','風浪停航旗號表','水泊百渡安航約'])if(!state.inventory.includes(item))state.inventory.push(item);
-    state.silver+=365;computeAchievements();computeGrade();log(`第五十一回完成：水泊百渡安航制度正式建立，章回評級 ${state.grade}，解鎖 ${state.achievements.length} 項成就。`);save(true);renderEnding();tone('achievement');
-  }
-
-  function renderAchievements(){return `<div class="achievement-grid">${ACHIEVEMENTS.map(([name,text])=>{const unlocked=state.achievements.includes(name);return `<article class="achievement ${unlocked?'':'locked'}"><b>${unlocked?'🏅':'🔒'} ${name}</b><span>${text}</span></article>`}).join('')}</div>`}
-  function gradeText(){return state.grade==='S'?'浪定舟穩・完美安航':state.grade==='A'?'水陸協力・安航有成':state.grade==='B'?'制度已立・仍可精進':'風浪初定・再整舟師'}
-
-  function renderEnding(){
-    screen='ending';
-    if(!state.grade)computeGrade();
-    app.innerHTML=`${header('第五十一回完・百渡安航','李俊正式列入五十一英雄譜，童威加入梁山助陣')}${nav()}<section class="hero"><div class="eyebrow">制度章回完成</div><div class="grade-badge grade-${state.grade.toLowerCase()}"><span>${state.grade}</span><small>${state.score} 分</small></div><h1>船有籍，渡有價；風浪知止，落水有援</h1><h2>混江龍李俊・第五十一名主角</h2><p>沿江渡船皆須掛牌、標示核載、公開票價並遵守風浪停航；若有翻船、失聯或財物遭劫，水寨、巡船、客棧與醫棚立即聯動救援。</p><p class="grade-copy"><b>${gradeText()}</b>：全章行動 ${state.runStats.actions} 次、戰敗 ${state.runStats.defeats} 次、用藥 ${state.runStats.medicinesUsed} 次。</p><div class="actions"><button class="btn primary" data-act="replay">重演第五十一回</button><button class="btn" data-act="roster">查看五十一英雄譜</button><button class="btn" data-act="manage">匯出完成存檔</button><a class="btn" href="previous-v6.1.0/index.html">重遊第五十回</a></div></section><div class="grid three" style="margin-top:16px"><section class="card"><h3>章回成果</h3><p>四項查驗 ${state.clues.length}/4<br>五階段軍略 ${state.strategy.length}/5<br>三場主線戰鬥 3/3<br>章回評級 ${state.grade}（${state.score} 分）</p></section><section class="card"><h3>制度收藏</h3>${state.inventory.filter(item=>typeof item==='string'&&item!=='medicine').map(item=>`<p>✓ ${esc(item)}</p>`).join('')}</section><section class="card"><h3>後續伏筆</h3><p>出洞蛟童威已加入同伴編成。下一回可由童威升格主角，整頓潛水救援、沉船打撈與水下通道安全。</p></section></div><section class="card" style="margin-top:16px"><h3>第五十一回成就（${state.achievements.length}/4）</h3>${renderAchievements()}</section>`;
-  }
-
-  function renderRoster(){
-    screen='roster';
-    app.innerHTML=`${header('五十一英雄譜','李俊完成百渡安航後正式列席')}${nav()}<div class="grid three" style="margin-top:16px">${ROSTER.map((name,index)=>`<article class="card ${index===50?'success':''}"><div class="portrait"><div class="avatar">${esc(name[0])}</div><div><span class="tag">第 ${index+1} 席</span><h3>${esc(name)}</h3><p>${index===50?'混江龍・百渡安航主理':index>=34?'制度章回英雄':'梁山前篇英雄'}</p></div></div></article>`).join('')}</div>`;
-  }
-
-  function renderTimeline(){
-    screen='timeline';
-    app.innerHTML=`${header('第三十五至五十一回章回錄','由百田安灌一路延伸至百渡安航')}${nav()}<section class="timeline" style="margin-top:16px">${CHAPTERS.map(chapter=>`<article class="${chapter[0]===51?'current':''}"><b>第${chapter[0]}回</b><div><h3>${chapter[1]}</h3><p>主角：${chapter[2]}　新同伴：${chapter[3]}</p>${chapter[0]===48?'<span class="tag good">v5.9.0 測試紀錄</span>':''}${chapter[0]===49?'<span class="tag good">v6.0.0 已保留</span>':''}${chapter[0]===50?'<span class="tag good">v6.1.0 已保留</span>':''}${chapter[0]===51?'<span class="tag good">v6.2.0 本版可遊玩</span>':''}</div></article>`).join('')}</section>`;
-  }
-
-  function openManage(){
-    const data=JSON.stringify(state,null,2);
-    openModal('存檔管理',`<p>v6.2.0 沿用續篇存檔鍵，首次讀取 v6.1.0 時會自動建立前回備份，再開啟第五十一回。</p><textarea id="saveText" spellcheck="false">${esc(data)}</textarea><div class="actions"><button class="btn primary" data-modal="copy">複製存檔</button><button class="btn" data-modal="download">下載 JSON</button><button class="btn" data-modal="import">匯入文字</button><button class="btn danger" data-modal="reset">重設第五十一回</button></div>`);
-  }
-
-  function openAbout(){
-    openModal('v6.2.0 版本說明',`<h3>第五十一回「混江龍巡渡・百渡安航」</h3><p>新增李俊主角、童威同伴、三場戰鬥、四項渡航查驗、五階段軍略、五十一英雄譜與第三十五至五十一回章回錄。</p><h3>行舟裝備與章回評級</h3><p>新增救生纜、風向旗、公示印三種裝備；結算依行動數、戰敗、用藥與最終戰援護計算 S／A／B／C 評級。</p><h3>存檔安全</h3><p>偵測到 v6.1.0 存檔時，會先備份到 <span class="code">${V61_BACKUP_KEY}</span>，再將完成狀態、前回成就與部分銀兩承接至第五十一回。經典篇存檔仍只讀不覆寫。</p><h3>前版與經典篇</h3><p>壓縮檔內保留 <span class="code">previous-v6.1.0/</span>、<span class="code">previous-v6.0.0/</span> 與 <span class="code">legacy-v4.5.0/</span>，可由首頁直接開啟。</p>`);
-  }
-
-  function openModal(title,html){modalRoot.classList.remove('hidden');modalRoot.innerHTML=`<section class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h2>${esc(title)}</h2><button class="icon-btn" data-modal="close">✕</button></div>${html}</section>`}
-  function closeModal(){modalRoot.classList.add('hidden');modalRoot.innerHTML=''}
-
-  function render(){
-    document.body.dataset.theme=prefs.theme;$('#soundBtn').textContent=prefs.sound?'🔊':'🔇';
-    if(screen==='home')renderHome();else if(screen==='chapter')renderChapter();else if(screen==='ending')renderEnding();else if(screen==='roster')renderRoster();else if(screen==='timeline')renderTimeline();
-  }
-
-  document.addEventListener('click',async event=>{
-    const action=event.target.closest('[data-act]')?.dataset.act;
-    if(action){
-      if(action==='home')renderHome();
-      if(action==='start')startChapter(false);
-      if(action==='continue'){screen='chapter';renderChapter()}
-      if(action==='replay')startChapter(true);
-      if(action==='chapter'){screen='chapter';renderChapter()}
-      if(action==='roster')renderRoster();
-      if(action==='timeline')renderTimeline();
-      if(action==='save')save();
-      if(action==='manage')openManage();
-      if(['arrive','investigate','guard','council','strategy','boss','establish'].includes(action)){state.scene=action;save(true);renderChapter()}
-      if(action==='battle1')beginBattle('patrol');
-      if(action==='battle2')beginBattle('guard');
-      if(action==='bossbattle')beginBattle('boss');
-      if(action==='finish')finish();
+    battle.actions++;
+    run.stats.actions++;
+    enemy.hp = Math.max(0, enemy.hp);
+    if (enemy.hp <= 0) {
+      battleVictory();
+      battleBusy = false;
+      return;
     }
 
-    const diff=event.target.closest('[data-difficulty]')?.dataset.difficulty;
-    if(diff&&DIFFICULTIES[diff]){if(state.battle)return toast('戰鬥進行中不能切換難度。');prefs.difficulty=diff;savePrefs();render();toast(`已切換為${DIFFICULTIES[diff].name}難度。`)}
+    const raw = Math.max(18, enemy.atk + rand(-8, 17) - Math.round(hero.def * .42));
+    const taken = hero.guarding ? Math.round(raw * .38) : raw;
+    hero.hp = Math.max(0, hero.hp - taken);
+    battle.log.unshift(`${enemy.name}反擊，${ch.name}受到 ${taken} 點傷害。`);
+    battle.turn++;
+    hero.guarding = false;
+    tone('hurt');
 
-    const gear=event.target.closest('[data-gear]')?.dataset.gear;
-    if(gear&&GEAR[gear]){if(state.battle)return toast('戰鬥進行中不能更換裝備。');state.gear=gear;save(true);render();tone('gear');toast(`已裝備${GEAR[gear].name}。`)}
-
-    const clue=event.target.closest('[data-clue]')?.dataset.clue;if(clue)inspect(clue);
-    const strategy=event.target.closest('[data-strategy]')?.dataset.strategy;if(strategy!==undefined)doStrategy(Number(strategy));
-    const battle=event.target.closest('[data-battle]')?.dataset.battle;if(battle)await battleAction(battle);
-    const modalAction=event.target.closest('[data-modal]')?.dataset.modal;
-    if(modalAction==='close')closeModal();
-    if(modalAction==='copy'){try{await navigator.clipboard?.writeText($('#saveText').value);toast('存檔文字已複製。')}catch{toast('無法直接複製，請手動全選文字。')}}
-    if(modalAction==='download'){const blob=new Blob([$('#saveText').value],{type:'application/json'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='水滸英雄傳_v6.2.0_存檔.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
-    if(modalAction==='import'){
-      try{
-        const imported=JSON.parse($('#saveText').value);state=importState(imported);save(true);closeModal();renderHome();
-        toast(imported.version==='6.1.0'||imported.hero?.name==='李立'?'v6.1.0 存檔已備份並承接至第五十一回。':'存檔匯入成功。');
-      }catch{toast('存檔 JSON 格式不正確。')}
+    if (hero.hp <= 0) {
+      run.stats.defeats++;
+      run.hero.hp = Math.round(run.hero.maxHp * .72);
+      run.hero.sp = Math.round(run.hero.maxSp * .72);
+      run.battle = null;
+      screen = 'chapter';
+      save(true);
+      toast('本場失利，已退回戰前整補，可再次挑戰。','warn');
+      battleBusy = false;
+      render();
+      return;
     }
-    if(modalAction==='reset'){if(confirm('只重設 v6.2.0 第五十一回進度，前回備份與經典篇不受影響。確定嗎？')){closeModal();reset()}}
+    save(true);
+    renderBattle();
+    battleBusy = false;
+  }
+
+  function battleVictory() {
+    const run = state.current;
+    const battle = run.battle;
+    const stage = battle.stage;
+    run.battles[String(stage)] = true;
+    run.silverEarned += battle.enemy.reward;
+    state.silver += battle.enemy.reward;
+    run.medicines = Math.min(3, run.medicines + 1);
+    run.hero.hp = run.hero.maxHp;
+    run.hero.sp = run.hero.maxSp;
+    run.log.unshift(`第 ${stage + 1} 場勝利，獲得 ${battle.enemy.reward} 銀兩。`);
+    if (stage === 0) run.companion.unlocked = true;
+    run.battle = null;
+    screen = 'chapter';
+    save(true);
+    toast(`戰鬥勝利，獲得 ${battle.enemy.reward} 銀兩。`, 'good');
+    tone('victory');
+    render();
+  }
+
+  function collectClue(index) {
+    const run = state.current;
+    const i = Number(index);
+    if (!run || run.clues.includes(i)) return;
+    run.clues.push(i);
+    run.clues.sort();
+    run.hero.sp = clamp(run.hero.sp + 25, 0, run.hero.maxSp);
+    run.log.unshift(`查驗完成：${clueData(currentChapter())[i].title}。`);
+    save(true);
+    renderChapter();
+    tone('save');
+  }
+
+  function doStrategy(index) {
+    const run = state.current;
+    const i = Number(index);
+    if (!run || run.clues.length < 4 || run.strategies.includes(i) || i !== run.strategies.length) return;
+    run.strategies.push(i);
+    run.hero.hp = clamp(run.hero.hp + 40, 0, run.hero.maxHp);
+    run.hero.sp = clamp(run.hero.sp + 50, 0, run.hero.maxSp);
+    run.log.unshift(`軍略完成：${strategyData(currentChapter())[i].title}。`);
+    save(true);
+    renderChapter();
+    tone('skill');
+  }
+
+  function computeResult(run) {
+    let score = 100;
+    score -= Math.max(0, run.stats.actions - 12) * 2;
+    score -= run.stats.defeats * 12;
+    score -= run.stats.medicinesUsed * 5;
+    score -= run.stats.bossCompanionUsed ? 4 : 0;
+    score = clamp(Math.round(score), 40, 100);
+    const grade = score >= 90 ? 'S' : score >= 78 ? 'A' : score >= 65 ? 'B' : 'C';
+    const achievements = [];
+    if (run.clues.length === 4) achievements.push('明察四證');
+    if (run.stats.defeats === 0) achievements.push('三戰連捷');
+    if (run.stats.medicinesUsed === 0) achievements.push('無藥制勝');
+    if (!run.stats.bossCompanionUsed) achievements.push('獨當一面');
+    return {score, grade, achievements};
+  }
+
+  function finishChapter() {
+    const run = state.current;
+    if (!run || !run.battles['2']) return;
+    const result = computeResult(run);
+    run.complete = true;
+    run.score = result.score;
+    run.grade = result.grade;
+    run.achievements = result.achievements;
+    const ch = currentChapter();
+    const reward = 180 + ch.number * 3;
+    state.silver += reward;
+    run.silverEarned += reward;
+    const previous = state.completed[String(ch.number)];
+    const record = {
+      grade:result.grade,
+      score:result.score,
+      actions:run.stats.actions,
+      defeats:run.stats.defeats,
+      medicinesUsed:run.stats.medicinesUsed,
+      achievements:result.achievements,
+      completedAt:new Date().toISOString(),
+      source:'v7.0.0 完整章回版'
+    };
+    if (!previous || Number(previous.score || 0) <= result.score) state.completed[String(ch.number)] = record;
+    state.unlocked = Math.max(state.unlocked, Math.min(108, ch.number + 1));
+    state.selected = Math.min(108, ch.number + 1);
+    run.log.unshift(`第 ${ch.number} 回完成，評級 ${result.grade}、${result.score} 分。`);
+    screen = 'ending';
+    save(true);
+    render();
+    tone('achievement');
+  }
+
+  function difficultyPicker(run = state.current) {
+    return `<div class="inline-actions">${Object.entries(DIFFICULTIES).map(([key,item]) => `<button class="btn small ${run?.difficulty === key ? 'primary' : ''}" data-difficulty="${key}" ${run?.battle ? 'disabled' : ''}>${item.name}</button>`).join('')}</div><p class="muted">${esc(DIFFICULTIES[run?.difficulty || prefs.difficulty].text)}</p>`;
+  }
+
+  function gearPicker(run = state.current) {
+    return `<div class="grid three">${Object.entries(GEARS).map(([key,item]) => `<button class="card ${run?.gear === key ? 'current' : ''}" data-gear="${key}" ${run?.battle ? 'disabled' : ''} style="text-align:left;cursor:pointer"><h3>${item.icon} ${item.name}</h3><p>${item.text}</p></button>`).join('')}</div>`;
+  }
+
+  function topbar(subtitle = '') {
+    return `<header class="topbar"><div class="brand"><div class="brand-mark">水</div><div class="brand-text"><b>水滸英雄傳：梁山風雲</b><small>v${VERSION} 完整章回版${subtitle ? `・${esc(subtitle)}` : ''}</small></div></div><div class="top-actions"><button class="btn icon" data-act="theme" title="切換顯示模式">◐</button><button class="btn icon" data-act="speech" title="朗讀本頁">🔊</button><button class="btn" data-act="manage"><span>存檔</span></button></div></header>`;
+  }
+
+  function nav() {
+    return `<nav class="nav" aria-label="遊戲導覽"><button class="btn small" data-act="home">首頁</button><button class="btn small" data-act="chapters">章回</button><button class="btn small" data-act="roster">英雄譜</button>${state.current ? '<button class="btn small" data-act="continue">目前章回</button>' : ''}<span class="nav-spacer"></span><span class="tag accent">完成 ${completionCount()}/108</span><span class="tag">銀兩 ${Math.round(state.silver)}</span></nav>`;
+  }
+
+  function renderHome() {
+    screen = 'home';
+    const recommended = chapter(firstIncomplete());
+    const complete = completionCount();
+    const migrationClass = state.migration.imported.length ? 'success' : 'warning';
+    app.innerHTML = `${topbar()}${nav()}<section class="hero"><div class="eyebrow">第一回至第一百零八回・完整可遊玩</div><h1>一百零八英雄<br>一次聚義</h1><h2>從景陽岡打虎，一路完成百業安民與金毛犬護馬</h2><p>本版把全部 108 回整合到同一套章回選單與存檔。每回都有專屬主角、同伴、四項查驗、五階段軍略、三場戰鬥、四項成就及 S／A／B／C 評級，可依序遊玩，也可自由選章重演。</p><div class="actions"><button class="btn primary" data-act="start-recommended">${complete ? '前往下一未完成章回' : '開始第一回'}</button>${state.current && !state.current.complete ? '<button class="btn good" data-act="continue">繼續目前章回</button>' : ''}<button class="btn" data-act="chapters">開啟 108 回選單</button><button class="btn" data-act="info">版本說明</button></div></section>
+      <div class="grid four" style="margin-top:16px"><section class="card"><div class="metric"><div><span>完成章回</span><strong>${complete}</strong></div><b>/ 108</b></div><div class="progress" style="margin-top:12px"><i style="width:${pct(complete,108)}%"></i></div></section><section class="card"><div class="metric"><div><span>S 級章回</span><strong>${sCount()}</strong></div><b>回</b></div><p>低行動、零戰敗、少用藥可提高評級。</p></section><section class="card"><div class="metric"><div><span>累積評分</span><strong>${totalScore()}</strong></div><b>分</b></div><p>重演章回取得更高分時會保留最佳紀錄。</p></section><section class="card"><div class="metric"><div><span>梁山銀兩</span><strong>${Math.round(state.silver)}</strong></div><b>兩</b></div><p>豪傑難度與公義印可提高戰鬥獎勵。</p></section></div>
+      <div class="grid two" style="margin-top:16px"><section class="card current"><div class="portrait"><div class="avatar">${esc(recommended.name[0])}</div><div><span class="tag accent">推薦第 ${recommended.number} 回</span><h3>${esc(recommended.title)}</h3><p>${esc(recommended.nickname)}・${esc(recommended.name)}｜${esc(recommended.focus)}</p></div></div><div class="actions"><button class="btn primary" data-chapter="${recommended.number}">進入本回</button></div></section><section class="card ${migrationClass}"><h3>舊存檔安全承接</h3><p>${esc(state.migration.note)}</p><p class="muted">舊資料會先備份到 <span class="code">${OLD_BACKUP_PREFIX}*</span>，不會覆寫 v4.5.0 或 v6.2.0 原存檔。</p></section></div>
+      <div class="grid three" style="margin-top:16px"><section class="card"><h3>經典篇 1～34 回</h3><p>保留原有故事主線，再以統一引擎提供快速重演。壓縮檔內仍附原版 v4.5.0。</p><a class="btn" href="previous-v6.2.0/legacy-v4.5.0/index.html">開啟原版經典篇</a></section><section class="card"><h3>制度續篇 35～51 回</h3><p>由百田安灌延伸至百渡安航，全部納入同一選章、英雄譜與評級紀錄。</p><a class="btn" href="previous-v6.2.0/index.html">開啟原版 v6.2.0</a></section><section class="card"><h3>百業聚義篇 52～108 回</h3><p>一次補完童威至段景住共 57 回，最後由智多星吳用總結梁山百業安民約。</p><button class="btn" data-act="chapters" data-era-target="百業聚義篇">查看後 57 回</button></section></div>`;
+  }
+
+  function renderChapters() {
+    screen = 'chapters';
+    const terms = chapterSearch.trim().toLowerCase();
+    const filtered = chapters.filter(ch => {
+      const eraOk = chapterEra === 'all' || ch.era === chapterEra;
+      const text = `${ch.number} ${ch.title} ${ch.name} ${ch.nickname} ${ch.focus}`.toLowerCase();
+      return eraOk && (!terms || text.includes(terms));
+    });
+    const recommended = firstIncomplete();
+    app.innerHTML = `${topbar('章回總覽')}${nav()}<section class="hero"><div class="eyebrow">完整章回選單</div><h1>第一回至第一百零八回</h1><h2>可依序推進，也可直接選擇任何章回重演</h2><p>所有章回都已建立完整遊玩流程。完成紀錄、最佳評級與成就會集中保存在 v7.0.0 存檔中。</p></section><div class="chapter-toolbar"><input id="chapterSearch" class="field" value="${esc(chapterSearch)}" placeholder="搜尋章回、英雄、綽號或主題"><select id="eraFilter" class="field"><option value="all" ${chapterEra==='all'?'selected':''}>全部篇章</option><option value="經典篇" ${chapterEra==='經典篇'?'selected':''}>經典篇 1～34</option><option value="制度續篇" ${chapterEra==='制度續篇'?'selected':''}>制度續篇 35～51</option><option value="百業聚義篇" ${chapterEra==='百業聚義篇'?'selected':''}>百業聚義篇 52～108</option></select><button class="btn" data-act="clear-filter">清除</button></div><div class="chapter-grid">${filtered.map(ch => {
+      const record = state.completed[String(ch.number)];
+      return `<button class="card chapter-card ${record?'completed':''} ${ch.number===recommended?'recommended':''}" data-chapter="${ch.number}"><div class="chapter-no"><span>第 ${ch.number} 回</span><span class="chapter-icon">${ch.icon}</span></div><h3>${esc(ch.title)}</h3><p><b>${esc(ch.nickname)}・${esc(ch.name)}</b><br>${esc(ch.focus)}</p><span class="tag">${esc(ch.era)}</span>${record?`<span class="tag good">最佳 ${record.grade}・${record.score} 分</span>`:''}</button>`;
+    }).join('')}</div>${filtered.length ? '' : '<div class="empty">找不到符合條件的章回。</div>'}`;
+    const search = $('#chapterSearch');
+    if (search) search.addEventListener('input', event => { chapterSearch = event.target.value; renderChapters(); requestAnimationFrame(() => { const input=$('#chapterSearch'); if(input){input.focus(); input.setSelectionRange(input.value.length,input.value.length);} }); });
+    const era = $('#eraFilter');
+    if (era) era.addEventListener('change', event => { chapterEra = event.target.value; renderChapters(); });
+  }
+
+  function renderChapter() {
+    screen = 'chapter';
+    const run = state.current;
+    if (!run) return renderHome();
+    const ch = currentChapter();
+    const clues = clueData(ch);
+    const strategies = strategyData(ch);
+    const completedRecord = state.completed[String(ch.number)];
+    const prepDone = run.clues.length === 4 && run.strategies.length === 5;
+    app.innerHTML = `${topbar(`第 ${ch.number} 回`)}${nav()}<section class="hero"><div class="eyebrow">${esc(ch.era)}・${esc(kindData(ch).label)}</div><h1>${esc(ch.title)}</h1><h2>${esc(ch.nickname)}・${esc(ch.name)}　｜　新同伴：${esc(ch.companionNickname)}・${esc(ch.companion)}</h2><p>${esc(chapterIntro(ch))}</p><div class="actions"><button class="btn" data-act="chapters">返回選章</button>${completedRecord?`<span class="tag good">最佳紀錄 ${completedRecord.grade}・${completedRecord.score} 分</span>`:''}</div></section>
+      <div class="status-grid" style="margin-top:16px"><section class="card"><div class="portrait"><div class="avatar">${esc(ch.name[0])}</div><div><span class="tag accent">第 ${ch.number} 名主角</span><h3>${esc(ch.nickname)}・${esc(ch.name)}</h3><p>${esc(ch.focus)}</p></div></div><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(run.hero.hp,run.hero.maxHp)}%"></i></div><b>${run.hero.hp}/${run.hero.maxHp}</b></div><div class="statline"><span>豪氣</span><div class="bar sp"><i style="width:${pct(run.hero.sp,run.hero.maxSp)}%"></i></div><b>${run.hero.sp}/${run.hero.maxSp}</b></div><p><span class="tag">攻 ${run.hero.atk}</span><span class="tag">防 ${run.hero.def}</span><span class="tag">金瘡藥 ${run.medicines}</span><span class="tag">本回銀兩 +${run.silverEarned}</span></p></section><section class="card"><h3>本回進度</h3><p>查驗 ${run.clues.length}/4　軍略 ${run.strategies.length}/5　戰鬥 ${Object.values(run.battles).filter(Boolean).length}/3</p><div class="progress"><i style="width:${pct(run.clues.length+run.strategies.length+Object.values(run.battles).filter(Boolean).length,12)}%"></i></div><p>全章行動 ${run.stats.actions} 次<br>戰敗 ${run.stats.defeats} 次　用藥 ${run.stats.medicinesUsed} 次</p>${run.complete?`<span class="tag good">本次評級 ${run.grade}・${run.score} 分</span>`:''}</section></div>
+      <div class="section-title"><div><h2>一、四項查驗</h2><p>先找齊事實，才能制定軍略。</p></div><b>${run.clues.length}/4</b></div><section class="task-list">${clues.map((item,index) => `<button class="task ${run.clues.includes(index)?'done':''}" data-clue="${index}" ${run.clues.includes(index)?'disabled':''}><span class="task-icon">${item.icon}</span><span><b>${esc(item.title)}</b><small>${esc(item.text)}</small></span><span class="task-state">${run.clues.includes(index)?'✓':'查'}</span></button>`).join('')}</section>
+      <div class="section-title"><div><h2>二、五階段軍略</h2><p>依序完成，形成可追責的長久制度。</p></div><b>${run.strategies.length}/5</b></div><section class="task-list">${strategies.map((item,index) => {
+        const done=run.strategies.includes(index), enabled=run.clues.length===4 && index===run.strategies.length;
+        return `<button class="task ${done?'done':''}" data-strategy="${index}" ${done||!enabled?'disabled':''}><span class="task-icon">${index+1}</span><span><b>${esc(item.title)}</b><small>${esc(item.text)}</small></span><span class="task-state">${done?'✓':enabled?'行':'鎖'}</span></button>`;
+      }).join('')}</section>
+      <div class="section-title"><div><h2>三、三場主線戰鬥</h2><p>前兩戰清除阻力，最終戰擊破幕後黑主。</p></div><b>${Object.values(run.battles).filter(Boolean).length}/3</b></div><div class="grid three">${[0,1,2].map(stage => {
+        const done=run.battles[String(stage)], enabled=prepDone && (stage===0 || run.battles[String(stage-1)]);
+        const labels=['前哨戰','查驗戰','最終戰'];
+        return `<section class="card ${done?'success':''}"><h3>${['⚔️','🛡️','👹'][stage]} ${labels[stage]}</h3><p>${enemyFor(ch,stage,run.difficulty,run.gear).name}</p><button class="btn ${stage===2?'danger':'primary'}" data-battle-start="${stage}" ${done||!enabled?'disabled':''}>${done?'已勝利':enabled?'迎戰':'尚未解鎖'}</button></section>`;
+      }).join('')}</div>
+      <div class="section-title"><div><h2>難度與行裝</h2><p>非戰鬥狀態可調整；戰鬥開始後鎖定本場數值。</p></div></div><div class="grid two"><section class="card"><h3>難度</h3>${difficultyPicker(run)}</section><section class="card"><h3>行裝</h3><p>${GEARS[run.gear].icon} ${GEARS[run.gear].name}：${GEARS[run.gear].text}</p><button class="btn" data-act="gear-modal">更換行裝</button></section></div>
+      ${run.battles['2']&&!run.complete?`<section class="card success" style="margin-top:18px"><h2>章回條件全部完成</h2><p>可立下本回安民約，結算成就、評級與英雄譜紀錄。</p><button class="btn good" data-act="finish">完成第 ${ch.number} 回</button></section>`:''}
+      <section class="card" style="margin-top:18px"><h3>本回紀錄</h3><div class="log">${run.log.slice(0,12).map(item=>`<div>${esc(item)}</div>`).join('')}</div></section>`;
+  }
+
+  function renderBattle() {
+    screen = 'battle';
+    const run = state.current;
+    if (!run?.battle) return renderChapter();
+    const ch = currentChapter();
+    const names = skillNames(ch);
+    const battle = run.battle;
+    const hero = run.hero;
+    const enemy = battle.enemy;
+    const systemCost = battle.gear === 'flag' ? 85 : 105;
+    app.innerHTML = `${topbar(`戰鬥・第 ${ch.number} 回`)}${nav()}<section class="battle-grid"><article class="fighter"><div class="fighter-head"><div class="portrait"><div class="avatar">${esc(ch.name[0])}</div><div><span class="tag accent">${esc(ch.nickname)}</span><h3>${esc(ch.name)}</h3><p>攻 ${hero.atk}・防 ${hero.def}</p></div></div><span class="tag">第 ${battle.turn} 合</span></div><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(hero.hp,hero.maxHp)}%"></i></div><b>${hero.hp}/${hero.maxHp}</b></div><div class="statline"><span>豪氣</span><div class="bar sp"><i style="width:${pct(hero.sp,hero.maxSp)}%"></i></div><b>${hero.sp}/${hero.maxSp}</b></div><div class="battle-actions"><button class="btn" data-battle-action="attack">${esc(names.attack)}</button><button class="btn primary" data-battle-action="skill" ${hero.sp<60?'disabled':''}>${esc(names.skill)}（60）</button><button class="btn primary" data-battle-action="system" ${hero.sp<systemCost?'disabled':''}>${esc(names.system)}（${systemCost}）</button><button class="btn" data-battle-action="guard">守勢回氣</button><button class="btn good" data-battle-action="companion" ${battle.companionUsed?'disabled':''}>${esc(ch.companion)}援護</button><button class="btn" data-battle-action="medicine" ${run.medicines<=0?'disabled':''}>金瘡藥（${run.medicines}）</button></div><div class="battle-note">${DIFFICULTIES[battle.difficulty].name}難度・${GEARS[battle.gear].icon} ${GEARS[battle.gear].name}・勝利獎勵 ${enemy.reward} 銀兩・本場行動 ${battle.actions} 次</div></article><article class="fighter enemy"><div class="fighter-head"><div class="portrait"><div class="avatar">${enemy.icon}</div><div><span class="tag warn">敵方</span><h3>${esc(enemy.name)}</h3><p>攻 ${enemy.atk}・防 ${enemy.def}</p></div></div></div><div class="statline"><span>氣血</span><div class="bar"><i style="width:${pct(enemy.hp,enemy.maxHp)}%"></i></div><b>${enemy.hp}/${enemy.maxHp}</b></div><p>${esc(enemy.intro)}</p></article></section><section class="card" style="margin-top:16px"><h3>戰況</h3><div class="log">${battle.log.map(item=>`<div>${esc(item)}</div>`).join('')}</div></section>`;
+  }
+
+  function gradeText(grade) {
+    return ({S:'梁山典範',A:'安民善策',B:'穩健通關',C:'艱戰得勝'})[grade] || '章回完成';
+  }
+
+  function renderEnding() {
+    screen = 'ending';
+    const run = state.current;
+    if (!run?.complete) return renderChapter();
+    const ch = currentChapter();
+    const final = ch.number === 108;
+    app.innerHTML = `${topbar(`第 ${ch.number} 回完成`)}${nav()}<section class="hero"><div class="eyebrow">${final?'一百零八回全篇大結局':'章回完成'}</div><div class="grade-badge"><span>${run.grade}</span><small>${run.score} 分</small></div><h1>${final?'一百零八英雄<br>百業同安':esc(ch.title)}</h1><h2>${esc(ch.nickname)}・${esc(ch.name)}正式列入第 ${ch.number} 席</h2><p>${final?'段景住尋回走失馬匹後，智多星吳用將一百零八回的名冊、制度、救援與公議彙成《梁山百業安民總約》。從武松到段景住，每位英雄都不只留下戰功，也留下能讓百姓繼續生活的規矩。':`${ch.focus}已建立可查名冊、公開標準、停止條件與救援追蹤。下一位英雄 ${ch.companionNickname}・${ch.companion} 已接下新的章回任務。`}</p><p><b>${gradeText(run.grade)}</b>：全章行動 ${run.stats.actions} 次、戰敗 ${run.stats.defeats} 次、用藥 ${run.stats.medicinesUsed} 次，獲得 ${run.achievements.length}/4 項成就。</p><div class="actions"><button class="btn primary" data-act="replay">重演本回</button>${!final?`<button class="btn good" data-act="next">進入第 ${ch.number+1} 回</button>`:'<button class="btn good" data-act="chapters">查看全篇完成紀錄</button>'}<button class="btn" data-act="roster">查看一百零八英雄譜</button><button class="btn" data-act="manage">匯出完成存檔</button></div></section><div class="grid three" style="margin-top:16px"><section class="card"><h3>章回成果</h3><p>四項查驗 4/4<br>五階段軍略 5/5<br>三場戰鬥 3/3<br>本回銀兩 +${run.silverEarned}</p></section><section class="card"><h3>章回成就</h3>${['明察四證','三戰連捷','無藥制勝','獨當一面'].map(name=>`<div class="achievement ${run.achievements.includes(name)?'':'locked'}"><span class="medal">${run.achievements.includes(name)?'🏅':'🔒'}</span><div><b>${name}</b><p>${({明察四證:'完成全部四項查驗。',三戰連捷:'全章未曾戰敗。',無藥制勝:'全章未使用金瘡藥。',獨當一面:'最終戰未呼叫同伴援護。'})[name]}</p></div></div>`).join('')}</section><section class="card"><h3>${final?'全篇完成':'後續伏筆'}</h3><p>${final?`目前已完成 ${completionCount()}/108 回，取得 ${sCount()} 個 S 級。可自由重演任何章回，提高最佳分數。`:`${ch.companionNickname}・${ch.companion} 將升格為第 ${ch.number+1} 回主角，接續整頓「${chapter(ch.number+1).focus}」。`}</p></section></div>`;
+  }
+
+  function renderRoster() {
+    screen = 'roster';
+    app.innerHTML = `${topbar('一百零八英雄譜')}${nav()}<section class="hero"><div class="eyebrow">遊戲自訂聚義座次</div><h1>一百零八英雄譜</h1><h2>瓊英列入可操控英雄，吳用擔任軍師職司</h2><p>本遊戲沿用既有自訂章回順序，不照搬原著石碣座次。完成各回後會在英雄卡上顯示最佳評級。</p></section><div class="roster-grid" style="margin-top:16px">${chapters.map(ch => {
+      const record=state.completed[String(ch.number)];
+      return `<button class="card roster-card ${record?'success':''}" data-chapter="${ch.number}" style="text-align:left;cursor:pointer"><div class="portrait"><div class="avatar">${esc(ch.name[0])}</div><div><span class="tag">第 ${ch.number} 席</span><h3>${esc(ch.nickname)}・${esc(ch.name)}</h3><p>${record?`最佳 ${record.grade}・${record.score} 分`:'尚未完成'}</p></div></div></button>`;
+    }).join('')}</div>`;
+  }
+
+  function openModal(title, content) {
+    modalRoot.innerHTML = `<div class="modal-backdrop" data-modal="close"><section class="modal" role="dialog" aria-modal="true" aria-label="${esc(title)}" onclick="event.stopPropagation()"><header class="modal-head"><div><h2>${esc(title)}</h2></div><button class="btn icon" data-modal="close" aria-label="關閉">×</button></header>${content}</section></div>`;
+  }
+
+  function closeModal() { modalRoot.innerHTML = ''; }
+
+  function openGearModal() {
+    openModal('選擇本回行裝', `${gearPicker(state.current)}<div class="actions" style="margin-top:14px"><button class="btn" data-modal="close">完成</button></div>`);
+  }
+
+  function openManage() {
+    const data = JSON.stringify({type:'liangshan-v7-save',version:VERSION,exportedAt:new Date().toISOString(),state,prefs}, null, 2);
+    openModal('存檔管理', `<p>本版存檔包含 108 回完成紀錄、最佳評級、目前章回與偏好設定。</p><textarea id="saveText" spellcheck="false">${esc(data)}</textarea><div class="actions"><button class="btn primary" data-modal="copy">複製</button><button class="btn" data-modal="download">下載 JSON</button><button class="btn" data-modal="import">匯入文字</button><button class="btn warn" data-modal="reset-current">重設目前章回</button><button class="btn danger" data-modal="reset-all">清除 v7 全部進度</button></div><p class="muted">清除 v7 進度不會刪除 v4.5.0、v6.2.0 舊存檔與遷移備份。</p>`);
+  }
+
+  function openInfo() {
+    openModal('v7.0.0 完整章回版', `<h3>完整範圍</h3><p>第一回至第一百零八回全部可遊玩，共 108 名主角、108 組章回主題、432 項查驗、540 階段軍略、324 場主線戰鬥與 432 項章回成就。</p><h3>統一引擎</h3><p>前 34 回保留原版入口，同時可用本版快速重演；35～51 回整合既有制度續篇；52～108 回一次補完。每回都使用同一套穩定的存檔、難度、行裝、評級與手機介面。</p><h3>存檔承接</h3><p>首次啟動會唯讀偵測 <span class="code">${OLD_LEGACY_KEY}</span> 與 <span class="code">${OLD_SEQUEL_KEY}</span>，先備份再轉成 v7 完成紀錄。</p><h3>顯示與離線</h3><p>支援水墨、深色、電子紙模式，手機與桌面版面、語音朗讀、JSON 匯出入及 PWA 離線安裝。</p>`);
+  }
+
+  function render() {
+    document.body.dataset.theme = prefs.theme;
+    if (screen === 'home') renderHome();
+    else if (screen === 'chapters') renderChapters();
+    else if (screen === 'chapter') renderChapter();
+    else if (screen === 'battle') renderBattle();
+    else if (screen === 'ending') renderEnding();
+    else if (screen === 'roster') renderRoster();
+  }
+
+  function toast(message, type = '') {
+    const node = document.createElement('div');
+    node.className = `toast ${type}`;
+    node.textContent = message;
+    toastRoot.appendChild(node);
+    setTimeout(() => node.remove(), 3200);
+  }
+
+  function tone(type) {
+    if (!prefs.sound) return;
+    try {
+      audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const freq = {hit:180,hurt:105,skill:410,guard:280,companion:520,save:340,battle:145,victory:600,achievement:760}[type] || 300;
+      osc.frequency.value = freq;
+      osc.type = type === 'hurt' ? 'sawtooth' : 'sine';
+      gain.gain.setValueAtTime(.04, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.0001, audioContext.currentTime + .16);
+      osc.connect(gain).connect(audioContext.destination);
+      osc.start(); osc.stop(audioContext.currentTime + .17);
+    } catch {}
+  }
+
+  function speakPage() {
+    if (!('speechSynthesis' in window)) return toast('此瀏覽器不支援語音朗讀。','warn');
+    if (speechSynthesis.speaking) { speechSynthesis.cancel(); toast('已停止朗讀。'); return; }
+    const text = [...app.querySelectorAll('h1,h2,h3,.hero p')].slice(0,14).map(node => node.textContent.trim()).join('。');
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-TW'; utter.rate = .95;
+    speechSynthesis.speak(utter);
+    toast('開始朗讀本頁。','good');
+  }
+
+  function cycleTheme() {
+    const order = ['ink','dark','paper'];
+    prefs.theme = order[(order.indexOf(prefs.theme) + 1) % order.length];
+    save(true); render();
+    toast(`已切換為 ${{ink:'水墨',dark:'深色',paper:'電子紙'}[prefs.theme]}模式。`);
+  }
+
+  function downloadText(filename, text, mime = 'application/json') {
+    const blob = new Blob([text], {type:`${mime};charset=utf-8`});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function importSaveText(text) {
+    const parsed = JSON.parse(text);
+    const incomingState = parsed?.state || parsed;
+    if (!incomingState || typeof incomingState !== 'object' || !incomingState.completed) throw new Error('invalid');
+    storage.setItem(`${OLD_BACKUP_PREFIX}before-import`, JSON.stringify(state));
+    state = mergeState(incomingState);
+    if (parsed?.prefs) {
+      prefs = {...freshPrefs(), ...parsed.prefs};
+      if (!DIFFICULTIES[prefs.difficulty]) prefs.difficulty='standard';
+      if (!GEARS[prefs.gear]) prefs.gear='mirror';
+    }
+    save(true);
+  }
+
+  app.addEventListener('click', event => {
+    const chapterButton = event.target.closest('[data-chapter]');
+    if (chapterButton) { startChapter(chapterButton.dataset.chapter, true); return; }
+    const clueButton = event.target.closest('[data-clue]');
+    if (clueButton) { collectClue(clueButton.dataset.clue); return; }
+    const strategyButton = event.target.closest('[data-strategy]');
+    if (strategyButton) { doStrategy(strategyButton.dataset.strategy); return; }
+    const battleStart = event.target.closest('[data-battle-start]');
+    if (battleStart) { startBattle(battleStart.dataset.battleStart); return; }
+    const battleActionButton = event.target.closest('[data-battle-action]');
+    if (battleActionButton) { battleAction(battleActionButton.dataset.battleAction); return; }
+    const difficultyButton = event.target.closest('[data-difficulty]');
+    if (difficultyButton && state.current && !state.current.battle) {
+      state.current.difficulty = difficultyButton.dataset.difficulty;
+      prefs.difficulty = difficultyButton.dataset.difficulty;
+      save(true); renderChapter(); return;
+    }
+    const gearButton = event.target.closest('[data-gear]');
+    if (gearButton && state.current && !state.current.battle) {
+      state.current.gear = gearButton.dataset.gear;
+      prefs.gear = gearButton.dataset.gear;
+      save(true); renderChapter(); closeModal(); toast(`已裝備${GEARS[prefs.gear].name}。`,'good'); return;
+    }
+    const actionButton = event.target.closest('[data-act]');
+    if (!actionButton) return;
+    const action = actionButton.dataset.act;
+    if (action === 'home') { screen='home'; render(); }
+    if (action === 'chapters') { if(actionButton.dataset.eraTarget)chapterEra=actionButton.dataset.eraTarget; screen='chapters'; render(); }
+    if (action === 'roster') { screen='roster'; render(); }
+    if (action === 'continue') { if(state.current){screen=state.current.battle?'battle':state.current.complete?'ending':'chapter';render();} else startChapter(firstIncomplete()); }
+    if (action === 'start-recommended') startChapter(firstIncomplete(), true);
+    if (action === 'clear-filter') { chapterSearch=''; chapterEra='all'; renderChapters(); }
+    if (action === 'finish') finishChapter();
+    if (action === 'next') startChapter(Math.min(108,currentChapter().number+1), true);
+    if (action === 'replay') startChapter(currentChapter().number, true);
+    if (action === 'theme') cycleTheme();
+    if (action === 'speech') speakPage();
+    if (action === 'manage') openManage();
+    if (action === 'info') openInfo();
+    if (action === 'gear-modal') openGearModal();
+    if (action === 'install' && deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.finally(()=>deferredPrompt=null); }
   });
 
-  $('#brandBtn').addEventListener('click',renderHome);
-  $('#aboutBtn').addEventListener('click',openAbout);
-  $('#themeBtn').addEventListener('click',()=>{const themes=['ink','dark','paper'];prefs.theme=themes[(themes.indexOf(prefs.theme)+1)%themes.length];savePrefs();render();toast(`已切換為 ${prefs.theme==='ink'?'水墨':prefs.theme==='dark'?'深色':'電子紙'}模式。`)});
-  $('#soundBtn').addEventListener('click',()=>{prefs.sound=!prefs.sound;savePrefs();render();if(prefs.sound)tone('save')});
-  $('#narrateBtn').addEventListener('click',()=>{speechOn=!speechOn;$('#narrateBtn').textContent=speechOn?'停':'朗';if(speechOn)speak(app.innerText);else speechSynthesis?.cancel()});
-  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredPrompt=event;$('#installBtn').classList.remove('hidden')});
-  $('#installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').classList.add('hidden')});
-  window.addEventListener('beforeunload',()=>save(true));
-  if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.warn));
+  modalRoot.addEventListener('click', event => {
+    const button = event.target.closest('[data-modal]');
+    if (!button) return;
+    const action = button.dataset.modal;
+    if (action === 'close') { closeModal(); return; }
+    const textarea = $('#saveText');
+    if (action === 'copy' && textarea) {
+      navigator.clipboard?.writeText(textarea.value).then(()=>toast('存檔已複製。','good')).catch(()=>{textarea.select();document.execCommand('copy');toast('存檔已複製。','good');});
+    }
+    if (action === 'download' && textarea) downloadText(`水滸英雄傳_v7.0.0_存檔_${new Date().toISOString().slice(0,10)}.json`, textarea.value);
+    if (action === 'import' && textarea) {
+      try { importSaveText(textarea.value); closeModal(); screen='home'; render(); toast('v7 存檔匯入成功。','good'); }
+      catch { toast('存檔格式不正確，請確認內容。','warn'); }
+    }
+    if (action === 'reset-current' && state.current && confirm(`確定重設第 ${state.current.chapter} 回本次進度嗎？最佳完成紀錄會保留。`)) {
+      const number=state.current.chapter; state.current=makeRun(number); save(true); closeModal(); screen='chapter'; render(); toast('目前章回已重設。');
+    }
+    if (action === 'reset-all' && confirm('確定清除 v7.0.0 全部 108 回進度嗎？舊版存檔與備份不會刪除。')) {
+      storage.removeItem(SAVE_KEY); state=freshState(); migrateOldSaves(); closeModal(); screen='home'; render(); toast('v7 全部進度已重設；可承接的舊版紀錄已重新讀取。','warn');
+    }
+  });
+
+  window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredPrompt = event; });
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+
+  migrateOldSaves();
+  document.body.dataset.theme = prefs.theme;
   render();
+
+  // 供自動測試與除錯使用，不影響一般遊玩。
+  window.__LIANGSHAN_TEST__ = {
+    version:VERSION,
+    chapters,
+    getState:()=>clone(state),
+    start:number=>startChapter(number,true),
+    prepare:()=>{ if(!state.current)return; state.current.clues=[0,1,2,3]; state.current.strategies=[0,1,2,3,4]; save(true); render(); },
+    winStage:stage=>{ if(!state.current)return; state.current.battles[String(stage)]=true; if(Number(stage)===0)state.current.companion.unlocked=true; save(true); render(); },
+    finish:()=>{ if(!state.current)return; state.current.clues=[0,1,2,3];state.current.strategies=[0,1,2,3,4];state.current.battles={0:true,1:true,2:true};finishChapter(); },
+    reset:()=>{storage.removeItem(SAVE_KEY);state=freshState();state.migration.done=true;save(true);screen='home';render();}
+  };
 })();

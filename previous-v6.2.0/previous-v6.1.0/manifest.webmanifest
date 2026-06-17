@@ -1,12 +1,12 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v7.0.0 完整章回版",
-  "short_name": "梁山風雲",
-  "description": "第一回至第一百零八回完整網頁 RPG",
+  "name": "水滸英雄傳：梁山風雲 v6.1.0",
+  "short_name": "梁山風雲 v6.1",
+  "description": "第五十回：催命判官察店・百旅安宿",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f3ead7",
-  "theme_color": "#8a3b22",
+  "background_color": "#efe5d1",
+  "theme_color": "#7d251f",
   "lang": "zh-Hant-TW",
   "icons": [
     {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png"},
