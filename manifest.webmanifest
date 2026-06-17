@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v7.0.0 完整章回版",
+  "name": "水滸英雄傳：梁山風雲 v7.1.0 百八英雄深度玩法版",
   "short_name": "梁山風雲",
-  "description": "第一回至第一百零八回完整網頁 RPG",
+  "description": "108 回完整網頁 RPG，新增章回暫存、銀兩商店、英雄專屬戰法、首領機制與交錯流程。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
