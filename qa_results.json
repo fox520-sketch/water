@@ -1,12 +1,206 @@
 {
-  "passed": 508,
-  "total": 508,
-  "failed": [],
-  "era_counts": {
-    "制度續篇": 17,
-    "經典篇": 34,
-    "百業聚義篇": 57
-  },
-  "chapter_count": 108,
-  "file_count": 50
+  "version": "7.1.0",
+  "passed": 38,
+  "total": 38,
+  "all_passed": true,
+  "tests": [
+    {
+      "name": "版本為 7.1.0",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "108 回資料完整",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "交錯流程 13 步",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "交錯順序正確",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "108 個英雄戰法名稱不重複",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "英雄涵蓋 10 種定位",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "同伴援護涵蓋 6 類",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "首領機制涵蓋 6 類",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "點進行中章回先顯示選擇視窗",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "開啟選擇視窗不重設進度",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "切換其他章回先顯示保留提示",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "切換後目前章回為 2",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "第 1 回暫存仍保留一項查驗",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "返回第 1 回可續接原進度",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "商店正確扣除銀兩",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "護心鏡升至 2 級",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "金瘡藥進入倉庫",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "裝備升級效果套用",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "兩次查驗後輪到軍略 0",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "軍略後輪到第一戰",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "第一戰可由流程正常啟動",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "第一場正式戰鬥可完成",
+      "passed": true,
+      "value": 3
+    },
+    {
+      "name": "戰後流程進入第三項查驗",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "鐵甲首領具有護甲值",
+      "passed": true,
+      "value": {
+        "key": "armor",
+        "shield": 272,
+        "name": "鐵甲護身"
+      }
+    },
+    {
+      "name": "前六回輪替六種首領機制",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "v7.0.0 目前章回轉入 runs",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "108 回全部可結算",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "第 108 回完成紀錄存在",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "三種新增篩選皆存在",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "PWA 新版本提示可顯示",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "390px 手機版無水平溢位",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "頁面標題正確",
+      "passed": true,
+      "value": true
+    },
+    {
+      "name": "Service Worker 快取版本更新",
+      "passed": true
+    },
+    {
+      "name": "Service Worker 支援 SKIP_WAITING 訊息",
+      "passed": true
+    },
+    {
+      "name": "安裝階段不強制跳過等待",
+      "passed": true
+    },
+    {
+      "name": "Manifest 為 v7.1.0",
+      "passed": true
+    },
+    {
+      "name": "主程式 JavaScript 語法已檢查",
+      "passed": true
+    },
+    {
+      "name": "瀏覽器執行期間無 JavaScript 錯誤",
+      "passed": true,
+      "value": 0
+    }
+  ],
+  "console_events": 0,
+  "boss_seen": [
+    "armor",
+    "enrage",
+    "regen",
+    "reinforce",
+    "poison",
+    "counter"
+  ]
 }

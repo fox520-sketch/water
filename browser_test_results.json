@@ -1,55 +1,43 @@
 {
-  "api": "object",
-  "title": "水滸英雄傳：梁山風雲 v7.0.0 完整章回版",
-  "home": true,
-  "data": {
-    "count": 108,
-    "sequential": true,
-    "heroes": 108,
-    "titles": 108,
-    "companions": true,
-    "finalCompanion": "吳用",
-    "eras": {
-      "經典篇": 34,
-      "制度續篇": 17,
-      "百業聚義篇": 57
-    }
+  "version": "7.1.0",
+  "chapter_count": 108,
+  "flow_count": 13,
+  "chapter1_clues_before_switch": 2,
+  "chapter1_clues_after_return": 2,
+  "draft_count": 2,
+  "shop": {
+    "silver": 4180,
+    "mirror": 2,
+    "med": 1
   },
-  "cards": 108,
-  "search": {
-    "count": 1,
-    "text": true
+  "profiles": {
+    "heroNames": 108,
+    "roles": 10,
+    "companionTypes": 6,
+    "bossTypes": 6
   },
-  "first": {
-    "done": true,
-    "grade": "S",
-    "score": 100,
-    "unlocked": 2,
-    "ending": true
-  },
-  "realBattle": {
+  "step_before_strategy": 2,
+  "step_before_battle": 3,
+  "battle_started": true,
+  "actual_battle": {
+    "n": 3,
     "won": true,
-    "actions": 3,
-    "battle": null,
-    "hp": 1744
+    "battle": false
   },
-  "all": {
-    "completed": 108,
-    "sCount": 108,
-    "total": 10800,
-    "last": true,
-    "unlocked": 108,
-    "ending": true
-  },
-  "saveUI": {
-    "export": true,
-    "import": true,
-    "reset": true
-  },
+  "step_after_battle": 4,
+  "representative_complete": true,
+  "filter_options": [
+    "all",
+    "incomplete",
+    "nonS",
+    "recent"
+  ],
+  "recent_card_count": 4,
   "mobile": {
+    "innerWidth": 390,
     "scrollWidth": 390,
-    "clientWidth": 390,
     "overflow": false
   },
-  "exceptions": []
+  "title": "水滸英雄傳：梁山風雲 v7.1.0 百八英雄深度玩法版",
+  "console_error_count": 0
 }
