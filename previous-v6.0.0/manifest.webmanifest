@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v6.1.0",
-  "short_name": "梁山風雲 v6.1",
-  "description": "第五十回：催命判官察店・百旅安宿",
+  "name": "水滸英雄傳：梁山風雲 v6.0.0",
+  "short_name": "梁山風雲 v6",
+  "description": "第四十九回：金眼彪巡肆・百肆安營",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
