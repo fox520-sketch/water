@@ -1,8 +1,10 @@
-const CACHE = 'liangshan-v7.4.0-cache-1';
+const CACHE = 'liangshan-v7.5.0-cache-1';
 const ASSETS = [
   './','./index.html','./styles.css','./chapters.js','./game.js','./manifest.webmanifest',
-  './modules/tiangang.js','./modules/save-schema.js','./modules/cloud-sync.js','./modules/endgame.js','./modules/content-v74.js','./modules/accessibility.js',
-  './assets/icon-192.png','./assets/icon-512.png','./FIREBASE_SETUP.md','./DEPLOY_GITHUB_PAGES.md'
+  './modules/tiangang.js','./modules/dizha.js','./modules/save-schema.js','./modules/cloud-sync.js',
+  './modules/endgame.js','./modules/content-v74.js','./modules/epic-chapters.js','./modules/roguelike.js',
+  './modules/telemetry.js','./modules/accessibility.js','./assets/icon-192.png','./assets/icon-512.png',
+  './README.md','./FIREBASE_SETUP.md','./DEPLOY_GITHUB_PAGES.md','./LIVE_DEPLOYMENT_CHECKLIST.md','./SCREEN_READER_CHECKLIST.md'
 ];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

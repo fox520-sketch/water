@@ -1,48 +1,34 @@
 (() => {
   'use strict';
-  const CONFIG_KEY = 'liangshan-v74-firebase-config';
-  const SESSION_KEY = 'liangshan-v74-firebase-session';
-  let config = null;
-  let session = null;
+  const CONFIG_KEY='liangshan-v75-firebase-config';
+  const SESSION_KEY='liangshan-v75-firebase-session';
+  let config=null,session=null;
   const safeLocal={get:k=>{try{return localStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}},remove:k=>{try{localStorage.removeItem(k)}catch{}}};
   const safeSession={get:k=>{try{return sessionStorage.getItem(k)}catch{return null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch{}},remove:k=>{try{sessionStorage.removeItem(k)}catch{}}};
-
-  function load() {
-    try { config = JSON.parse(safeLocal.get(CONFIG_KEY)||'null'); } catch { config = null; }
-    try { session = JSON.parse(safeSession.get(SESSION_KEY)||'null'); } catch { session = null; }
-  }
+  function load(){try{config=JSON.parse(safeLocal.get(CONFIG_KEY)||'null')}catch{config=null}try{session=JSON.parse(safeSession.get(SESSION_KEY)||'null')}catch{session=null}}
   load();
-
-  function validConfig(c) { return Boolean(c?.apiKey && c?.projectId); }
-  function configure(c) {
-    if (!validConfig(c)) throw new Error('Firebase 設定需包含 apiKey 與 projectId。');
-    config = {apiKey:String(c.apiKey).trim(),projectId:String(c.projectId).trim(),authDomain:String(c.authDomain||'').trim()};
-    safeLocal.set(CONFIG_KEY,JSON.stringify(config));
-    return config;
-  }
-  function clearConfig(){ config=null;session=null;safeLocal.remove(CONFIG_KEY);safeSession.remove(SESSION_KEY); }
-  function authUrl(path){ if(!validConfig(config))throw new Error('尚未設定 Firebase。'); return `https://identitytoolkit.googleapis.com/v1/accounts:${path}?key=${encodeURIComponent(config.apiKey)}`; }
-  async function request(url,options={}) {
-    const res = await fetch(url,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
-    const data = await res.json().catch(()=>({}));
-    if(!res.ok) throw new Error(data?.error?.message||data?.error?.status||`HTTP ${res.status}`);
-    return data;
-  }
-  async function auth(path,email,password) {
-    const data = await request(authUrl(path),{method:'POST',body:JSON.stringify({email,password,returnSecureToken:true})});
-    session={uid:data.localId,email:data.email,idToken:data.idToken,refreshToken:data.refreshToken,expiresAt:Date.now()+Number(data.expiresIn||3600)*1000};
-    safeSession.set(SESSION_KEY,JSON.stringify(session));
-    return session;
-  }
-  const signUp = (email,password) => auth('signUp',email,password);
-  const signIn = (email,password) => auth('signInWithPassword',email,password);
+  const validConfig=c=>Boolean(c?.apiKey&&c?.projectId);
+  function configure(c){if(!validConfig(c))throw new Error('Firebase 設定需包含 apiKey 與 projectId。');config={apiKey:String(c.apiKey).trim(),projectId:String(c.projectId).trim(),authDomain:String(c.authDomain||'').trim()};safeLocal.set(CONFIG_KEY,JSON.stringify(config));return config;}
+  function clearConfig(){config=null;session=null;safeLocal.remove(CONFIG_KEY);safeSession.remove(SESSION_KEY);}
+  async function jsonRequest(url,options={}){const res=await fetch(url,{...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data?.error?.message||data?.error?.status||`HTTP ${res.status}`);return data;}
+  function authUrl(path){if(!validConfig(config))throw new Error('尚未設定 Firebase。');return`https://identitytoolkit.googleapis.com/v1/accounts:${path}?key=${encodeURIComponent(config.apiKey)}`;}
+  async function auth(path,email,password){const data=await jsonRequest(authUrl(path),{method:'POST',body:JSON.stringify({email,password,returnSecureToken:true})});session={uid:data.localId,email:data.email,idToken:data.idToken,refreshToken:data.refreshToken,expiresAt:Date.now()+Number(data.expiresIn||3600)*1000};safeSession.set(SESSION_KEY,JSON.stringify(session));return session;}
+  const signUp=(email,password)=>auth('signUp',email,password);
+  const signIn=(email,password)=>auth('signInWithPassword',email,password);
   function signOut(){session=null;safeSession.remove(SESSION_KEY);}
-  function requireSession(){if(!session?.idToken)throw new Error('請先登入 Firebase 雲端存檔。');return session;}
-  function docUrl(){const s=requireSession();return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(config.projectId)}/databases/(default)/documents/users/${encodeURIComponent(s.uid)}/saves/main`;}
-  function encodeDoc(payload,checksum,version){return{fields:{payload:{stringValue:JSON.stringify(payload)},checksum:{stringValue:checksum||''},version:{stringValue:version||''},updatedAt:{timestampValue:new Date().toISOString()}}};}
-  function decodeDoc(doc){const f=doc?.fields||{};if(!f.payload?.stringValue)return null;return{payload:JSON.parse(f.payload.stringValue),checksum:f.checksum?.stringValue||'',version:f.version?.stringValue||'',updatedAt:f.updatedAt?.timestampValue||doc.updateTime||''};}
-  async function upload(payload,checksum,version){const s=requireSession();const data=await request(docUrl(),{method:'PATCH',headers:{Authorization:`Bearer ${s.idToken}`},body:JSON.stringify(encodeDoc(payload,checksum,version))});return decodeDoc(data);}
-  async function download(){const s=requireSession();const res=await fetch(docUrl(),{headers:{Authorization:`Bearer ${s.idToken}`}});if(res.status===404)return null;const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data?.error?.message||`HTTP ${res.status}`);return decodeDoc(data);}
-  function getStatus(){return{configured:validConfig(config),config:config?{projectId:config.projectId,apiKeyMasked:`${config.apiKey.slice(0,4)}…${config.apiKey.slice(-3)}`} : null,signedIn:Boolean(session?.idToken),email:session?.email||'',uid:session?.uid||''};}
-  window.LS74Cloud = {configure,clearConfig,signUp,signIn,signOut,upload,download,getStatus,getConfig:()=>config};
+  async function refreshSession(){if(!session?.refreshToken)throw new Error('登入已失效，請重新登入。');const url=`https://securetoken.googleapis.com/v1/token?key=${encodeURIComponent(config.apiKey)}`;const body=new URLSearchParams({grant_type:'refresh_token',refresh_token:session.refreshToken});const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data?.error?.message||`HTTP ${res.status}`);session={...session,uid:data.user_id||session.uid,idToken:data.id_token,refreshToken:data.refresh_token||session.refreshToken,expiresAt:Date.now()+Number(data.expires_in||3600)*1000};safeSession.set(SESSION_KEY,JSON.stringify(session));return session;}
+  async function requireSession(){if(!session?.idToken)throw new Error('請先登入 Firebase 雲端存檔。');if(Date.now()>Number(session.expiresAt||0)-60000)await refreshSession();return session;}
+  const baseUrl=()=>`https://firestore.googleapis.com/v1/projects/${encodeURIComponent(config.projectId)}/databases/(default)/documents`;
+  async function authorizedFetch(url,options={}){const s=await requireSession();const res=await fetch(url,{...options,headers:{'Content-Type':'application/json',Authorization:`Bearer ${s.idToken}`,...(options.headers||{})}});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data?.error?.message||data?.error?.status||`HTTP ${res.status}`);return data;}
+  async function mainUrl(){const s=await requireSession();return`${baseUrl()}/users/${encodeURIComponent(s.uid)}/saves/main`;}
+  function encodeDoc(payload,checksum,version,label='主存檔'){return{fields:{payload:{stringValue:JSON.stringify(payload)},checksum:{stringValue:checksum||''},version:{stringValue:version||''},label:{stringValue:label},updatedAt:{timestampValue:new Date().toISOString()}}};}
+  function decodeDoc(doc){const f=doc?.fields||{};if(!f.payload?.stringValue)return null;return{id:String(doc.name||'').split('/').pop(),payload:JSON.parse(f.payload.stringValue),checksum:f.checksum?.stringValue||'',version:f.version?.stringValue||'',label:f.label?.stringValue||'',updatedAt:f.updatedAt?.timestampValue||doc.updateTime||''};}
+  async function upload(payload,checksum,version,label='自動同步'){const main=await authorizedFetch(await mainUrl(),{method:'PATCH',body:JSON.stringify(encodeDoc(payload,checksum,version,'主存檔'))});const s=await requireSession();const id=`r${Date.now()}`;await authorizedFetch(`${baseUrl()}/users/${encodeURIComponent(s.uid)}/history/${id}`,{method:'PATCH',body:JSON.stringify(encodeDoc(payload,checksum,version,label))});return decodeDoc(main);}
+  async function download(){try{return decodeDoc(await authorizedFetch(await mainUrl()))}catch(error){if(/NOT_FOUND|404/.test(error.message))return null;throw error;}}
+  async function listHistory(limit=10){const s=await requireSession();const url=`${baseUrl()}/users/${encodeURIComponent(s.uid)}/history?pageSize=${Math.max(1,Math.min(30,Number(limit)||10))}`;const data=await authorizedFetch(url);return(data.documents||[]).map(decodeDoc).filter(Boolean).sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt)).slice(0,limit);}
+  async function downloadHistory(id){const s=await requireSession();return decodeDoc(await authorizedFetch(`${baseUrl()}/users/${encodeURIComponent(s.uid)}/history/${encodeURIComponent(id)}`));}
+  async function deleteHistory(id){const s=await requireSession();const url=`${baseUrl()}/users/${encodeURIComponent(s.uid)}/history/${encodeURIComponent(id)}`;const ss=await requireSession();const res=await fetch(url,{method:'DELETE',headers:{Authorization:`Bearer ${ss.idToken}`}});if(!res.ok)throw new Error(`HTTP ${res.status}`);return true;}
+  async function diagnostics(){const out={configured:validConfig(config),signedIn:Boolean(session?.idToken),auth:false,firestore:false,latencyMs:null,error:''};if(!out.configured)return out;const start=performance.now();try{await requireSession();out.auth=true;await download();out.firestore=true;out.latencyMs=Math.round(performance.now()-start);}catch(error){out.error=error.message;}return out;}
+  function getStatus(){return{configured:validConfig(config),config:config?{projectId:config.projectId,apiKeyMasked:`${config.apiKey.slice(0,4)}…${config.apiKey.slice(-3)}`} : null,signedIn:Boolean(session?.idToken),email:session?.email||'',uid:session?.uid||'',expiresAt:session?.expiresAt||0};}
+  window.LS75Cloud={configure,clearConfig,signUp,signIn,signOut,upload,download,listHistory,downloadHistory,deleteHistory,diagnostics,getStatus,getConfig:()=>config};
 })();

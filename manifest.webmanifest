@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v7.4.0",
+  "name": "水滸英雄傳：梁山風雲 v7.5.0",
   "short_name": "梁山風雲",
-  "description": "梁山遠征與雲端傳承版：108 回、天罡專屬技能、無盡塔、遠征與可選 Firebase 雲端存檔。",
+  "description": "百八真傳與正式上線版：108 名英雄真傳、重要章回手工劇情、Rogue-like 遠征、每週挑戰與可選 Firebase 雲端版本合併。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,17 @@
   "theme_color": "#8a3b22",
   "lang": "zh-Hant-TW",
   "icons": [
-    {"src":"./assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"./assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

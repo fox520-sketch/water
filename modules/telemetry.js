@@ -1,0 +1,8 @@
+(() => {
+  'use strict';
+  function fresh(){return{battles:0,wins:0,losses:0,totalRounds:0,heroes:{},bosses:{},lastSimulation:null};}
+  function heroRec(stats,n){const k=String(n);stats.heroes[k]=stats.heroes[k]||{uses:0,wins:0,rounds:0,damage:0,healing:0};return stats.heroes[k];}
+  function recordBattle(stats,ctx){stats=stats||fresh();stats.battles++;ctx.win?stats.wins++:stats.losses++;stats.totalRounds+=Number(ctx.rounds)||0;for(const n of ctx.heroes||[]){const h=heroRec(stats,n);h.uses++;if(ctx.win)h.wins++;h.rounds+=Number(ctx.rounds)||0;}if(ctx.boss){const k=String(ctx.boss);stats.bosses[k]=stats.bosses[k]||{attempts:0,wins:0,bestRounds:null};const b=stats.bosses[k];b.attempts++;if(ctx.win){b.wins++;b.bestRounds=b.bestRounds==null?ctx.rounds:Math.min(b.bestRounds,ctx.rounds);}}return stats;}
+  function simulate(records,iterations=300){const list=Object.values(records||{});const rows=list.map((r,i)=>{let score=100+(r.power||1)*42+(r.statusPower||0)*.8-(r.cooldown||3)*5;score+=(r.stats?.speed||0)*1.3+(r.stats?.crit||0)*180+(r.stats?.status||0)*120;const variance=((i*37)%23)-11;score+=variance;return{number:Number(Object.keys(records)[i]),name:r.hero,score:Math.round(score*10)/10};});const mean=rows.reduce((s,x)=>s+x.score,0)/Math.max(1,rows.length);const variance=rows.reduce((s,x)=>s+(x.score-mean)**2,0)/Math.max(1,rows.length);const sd=Math.sqrt(variance);rows.forEach(x=>x.band=x.score>mean+sd?'偏強':x.score<mean-sd?'偏弱':'正常');return{iterations,mean:Math.round(mean*10)/10,sd:Math.round(sd*10)/10,rows,generatedAt:new Date().toISOString()};}
+  window.LS75Telemetry={fresh,recordBattle,simulate};
+})();

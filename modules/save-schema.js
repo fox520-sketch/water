@@ -1,61 +1,14 @@
 (() => {
   'use strict';
-  const SCHEMA_VERSION = 4;
-  const REQUIRED_TOP_LEVEL = ['version','silver','completed','inventory','heroes','formations','base'];
-
-  function canonical(value) {
-    if (Array.isArray(value)) return value.map(canonical);
-    if (value && typeof value === 'object') {
-      return Object.keys(value).sort().reduce((out,key) => {
-        if (!['updatedAt','lastBackupAt','checksum'].includes(key)) out[key] = canonical(value[key]);
-        return out;
-      }, {});
-    }
-    return value;
-  }
-
-  async function checksum(value) {
-    const text = JSON.stringify(canonical(value));
-    if (globalThis.crypto?.subtle) {
-      const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-      return [...new Uint8Array(bytes)].map(x => x.toString(16).padStart(2,'0')).join('');
-    }
-    let h = 2166136261;
-    for (let i=0;i<text.length;i++) { h ^= text.charCodeAt(i); h = Math.imul(h,16777619); }
-    return `fnv1a-${(h>>>0).toString(16).padStart(8,'0')}`;
-  }
-
-  function validateState(state) {
-    const errors = [];
-    if (!state || typeof state !== 'object') errors.push('存檔不是物件。');
-    else {
-      for (const key of REQUIRED_TOP_LEVEL) if (!(key in state)) errors.push(`缺少欄位：${key}`);
-      if (state.completed && typeof state.completed !== 'object') errors.push('completed 格式錯誤。');
-      if (state.heroes && typeof state.heroes !== 'object') errors.push('heroes 格式錯誤。');
-      if (state.inventory && !Array.isArray(state.inventory.items)) errors.push('inventory.items 格式錯誤。');
-      if (state.formations && !Array.isArray(state.formations)) errors.push('formations 格式錯誤。');
-      if (Number(state.silver) < 0) errors.push('銀兩不可為負數。');
-    }
-    return {ok:errors.length===0,errors};
-  }
-
-  function validateExport(payload) {
-    if (!payload || typeof payload !== 'object') return {ok:false,errors:['匯入內容不是有效物件。']};
-    const state = payload.state || payload;
-    const result = validateState(state);
-    return {...result,state,prefs:payload.prefs||{},version:payload.version||state.version||'未知'};
-  }
-
-  function compare(localState, cloudState) {
-    const l = new Date(localState?.updatedAt||0).getTime();
-    const c = new Date(cloudState?.updatedAt||0).getTime();
-    const localCompleted = Object.keys(localState?.completed||{}).length;
-    const cloudCompleted = Object.keys(cloudState?.completed||{}).length;
-    let recommendation = 'local';
-    if (c > l + 1000 || cloudCompleted > localCompleted) recommendation = 'cloud';
-    if (l === c && localCompleted === cloudCompleted) recommendation = 'same';
-    return {localUpdatedAt:localState?.updatedAt||'',cloudUpdatedAt:cloudState?.updatedAt||'',localCompleted,cloudCompleted,recommendation};
-  }
-
-  window.LS74SaveSchema = {SCHEMA_VERSION,checksum,validateState,validateExport,compare,canonical};
+  const SCHEMA_VERSION=5;
+  const REQUIRED_TOP_LEVEL=['version','silver','completed','inventory','heroes','formations','base'];
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  function canonical(value){if(Array.isArray(value))return value.map(canonical);if(value&&typeof value==='object')return Object.keys(value).sort().reduce((out,key)=>{if(!['updatedAt','lastBackupAt','checksum'].includes(key))out[key]=canonical(value[key]);return out;},{});return value;}
+  async function checksum(value){const text=JSON.stringify(canonical(value));if(globalThis.crypto?.subtle){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return[...new Uint8Array(bytes)].map(x=>x.toString(16).padStart(2,'0')).join('');}let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return`fnv1a-${(h>>>0).toString(16).padStart(8,'0')}`;}
+  function validateState(state){const errors=[];if(!state||typeof state!=='object')errors.push('存檔不是物件。');else{for(const key of REQUIRED_TOP_LEVEL)if(!(key in state))errors.push(`缺少欄位：${key}`);if(state.completed&&typeof state.completed!=='object')errors.push('completed 格式錯誤。');if(state.heroes&&typeof state.heroes!=='object')errors.push('heroes 格式錯誤。');if(state.inventory&&!Array.isArray(state.inventory.items))errors.push('inventory.items 格式錯誤。');if(state.formations&&!Array.isArray(state.formations))errors.push('formations 格式錯誤。');if(Number(state.silver)<0)errors.push('銀兩不可為負數。');if(state.telemetry&&typeof state.telemetry!=='object')errors.push('telemetry 格式錯誤。');}return{ok:errors.length===0,errors};}
+  function validateExport(payload){if(!payload||typeof payload!=='object')return{ok:false,errors:['匯入內容不是有效物件。']};const state=payload.state||payload;const result=validateState(state);return{...result,state,prefs:payload.prefs||{},version:payload.version||state.version||'未知'};}
+  function compare(localState,cloudState){const l=new Date(localState?.updatedAt||0).getTime(),c=new Date(cloudState?.updatedAt||0).getTime();const localCompleted=Object.keys(localState?.completed||{}).length,cloudCompleted=Object.keys(cloudState?.completed||{}).length;let recommendation='local';if(c>l+1000||cloudCompleted>localCompleted)recommendation='cloud';if(l===c&&localCompleted===cloudCompleted)recommendation='same';const fields={completed:[localCompleted,cloudCompleted],heroes:[Object.keys(localState?.heroes||{}).length,Object.keys(cloudState?.heroes||{}).length],items:[localState?.inventory?.items?.length||0,cloudState?.inventory?.items?.length||0],silver:[localState?.silver||0,cloudState?.silver||0],tower:[localState?.endgame?.towerBest||0,cloudState?.endgame?.towerBest||0]};return{localUpdatedAt:localState?.updatedAt||'',cloudUpdatedAt:cloudState?.updatedAt||'',localCompleted,cloudCompleted,recommendation,fields};}
+  function bestRecord(a,b){if(!a)return clone(b);if(!b)return clone(a);return Number(b.score||0)>Number(a.score||0)?clone(b):clone(a);}
+  function mergeStates(localState,cloudState){const l=clone(localState||{}),c=clone(cloudState||{}),out={...l};out.completed={...l.completed};for(const[k,v]of Object.entries(c.completed||{}))out.completed[k]=bestRecord(out.completed[k],v);out.heroes={...l.heroes};for(const[k,hc]of Object.entries(c.heroes||{})){const hl=out.heroes[k]||{};out.heroes[k]={...hl,...hc,level:Math.max(Number(hl.level)||1,Number(hc.level)||1),xp:Math.max(Number(hl.xp)||0,Number(hc.xp)||0),skillPoints:Math.max(Number(hl.skillPoints)||0,Number(hc.skillPoints)||0),awakened:Boolean(hl.awakened||hc.awakened),wins:Math.max(Number(hl.wins)||0,Number(hc.wins)||0),battles:Math.max(Number(hl.battles)||0,Number(hc.battles)||0),equipment:{...(hl.equipment||{}),...(hc.equipment||{})}};}const items=new Map();for(const x of [...(l.inventory?.items||[]),...(c.inventory?.items||[])]){const old=items.get(x.id);if(!old||Number(x.level||1)>Number(old.level||1)||Number(x.reforges||0)>Number(old.reforges||0))items.set(x.id,clone(x));}out.inventory={...(l.inventory||{}),...(c.inventory||{}),items:[...items.values()],medicines:Math.max(l.inventory?.medicines||0,c.inventory?.medicines||0),materials:{}};for(const k of ['iron','wood','cloth','essence'])out.inventory.materials[k]=Math.max(l.inventory?.materials?.[k]||0,c.inventory?.materials?.[k]||0);out.silver=Math.max(Number(l.silver)||0,Number(c.silver)||0);out.base={...(l.base||{})};for(const[k,v]of Object.entries(c.base||{}))out.base[k]=typeof v==='number'?Math.max(Number(out.base[k])||0,v):out.base[k]??clone(v);out.endgame={...(l.endgame||{}),...(c.endgame||{}),towerBest:Math.max(l.endgame?.towerBest||0,c.endgame?.towerBest||0),bossRecords:{...(l.endgame?.bossRecords||{}),...(c.endgame?.bossRecords||{})}};out.recent=[...new Set([...(l.recent||[]),...(c.recent||[])])].slice(0,16);out.unlocked=Math.max(l.unlocked||1,c.unlocked||1);out.updatedAt=new Date().toISOString();out.cloud={...(l.cloud||{}),lastMergeAt:out.updatedAt,mergeSource:'smart'};return out;}
+  window.LS75SaveSchema={SCHEMA_VERSION,checksum,validateState,validateExport,compare,mergeStates,canonical};
 })();

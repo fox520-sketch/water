@@ -1,24 +1,25 @@
-# v7.4.0 PWA 部署前驗收
+# v7.5.0 PWA 部署前驗收報告
+
+驗收日期：2026-06-17
 
 ## 已完成
 
-- `manifest.webmanifest` 名稱、圖示、`start_url` 與 `scope` 均使用相對路徑。
-- `service-worker.js` 通過 JavaScript 語法檢查。
-- 16 個預快取項目皆存在，沒有遺漏檔案。
-- Service Worker scope 設為 `./`，適合 GitHub Pages 專案子目錄。
-- 舊版快取會在 activate 階段刪除。
-- 更新前會建立存檔備份，再送出 `SKIP_WAITING`。
-- GitHub Pages Actions 工作流程已包含於 `.github/workflows/pages.yml`。
-- Windows ZIP 與單一 HTML 版皆由同一份原始碼產生。
+- Manifest 可解析，版本為 v7.5.0。
+- `start_url` 與 `scope` 使用相對路徑 `./`。
+- 192 × 192 與 512 × 512 圖示存在。
+- Service Worker 快取名稱為 `liangshan-v7.5.0-cache-1`。
+- Service Worker 預快取包含所有遊戲模組與部署文件。
+- GitHub Pages Actions 與 Release Actions 檔案存在。
+- Windows ZIP 使用英文根目錄及英文發布檔名。
+- ZIP CRC、最長路徑及 SHA-256 通過。
+- 單一 HTML 由同一份原始碼生成並通過瀏覽器測試。
 
-## 尚需公開網站完成
+## 本環境無法代替完成
 
-由於目前沒有使用者 GitHub 儲存庫的寫入權限，尚未能在實際公開網址驗證以下項目：
+- 將程式推送到你的 GitHub 儲存庫。
+- 產生你的公開 GitHub Pages URL。
+- 在公開 HTTPS 網址實際安裝 Windows／Android／iPhone PWA。
+- 使用你的 Firebase 專案完成電腦與手機跨裝置同步。
+- 驗證不同真實帳號的 Firestore Rules 隔離。
 
-- GitHub Pages 公開 HTTPS 首次載入
-- Windows／Android 的 PWA 安裝提示
-- iPhone Safari 加到主畫面
-- 從 v7.4.0 更新到下一版時的真實 Service Worker 接管
-- 真實 Firebase 專案的跨裝置同步
-
-部署後可依 `DEPLOY_GITHUB_PAGES.md` 的清單完成最後驗收。
+完成部署後，請依 `LIVE_DEPLOYMENT_CHECKLIST.md` 逐項驗收。
