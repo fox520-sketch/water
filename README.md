@@ -1,16 +1,32 @@
-{
-  "name": "水滸英雄傳：梁山風雲 v5.8.0",
-  "short_name": "梁山風雲 v5.8",
-  "description": "第四十七回「沒遮攔核債・百債安償」：四十七英雄章回式單機網頁 RPG。",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#efe4c4",
-  "theme_color": "#6f1d1b",
-  "lang": "zh-Hant-TW",
-  "orientation": "any",
-  "icons": [
-    {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
-  ]
-}
+# 水滸英雄傳：梁山風雲 v6.0.0
+
+## 新增章回
+
+第四十九回「金眼彪巡肆・百肆安營」
+
+- 第四十九名主角：金眼彪・施恩
+- 新同伴：催命判官・李立
+- 主角技能：金眼彪巡肆、四肆安營
+- 同伴援護：催命判官斷霸
+- 四項查驗：店籍與租權、租契與抽成、收費與帳冊、安全與救濟
+- 五階段軍略：店籍立號、租契明示、收費公示、安全巡檢、爭議救濟
+- 三場主線戰鬥、章回結算、四十九英雄譜、章回錄
+
+## 開啟方式
+
+直接開啟根目錄 `index.html`。部署到 GitHub Pages 後可安裝為 PWA。
+
+## 存檔
+
+- v6 續篇存檔：`liangshan-rpg-sequel-v6`
+- 唯讀偵測舊版存檔：`liangshan-rpg-save-v1`
+- 不會覆寫舊版存檔
+- 可由遊戲內匯出／匯入 JSON
+
+## 經典篇
+
+`legacy-v4.5.0/` 完整保留本次上傳的 v4.5.0 原始程式，可由新版首頁開啟。
+
+## 版本基底說明
+
+本次可直接取得的完整程式本體為 v4.5.0；另已確認 v5.9.0 測試紀錄，但未取得該版原始碼。因此 v6.0.0 採「獨立續篇＋經典篇保留」方式製作，避免破壞既有程式與存檔。

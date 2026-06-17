@@ -1,0 +1,26 @@
+{
+  "name": "水滸英雄傳：梁山風雲",
+  "short_name": "梁山風雲",
+  "description": "章回式單機網頁 RPG：三十四英雄、出林龍鄒淵與獨角龍鄒潤、水泊百水安飲、百水安飲署及快速整備。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe4c4",
+  "theme_color": "#6f1d1b",
+  "lang": "zh-Hant-TW",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
