@@ -1,0 +1,55 @@
+{
+  "api": "object",
+  "title": "水滸英雄傳：梁山風雲 v7.0.0 完整章回版",
+  "home": true,
+  "data": {
+    "count": 108,
+    "sequential": true,
+    "heroes": 108,
+    "titles": 108,
+    "companions": true,
+    "finalCompanion": "吳用",
+    "eras": {
+      "經典篇": 34,
+      "制度續篇": 17,
+      "百業聚義篇": 57
+    }
+  },
+  "cards": 108,
+  "search": {
+    "count": 1,
+    "text": true
+  },
+  "first": {
+    "done": true,
+    "grade": "S",
+    "score": 100,
+    "unlocked": 2,
+    "ending": true
+  },
+  "realBattle": {
+    "won": true,
+    "actions": 3,
+    "battle": null,
+    "hp": 1744
+  },
+  "all": {
+    "completed": 108,
+    "sCount": 108,
+    "total": 10800,
+    "last": true,
+    "unlocked": 108,
+    "ending": true
+  },
+  "saveUI": {
+    "export": true,
+    "import": true,
+    "reset": true
+  },
+  "mobile": {
+    "scrollWidth": 390,
+    "clientWidth": 390,
+    "overflow": false
+  },
+  "exceptions": []
+}
