@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 180 260" role="img" aria-labelledby="t d">
+<title id="t">兩頭蛇・解珍水墨立繪</title><desc id="d">第 32 名天罡英雄的程式化水墨人物卡。</desc>
+<rect width="180" height="260" rx="18" fill="#f1ecfb"/><path d="M10 36 Q80 8 170 30 M6 210 Q96 236 176 198" fill="none" stroke="#28233a" stroke-width="2" opacity=".18"/>
+<circle cx="90" cy="68" r="34" fill="#28233a" opacity=".96"/><path d="M58 62 Q90 10 122 63 Q106 49 90 46 Q72 48 58 62" fill="#28233a"/>
+<path d="M18 188 Q90 117 162 188 L162 226 L18 226 Z" fill="#28233a" opacity=".94"/>
+<path d="M75 70 Q90 78 105 70" fill="none" stroke="#f1ecfb" stroke-width="3" opacity=".55"/><circle cx="78" cy="64" r="2.5" fill="#f1ecfb"/><circle cx="102" cy="64" r="2.5" fill="#f1ecfb"/>
+<path d="M48 158 L157 34" stroke="#7c3aed" stroke-width="5"/><path d="M150 42 L162 20 L158 50 Z" fill="#7c3aed"/>
+<circle cx="148" cy="183" r="18" fill="none" stroke="#7c3aed" stroke-width="4"/><text x="148" y="190" text-anchor="middle" font-size="18" font-family="serif" fill="#7c3aed">解</text>
+<text x="16" y="238" font-size="13" font-weight="700" font-family="serif" fill="#28233a">32 兩頭蛇</text><text x="164" y="238" text-anchor="end" font-size="16" font-family="serif" fill="#7c3aed">解珍</text>
+</svg>

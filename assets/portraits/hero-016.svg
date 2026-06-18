@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 180 260" role="img" aria-labelledby="t d">
+<title id="t">神行太保・戴宗水墨立繪</title><desc id="d">第 16 名天罡英雄的程式化水墨人物卡。</desc>
+<rect width="180" height="260" rx="18" fill="#eef4e8"/><path d="M10 36 Q80 8 170 30 M6 210 Q96 236 176 198" fill="none" stroke="#202a25" stroke-width="2" opacity=".18"/>
+<circle cx="90" cy="68" r="34" fill="#202a25" opacity=".96"/><path d="M58 63 Q90 11 122 64 Q106 49 90 46 Q72 48 58 63" fill="#202a25"/>
+<path d="M16 188 Q90 117 164 188 L162 226 L18 226 Z" fill="#202a25" opacity=".94"/>
+<path d="M75 70 Q90 78 105 70" fill="none" stroke="#eef4e8" stroke-width="3" opacity=".55"/><circle cx="78" cy="64" r="2.5" fill="#eef4e8"/><circle cx="102" cy="64" r="2.5" fill="#eef4e8"/>
+<path d="M68 150 L148 42" stroke="#2f855a" stroke-width="6"/><path d="M134 58 L155 32 L148 64 Z" fill="#2f855a"/>
+<circle cx="148" cy="183" r="18" fill="none" stroke="#2f855a" stroke-width="4"/><text x="148" y="190" text-anchor="middle" font-size="18" font-family="serif" fill="#2f855a">戴</text>
+<text x="16" y="238" font-size="13" font-weight="700" font-family="serif" fill="#202a25">16 神行太保</text><text x="164" y="238" text-anchor="end" font-size="16" font-family="serif" fill="#2f855a">戴宗</text>
+</svg>

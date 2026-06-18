@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 180 260" role="img" aria-labelledby="t d">
+<title id="t">鐵叫子・樂和水墨立繪</title><desc id="d">第 20 名天罡英雄的程式化水墨人物卡。</desc>
+<rect width="180" height="260" rx="18" fill="#f4ead5"/><path d="M10 36 Q80 8 170 30 M6 210 Q96 236 176 198" fill="none" stroke="#1f2933" stroke-width="2" opacity=".18"/>
+<circle cx="90" cy="68" r="34" fill="#1f2933" opacity=".96"/><path d="M58 62 Q90 10 122 63 Q106 49 90 46 Q72 48 58 62" fill="#1f2933"/>
+<path d="M20 188 Q90 117 160 188 L162 226 L18 226 Z" fill="#1f2933" opacity=".94"/>
+<path d="M75 70 Q90 78 105 70" fill="none" stroke="#f4ead5" stroke-width="3" opacity=".55"/><circle cx="78" cy="64" r="2.5" fill="#f4ead5"/><circle cx="102" cy="64" r="2.5" fill="#f4ead5"/>
+<path d="M55 148 L155 28" stroke="#b45309" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+<circle cx="148" cy="183" r="18" fill="none" stroke="#b45309" stroke-width="4"/><text x="148" y="190" text-anchor="middle" font-size="18" font-family="serif" fill="#b45309">樂</text>
+<text x="16" y="238" font-size="13" font-weight="700" font-family="serif" fill="#1f2933">20 鐵叫子</text><text x="164" y="238" text-anchor="end" font-size="16" font-family="serif" fill="#b45309">樂和</text>
+</svg>

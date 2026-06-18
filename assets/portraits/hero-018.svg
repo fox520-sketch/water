@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="520" viewBox="0 0 180 260" role="img" aria-labelledby="t d">
+<title id="t">聖手書生・蕭讓水墨立繪</title><desc id="d">第 18 名天罡英雄的程式化水墨人物卡。</desc>
+<rect width="180" height="260" rx="18" fill="#e8f0fb"/><path d="M10 36 Q80 8 170 30 M6 210 Q96 236 176 198" fill="none" stroke="#20242c" stroke-width="2" opacity=".18"/>
+<circle cx="90" cy="68" r="34" fill="#20242c" opacity=".96"/><path d="M58 63 Q90 10 122 63 Q106 49 90 46 Q72 48 58 63" fill="#20242c"/>
+<path d="M18 188 Q90 117 162 188 L162 226 L18 226 Z" fill="#20242c" opacity=".94"/>
+<path d="M75 70 Q90 78 105 70" fill="none" stroke="#e8f0fb" stroke-width="3" opacity=".55"/><circle cx="78" cy="64" r="2.5" fill="#e8f0fb"/><circle cx="102" cy="64" r="2.5" fill="#e8f0fb"/>
+<path d="M74 139 Q118 85 154 126 Q119 152 74 139" fill="none" stroke="#2563eb" stroke-width="6"/><path d="M82 137 L146 122 M93 130 L138 111 M105 122 L128 101" stroke="#2563eb" stroke-width="2"/>
+<circle cx="148" cy="183" r="18" fill="none" stroke="#2563eb" stroke-width="4"/><text x="148" y="190" text-anchor="middle" font-size="18" font-family="serif" fill="#2563eb">蕭</text>
+<text x="16" y="238" font-size="13" font-weight="700" font-family="serif" fill="#20242c">18 聖手書生</text><text x="164" y="238" text-anchor="end" font-size="16" font-family="serif" fill="#2563eb">蕭讓</text>
+</svg>

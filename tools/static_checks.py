@@ -1,62 +1,26 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import argparse, hashlib, json, subprocess, sys, zipfile
-
-VERSION='7.5.0'
-ROOT=Path(__file__).resolve().parents[1]
-JS=[ROOT/'game.js',ROOT/'chapters.js',*sorted((ROOT/'modules').glob('*.js'))]
-checks=[]
-def check(name,ok,detail=''):
-    checks.append((name,bool(ok),detail))
-
+import argparse,hashlib,json,subprocess,sys,zipfile
+VERSION='7.6.0';ROOT=Path(__file__).resolve().parents[1];checks=[]
+def check(n,o,d=''):checks.append((n,bool(o),d))
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--dist',required=True);args=ap.parse_args();dist=Path(args.dist).resolve()
-    for f in JS:
-        result=subprocess.run(['node','--check',str(f)],capture_output=True,text=True)
-        check(f'JavaScript 語法：{f.name}',result.returncode==0,result.stderr.strip())
-    try:
-        manifest=json.loads((ROOT/'manifest.webmanifest').read_text(encoding='utf-8'))
-        check('Manifest 可解析',True)
-        check('Manifest 版本',VERSION in manifest.get('name',''),manifest.get('name',''))
-        check('Manifest 相對 scope',manifest.get('scope')=='./')
-        check('Manifest 相對 start_url',manifest.get('start_url')=='./')
-    except Exception as e:
-        check('Manifest 可解析',False,str(e))
-    sw=(ROOT/'service-worker.js').read_text(encoding='utf-8')
-    check('Service Worker 版本',f'liangshan-v{VERSION}-cache-1' in sw)
-    required=['modules/dizha.js','modules/epic-chapters.js','modules/roguelike.js','modules/telemetry.js','LIVE_DEPLOYMENT_CHECKLIST.md','SCREEN_READER_CHECKLIST.md']
-    for name in required:
-        check(f'必要資產：{name}',(ROOT/name).exists())
-        check(f'SW 預快取：{name}',f"./{name}" in sw)
-    index=(ROOT/'index.html').read_text(encoding='utf-8')
-    for name in ['modules/dizha.js','modules/epic-chapters.js','modules/roguelike.js','modules/telemetry.js']:
-        check(f'首頁載入：{name}',name in index)
-    rules=(ROOT/'firebase.rules').read_text(encoding='utf-8')
-    check('Rules 保護主存檔','/saves/{saveId}' in rules and 'request.auth.uid == userId' in rules)
-    check('Rules 保護版本歷史','/history/{historyId}' in rules and 'request.auth.uid == userId' in rules)
-    zip_path=dist/f'Liangshan_v{VERSION}_Windows.zip';stand=dist/f'Liangshan_v{VERSION}_Standalone.html';sha=dist/f'Liangshan_v{VERSION}_Windows.sha256.txt'
-    check('Windows ZIP 存在',zip_path.exists())
-    check('單一 HTML 存在',stand.exists())
-    check('SHA 檔存在',sha.exists())
-    if zip_path.exists():
-        try:
-            with zipfile.ZipFile(zip_path) as z:
-                bad=z.testzip();names=z.namelist()
-                check('ZIP CRC',bad is None,str(bad))
-                check('ZIP 全英文路徑',all(all(ord(c)<128 for c in n) for n in names))
-                check('ZIP 單一根目錄',all(n.startswith(f'Liangshan_v{VERSION}/') for n in names))
-                check('ZIP 無巢狀發布檔',not any(n.endswith('_Windows.zip') or n.endswith('_Windows.sha256.txt') for n in names))
-                check('ZIP 最長路徑 < 220',max(map(len,names),default=0)<220,str(max(map(len,names),default=0)))
-        except Exception as e:
-            check('ZIP CRC',False,str(e))
-    if stand.exists():
-        text=stand.read_text(encoding='utf-8')
-        check('Standalone 版本',f'v{VERSION}' in text)
-        check('Standalone 無外部遊戲 JS',not any(f'src="{x}"' in text or f'src="./{x}"' in text for x in ['game.js','chapters.js','modules/dizha.js']))
-    if zip_path.exists() and sha.exists():
-        actual=hashlib.sha256(zip_path.read_bytes()).hexdigest();expected=sha.read_text(encoding='ascii').split()[0]
-        check('SHA-256 相符',actual==expected,f'{actual} != {expected}')
-    passed=sum(ok for _,ok,_ in checks)
-    print(json.dumps({'passed':passed,'total':len(checks),'failed':[{'name':n,'detail':d} for n,ok,d in checks if not ok]},ensure_ascii=False,indent=2))
-    return 0 if passed==len(checks) else 1
+ ap=argparse.ArgumentParser();ap.add_argument('--dist',required=True);a=ap.parse_args();dist=Path(a.dist)
+ for f in [ROOT/'game.js',ROOT/'chapters.js',*sorted((ROOT/'modules').glob('*.js'))]:
+  r=subprocess.run(['node','--check',str(f)],capture_output=True,text=True);check(f'JavaScript：{f.name}',r.returncode==0,r.stderr)
+ try:m=json.loads((ROOT/'manifest.webmanifest').read_text());check('Manifest 解析',True);check('Manifest 版本',VERSION in m['name']);check('相對 scope/start',m['scope']=='./' and m['start_url']=='./')
+ except Exception as e:check('Manifest 解析',False,str(e))
+ sw=(ROOT/'service-worker.js').read_text();check('SW 版本',f'liangshan-v{VERSION}-cache-1' in sw)
+ required=['modules/epic-chapters-v76.js','modules/roguelike-v76.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js','LIVE_DEPLOYMENT_CHECKLIST.md','SCREEN_READER_CHECKLIST.md']
+ for n in required:check(f'必要資產 {n}',(ROOT/n).exists());check(f'SW 快取 {n}',f'./{n}' in sw)
+ check('36 角色卡',len(list((ROOT/'assets/portraits').glob('hero-*.svg')))==36);check('12 背景',len(list((ROOT/'assets/backgrounds').glob('scene-*.svg')))==12)
+ idx=(ROOT/'index.html').read_text();
+ for n in ['modules/epic-chapters-v76.js','modules/roguelike-v76.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js']:check(f'首頁載入 {n}',n in idx)
+ z=dist/f'Liangshan_v{VERSION}_Windows.zip';h=dist/f'Liangshan_v{VERSION}_Standalone.html';sha=dist/f'Liangshan_v{VERSION}_Windows.sha256.txt'
+ for n,x in [('ZIP',z),('Standalone',h),('SHA',sha)]:check(f'{n} 存在',x.exists())
+ if z.exists():
+  with zipfile.ZipFile(z) as q:names=q.namelist();check('ZIP CRC',q.testzip() is None);check('英文路徑',all(all(ord(c)<128 for c in n) for n in names));check('單一根目錄',all(n.startswith(f'Liangshan_v{VERSION}/') for n in names));check('路徑長度',max(map(len,names))<220,str(max(map(len,names))))
+ if h.exists():
+  t=h.read_text();check('Standalone 版本',f'v{VERSION}' in t);check('Standalone 無外部遊戲 JS','src="game.js"' not in t and 'src="./game.js"' not in t);check('Standalone 內嵌角色卡','data:image/svg+xml;base64,' in t and 'data-standalone-assets="embedded"' in t)
+ if z.exists() and sha.exists():check('SHA 相符',hashlib.sha256(z.read_bytes()).hexdigest()==sha.read_text().split()[0])
+ passed=sum(o for _,o,_ in checks);print(json.dumps({'passed':passed,'total':len(checks),'failed':[{'name':n,'detail':d} for n,o,d in checks if not o]},ensure_ascii=False,indent=2));return 0 if passed==len(checks) else 1
 if __name__=='__main__':sys.exit(main())

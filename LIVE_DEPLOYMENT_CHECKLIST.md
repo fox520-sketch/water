@@ -1,39 +1,35 @@
-# v7.5.0 正式上線驗收清單
-
-> 這份清單必須在公開 GitHub Pages HTTPS 網址與你自己的 Firebase 專案上執行。
+# v7.6.0 正式上線驗收清單
 
 ## GitHub Pages
 
-- [ ] GitHub Actions 部署成功。
-- [ ] 公開網址可開啟，首頁顯示 v7.5.0。
-- [ ] 所有 JS、CSS、Manifest、圖示均回傳 200。
-- [ ] 專案子路徑沒有 404。
-- [ ] Service Worker scope 正確。
-- [ ] 快取名稱為 `liangshan-v7.5.0-cache-1`。
-- [ ] 離線後重新載入仍能進入遊戲。
-- [ ] 從舊版本升級時出現更新提示。
-- [ ] 更新前自動備份增加一份。
+- [ ] 推送所有檔案到儲存庫 `main` 分支。
+- [ ] Settings → Pages → Source 選擇 GitHub Actions。
+- [ ] Actions 的 Deploy GitHub Pages 成功。
+- [ ] 公開首頁顯示 v7.6.0。
+- [ ] 瀏覽器開發工具 Network 沒有 404。
+- [ ] 36 張角色卡與 12 張背景可載入。
+- [ ] Service Worker 快取為 `liangshan-v7.6.0-cache-1`。
 
-## PWA 裝置
+## Firebase
 
-- [ ] Windows Chrome／Edge 可安裝。
-- [ ] Android Chrome 可加到主畫面並離線啟動。
-- [ ] iPhone Safari 可加到主畫面。
-- [ ] 三種裝置均能讀取本機 IndexedDB 存檔。
+- [ ] 啟用 Email/Password Authentication。
+- [ ] 建立 Firestore。
+- [ ] 部署 `firebase.rules`。
+- [ ] 在遊戲雲端頁填入 API Key、Project ID、Auth Domain。
+- [ ] 使用帳號 A 上傳，帳號 B 無法讀取 A 的資料。
+- [ ] 電腦上傳、手機比較並智慧合併。
+- [ ] 雲端版本歷史可列出並還原。
 
-## Firebase 真實跨裝置
+## 三平台 PWA
 
-- [ ] Email/Password 已啟用。
-- [ ] `firebase.rules` 已發布。
-- [ ] 電腦 A 可建立帳號、登入、上傳。
-- [ ] Firestore 出現 `users/{uid}/saves/main`。
-- [ ] Firestore 出現 `users/{uid}/history/{版本ID}`。
-- [ ] 手機 B 使用同一帳號能讀取比較結果。
-- [ ] 智慧合併可保留雙方較佳章回、英雄與裝備。
-- [ ] 完全套用雲端前會建立本機備份。
-- [ ] 不同帳號無法讀取彼此存檔。
-- [ ] 離線修改後重新連線，可正常比較衝突。
+- [ ] Windows Chrome／Edge 安裝與離線重開。
+- [ ] Android Chrome 安裝與離線重開。
+- [ ] iPhone Safari 加到主畫面並重新開啟。
+- [ ] 更新前建立備份，更新後進度保留。
 
-## 發布結論
+## 正式營運
 
-只有以上項目全部完成，才能標記為「公開 GitHub Pages 與真實 Firebase 跨裝置正式驗收完成」。
+- [ ] 執行遊戲內「目前環境診斷」。
+- [ ] 匯出一份上線前存檔。
+- [ ] 完成第一回、鍛造、派遣、分岔遠征與雲端同步實測。
+- [ ] 記錄裝置、瀏覽器、版本與結果。
