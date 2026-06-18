@@ -1,25 +1,34 @@
-# v7.8.0 更新檔案測試報告
+# v7.9.0 測試報告
 
-## 覆蓋更新包檢查
-- 只含相對於 v7.7.0 需要覆蓋或新增的檔案。
-- ZIP 全英文路徑。
-- 最長路徑小於 220 字元。
-- ZIP CRC 測試通過。
+產生時間：2026-06-18 12:49:43
 
-## 靜態檢查
-- index.html 載入 v7.8 模組：通過。
-- game.js 版本號：v7.8.0。
-- manifest.webmanifest 版本說明：v7.8.0。
-- service-worker.js 快取名稱：liangshan-v7.8.0-cache-1。
-- 108 回手工章回模組：通過。
-- 108 英雄第三輪平衡模組：通過。
-- 遠征 v7.8 模組：通過。
-- 操作與診斷 v7.8 模組：通過。
-- 無障礙 v7.8 修正模組：通過。
-- 新增重要英雄精修立繪：36 張。
-- 新增遠征首領立繪：8 張。
+## 自動檢查：11/11 通過
 
-## 已知限制
-本環境無 GitHub、Firebase 寫入權限，也無法實際操作 NVDA／VoiceOver／TalkBack。相關項目提供正式驗收流程與紀錄表，不宣稱已代替你完成實機驗收。
+- ✅ game.js syntax
+- ✅ stability-v79.js syntax
+- ✅ chain-v79.js syntax
+- ✅ season-v79.js syntax
+- ✅ update zip CRC
+- ✅ rollback zip CRC
+- ✅ english paths
+- ✅ sw includes update.html
+- ✅ sw includes modules/stability-v79.js
+- ✅ sw includes modules/chain-v79.js
+- ✅ sw includes modules/season-v79.js
 
-- V78_DEPLOYMENT_RESULTS.md：已加入，避免 Service Worker 快取缺檔。
+## 已覆蓋功能
+
+- 一鍵更新檢查頁 `update.html`
+- 更新失敗回復包與 rollback 說明
+- 版本相容性檢查
+- Service Worker 快取版本診斷
+- 存檔遷移報告
+- 玩家問題回報工具
+- GitHub Pages 實測報告匯出
+- Firebase 跨裝置同步實測報告匯出
+- 章回連鎖影響系統
+- 遠征賽季與個人排行榜
+
+## 未宣稱已完成
+
+公開 GitHub Pages、真實 Firebase 電腦／手機同步、NVDA／VoiceOver／TalkBack 真人操作，仍需你的實際帳號與裝置驗收。

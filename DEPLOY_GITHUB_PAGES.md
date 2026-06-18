@@ -1,17 +1,11 @@
-# v7.8.0 GitHub Pages 實際部署檢查流程
+# v7.9.0 GitHub Pages 部署步驟
 
-1. 將 v7.8 更新檔案覆蓋到你的 GitHub Pages 專案根目錄。
-2. Commit 並 Push。
-3. 到 GitHub Actions 確認 Pages workflow 成功。
-4. 開啟公開網址，確認首頁顯示 v7.8.0。
-5. 開 DevTools Network，確認無 404，尤其是：
-   - modules/epic-chapters-v78.js
-   - modules/roguelike-v78.js
-   - modules/balance-v78.js
-   - modules/operations-v78.js
-   - modules/accessibility-v78.js
-   - assets/bosses/*.svg
-   - assets/portraits/refined/*.svg
-6. 到「雲端傳承」頁執行正式營運診斷。
+1. 先備份目前 v7.8.0 專案資料夾。
+2. 解壓縮 `Liangshan_v7.9.0_UpdateFiles.zip`。
+3. 將內容覆蓋到 GitHub Pages 專案根目錄。
+4. Commit 並 push。
+5. 開啟公開網址 `/update.html` 執行一鍵更新檢查。
+6. 開啟遊戲「維護」頁，匯出 GitHub Pages 實測報告。
+7. 確認 Service Worker 快取名稱為 v7.9.0。
 
-結果請記錄到 LIVE_DEPLOYMENT_CHECKLIST.md。
+如果更新失敗，請使用 `Liangshan_v7.9.0_RollbackTo_v7.8.0.zip` 覆蓋回 v7.8.0，並清除梁山快取。
