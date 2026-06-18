@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" role="img" aria-label="鐵券鬼判">
+  <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#1f1712"/><stop offset="1" stop-color="#f8f0dd"/></linearGradient><filter id="ink"><feTurbulence baseFrequency="0.03" numOctaves="2"/><feDisplacementMap in="SourceGraphic" scale="1.8"/></filter></defs>
+  <rect width="240" height="320" rx="28" fill="url(#g)"/>
+  <path d="M32 242 C60 101 92 73 122 99 C160 140 180 73 208 233" fill="none" stroke="#5d7a34" stroke-width="18" opacity=".25" filter="url(#ink)"/>
+  <circle cx="120" cy="112" r="58" fill="none" stroke="#f5d28a" stroke-width="7" opacity=".72"/>
+  <path d="M76 206 C98 170 146 169 166 207" fill="none" stroke="#f5d28a" stroke-width="12" stroke-linecap="round"/>
+  <path d="M88 112 Q120 61 152 112" fill="none" stroke="#5d7a34" stroke-width="8" stroke-linecap="round"/>
+  <text x="120" y="267" text-anchor="middle" font-family="serif" font-size="27" font-weight="800" fill="#f5d28a">鐵券鬼判</text>
+  <text x="120" y="294" text-anchor="middle" font-family="serif" font-size="16" fill="#5d7a34">遠征首領</text>
+</svg>
