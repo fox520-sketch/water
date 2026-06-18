@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import argparse, hashlib, re, zipfile
-VERSION='7.6.0'
+VERSION='7.7.0'
 MODULES=[
- 'chapters.js','modules/tiangang.js','modules/dizha.js','modules/save-schema.js','modules/cloud-sync.js','modules/endgame.js','modules/content-v74.js','modules/epic-chapters.js','modules/epic-chapters-v76.js','modules/roguelike.js','modules/roguelike-v76.js','modules/telemetry.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js','modules/accessibility.js','game.js'
+ 'chapters.js','modules/tiangang.js','modules/dizha.js','modules/save-schema.js','modules/cloud-sync.js','modules/endgame.js','modules/content-v74.js','modules/epic-chapters.js','modules/epic-chapters-v76.js','modules/roguelike.js','modules/roguelike-v76.js','modules/telemetry.js','modules/balance-v76.js','modules/operations-v76.js','modules/epic-chapters-v77.js','modules/roguelike-v77.js','modules/balance-v77.js','modules/operations-v77.js','modules/audio-v76.js','modules/accessibility.js','game.js'
 ]
 def standalone(src,out):
  html=(src/'index.html').read_text(encoding='utf-8');css=(src/'styles.css').read_text(encoding='utf-8')
@@ -32,7 +32,7 @@ def main():
  with zipfile.ZipFile(zip_path,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
   for f in sorted(src.rglob('*')):
    if not f.is_file() or '.git' in f.parts or 'dist' in f.relative_to(src).parts or '__pycache__' in f.parts or f.name.endswith('_Windows.zip') or f.name.endswith('_Windows.sha256.txt') or f.name.endswith('_Standalone.html') or f.name=='game.v75.backup.js':continue
-   z.write(f,Path(f'Liangshan_v{VERSION}')/f.relative_to(src))
-  z.write(stand,Path(f'Liangshan_v{VERSION}')/stand.name)
+   z.write(f,Path(Path(f'Liangshan_v{VERSION}'))/f.relative_to(src))
+  z.write(stand,Path(Path(f'Liangshan_v{VERSION}'))/stand.name)
  digest=hashlib.sha256(zip_path.read_bytes()).hexdigest();(out/f'Liangshan_v{VERSION}_Windows.sha256.txt').write_text(f'{digest}  {zip_path.name}\n',encoding='ascii');print(zip_path);print(digest)
 if __name__=='__main__':main()

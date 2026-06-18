@@ -1,15 +1,29 @@
-# v7.6.0 Firebase 雲端存檔設定
+# Firebase 跨裝置同步驗收流程 v7.7.0
 
-1. 在 Firebase Console 建立專案。
-2. Authentication → Sign-in method，啟用 Email/Password。
-3. 建立 Firestore Database。
-4. 使用 Firebase CLI 或 Console 部署本包的 `firebase.rules`。
-5. Project settings → Your apps，建立 Web App。
-6. 在遊戲「雲端」頁填入：
-   - API Key
-   - Project ID
-   - Auth Domain
-7. 建立測試帳號，執行「Firebase 真實連線診斷」。
-8. 使用兩台裝置驗證上傳、比較、智慧合併與歷史還原。
+## 必要服務
 
-Firebase 網頁 API Key 不是私密金鑰。資料安全依靠 Authentication 與 Firestore Rules；仍不得把管理員私鑰、Service Account JSON 或私人憑證上傳 GitHub。
+- Firebase Authentication：Email / Password
+- Cloud Firestore
+
+## 驗收流程
+
+1. 電腦 A 登入 Firebase，完成第一回並上傳。
+2. 手機 B 使用同帳號登入，下載雲端存檔。
+3. 手機 B 完成第二回，上傳新版本。
+4. 電腦 A 離線完成第三回，重新連線後開啟合併預覽。
+5. 檢查細項：
+   - 章回：本機獨有、雲端獨有
+   - 英雄：等級差異
+   - 裝備：獨有裝備與同 ID 衝突
+   - 建築與遠征紀錄
+6. 選擇智慧合併，確認合併前已建立本機備份。
+7. 從雲端歷史版本還原上一版，確認還原前再次備份。
+
+## 權限規則
+
+`firebase.rules` 已限制：
+
+- `users/{uid}/saves/main` 僅本人可讀寫
+- `users/{uid}/history/{version}` 僅本人可讀寫
+
+請在 Firebase Rules Simulator 測試帳號 A 不可讀取帳號 B。

@@ -1,51 +1,97 @@
-# v7.6.0 測試報告
+# 《水滸英雄傳：梁山風雲 v7.7.0》測試報告
 
-## 結果
+版本：正式上線驗收與百回精修版
 
-- 瀏覽器核心情境：**28／28 通過**
-- 靜態、語法、資產與發布：**53／53 通過**
-- 合計：**81／81 通過**
+## 測試摘要
 
-## 瀏覽器核心情境
+- 靜態、語法、資產、Service Worker 與發布檢查：65／65 通過
+- v7.7 專屬模組、資料、ZIP 與 Standalone 邏輯檢查：52／52 通過
+- 合計：117／117 通過
 
-- v7.6.0 正確啟動，108 回資料可讀取。
-- 36 個重要章回已載入，且具三方案內容。
-- 36 天罡角色卡與 12 組章回背景映射正常。
-- Schema v6 驗證通過。
-- 108 個英雄技能名稱唯一。
-- 108 筆正式平衡係數存在。
-- 新手教學與功能鎖定正常。
-- 108 回皆可完成結算。
-- 裝備方案可保存及套用。
-- 批次鎖定正常。
-- 108 × 12 情境平衡模擬正常。
-- Rogue-like 共十層，首層具有三條分岔。
-- 分岔選擇可保存。
-- 派遣會累積疲勞。
-- 雲端差異預覽可找出獨有章回及資料差異。
-- 營運診斷可產生檢查結果。
-- 首領巨額傷害仍會停在 70% 與 35% 階段門檻。
-- 超過 800 件裝備仍可建立與讀取。
-- 390 × 844 畫面無水平溢位。
-- 自動無障礙基本稽核通過。
-- 測試期間未捕捉 JavaScript 錯誤。
+## 主要通過項目
 
-## 靜態與發布
+- JavaScript 語法檢查：`game.js`、`chapters.js` 與所有模組通過。
+- 108 章回資料完整。
+- 36 天罡與 72 地煞資料完整。
+- 手工章回數量提升至 72 回。
+- 第 37～108 張地煞角色卡已存在。
+- 108 張角色卡列入 Service Worker 快取清單。
+- v7.7 四個新模組已由首頁與單一 HTML 載入：
+  - `epic-chapters-v77.js`
+  - `roguelike-v77.js`
+  - `balance-v77.js`
+  - `operations-v77.js`
+- 遠征系統含 10 層路線、遺物組合與專屬首領資料。
+- 第二輪平衡模組可回傳 108 英雄調整結果，正常觀察區達 80 名以上。
+- ZIP CRC 通過。
+- ZIP 內路徑全部為英文。
+- ZIP 為單一根目錄 `Liangshan_v7.7.0/`。
+- ZIP 最長路徑小於 220 字元。
+- 單一 HTML 版內嵌 v7.7 模組與 SVG 角色卡／背景資產。
+- SHA-256 校驗檔與 ZIP 相符。
 
-- 所有 JavaScript 檔案通過語法檢查。
-- Manifest 可解析，scope 與 start_url 為相對路徑。
-- Service Worker 快取版本為 v7.6.0。
-- 新增模組、36 張角色卡與 12 張場景背景均納入發布。
-- 單一 HTML 版已內嵌角色卡與背景。
-- Windows ZIP 通過 CRC。
-- ZIP 全部使用英文路徑、單一根目錄，最長路徑低於 220 字元。
-- SHA-256 與 ZIP 相符。
+## 已知限制
 
-## 尚未能在此環境完成
+本執行環境封鎖瀏覽器直接開啟 `localhost` 與 `file://`，因此無法在此環境完成真實瀏覽器 UI 操作測試。已改以 Node 動態模組檢查、發布檢查、ZIP CRC、Service Worker 快取清單、Standalone 內嵌檢查替代。
 
-- 公開 GitHub Pages HTTPS 網址驗收。
-- 真實 Firebase 專案的電腦／手機跨裝置同步。
-- Windows、Android、iPhone 三平台的實機安裝與更新。
-- NVDA、Narrator、VoiceOver、TalkBack 真人操作。
+以下項目仍需在你的真實環境完成：
 
-嘗試在本執行環境啟動 localhost 與 file URL 驗收時，被瀏覽器管理政策阻擋，因此未把這些項目標示為通過。
+- GitHub Pages 公開 HTTPS 網址驗收。
+- Firebase 真實電腦／手機跨裝置同步。
+- Windows、Android、iPhone 三平台 PWA 安裝與離線重開。
+- NVDA、Narrator、VoiceOver、TalkBack 真人無障礙測試。
+
+## 自訂檢查明細
+
+- 通過：JS 語法 game.js
+- 通過：JS 語法 chapters.js
+- 通過：JS 語法 accessibility.js
+- 通過：JS 語法 audio-v76.js
+- 通過：JS 語法 balance-v76.js
+- 通過：JS 語法 balance-v77.js
+- 通過：JS 語法 cloud-sync.js
+- 通過：JS 語法 content-v74.js
+- 通過：JS 語法 dizha.js
+- 通過：JS 語法 endgame.js
+- 通過：JS 語法 epic-chapters-v76.js
+- 通過：JS 語法 epic-chapters-v77.js
+- 通過：JS 語法 epic-chapters.js
+- 通過：JS 語法 operations-v76.js
+- 通過：JS 語法 operations-v77.js
+- 通過：JS 語法 roguelike-v76.js
+- 通過：JS 語法 roguelike-v77.js
+- 通過：JS 語法 roguelike.js
+- 通過：JS 語法 save-schema.js
+- 通過：JS 語法 telemetry.js
+- 通過：JS 語法 tiangang.js
+- 通過：Node 動態模組載入
+- 通過：108 章回資料 — `108`
+- 通過：36 天罡資料 — `36`
+- 通過：72 地煞資料 — `72`
+- 通過：72 回手工章回 — `72`
+- 通過：第 108 張角色卡路徑 — `assets/portraits/hero-108.svg`
+- 通過：平衡正常區提升 — `{'normal': 83, 'strong': 12, 'weak': 13, 'total': 108, 'previousNormal': 72, 'improvement': 11}`
+- 通過：遠征專屬首領 — `{'version': '7.7.0', 'relics': 30, 'combos': 6, 'bosses': 8, 'map': '10 層三岔視覺地圖'}`
+- 通過：遠征 10 層地圖 — `10`
+- 通過：108 角色卡資產
+- 通過：12 背景資產
+- 通過：SW 版本 v7.7.0
+- 通過：SW 快取 modules/epic-chapters-v77.js
+- 通過：SW 快取 modules/roguelike-v77.js
+- 通過：SW 快取 modules/balance-v77.js
+- 通過：SW 快取 modules/operations-v77.js
+- 通過：SW 快取 assets/portraits/hero-108.svg
+- 通過：Manifest v7.7.0
+- 通過：ZIP 存在
+- 通過：ZIP CRC
+- 通過：ZIP 英文路徑
+- 通過：ZIP 單一根目錄
+- 通過：ZIP 含第 108 角色卡
+- 通過：ZIP 含 v77 模組
+- 通過：ZIP 最長路徑 < 220 — `49`
+- 通過：Standalone 存在
+- 通過：Standalone v7.7.0
+- 通過：Standalone 內嵌資產
+- 通過：Standalone 內嵌 v77 模組
+- 通過：SHA 存在
+- 通過：SHA 相符

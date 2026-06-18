@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v7.6.0",
+  "name": "水滸英雄傳：梁山風雲 v7.7.0",
   "short_name": "梁山風雲",
-  "description": "全章回精修與正式營運版：108 英雄平衡、36 回手工劇情、分岔遠征、雲端合併預覽、新手導引與營運診斷。",
+  "description": "正式上線驗收與百回精修版：72 回手工劇情、第二輪平衡、遠征地圖、雲端細項合併、新手任務、72 地煞角色卡。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,17 @@
   "theme_color": "#8a3b22",
   "lang": "zh-Hant-TW",
   "icons": [
-    {"src":"./assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"./assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

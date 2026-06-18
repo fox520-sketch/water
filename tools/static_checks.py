@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys,zipfile
-VERSION='7.6.0';ROOT=Path(__file__).resolve().parents[1];checks=[]
+VERSION='7.7.0';ROOT=Path(__file__).resolve().parents[1];checks=[]
 def check(n,o,d=''):checks.append((n,bool(o),d))
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--dist',required=True);a=ap.parse_args();dist=Path(a.dist)
@@ -10,11 +10,11 @@ def main():
  try:m=json.loads((ROOT/'manifest.webmanifest').read_text());check('Manifest 解析',True);check('Manifest 版本',VERSION in m['name']);check('相對 scope/start',m['scope']=='./' and m['start_url']=='./')
  except Exception as e:check('Manifest 解析',False,str(e))
  sw=(ROOT/'service-worker.js').read_text();check('SW 版本',f'liangshan-v{VERSION}-cache-1' in sw)
- required=['modules/epic-chapters-v76.js','modules/roguelike-v76.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js','LIVE_DEPLOYMENT_CHECKLIST.md','SCREEN_READER_CHECKLIST.md']
+ required=['modules/epic-chapters-v77.js','modules/roguelike-v77.js','modules/balance-v77.js','modules/operations-v77.js','modules/epic-chapters-v76.js','modules/roguelike-v76.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js','LIVE_DEPLOYMENT_CHECKLIST.md','SCREEN_READER_CHECKLIST.md']
  for n in required:check(f'必要資產 {n}',(ROOT/n).exists());check(f'SW 快取 {n}',f'./{n}' in sw)
- check('36 角色卡',len(list((ROOT/'assets/portraits').glob('hero-*.svg')))==36);check('12 背景',len(list((ROOT/'assets/backgrounds').glob('scene-*.svg')))==12)
+ check('108 角色卡',len(list((ROOT/'assets/portraits').glob('hero-*.svg')))==108);check('12 背景',len(list((ROOT/'assets/backgrounds').glob('scene-*.svg')))==12)
  idx=(ROOT/'index.html').read_text();
- for n in ['modules/epic-chapters-v76.js','modules/roguelike-v76.js','modules/balance-v76.js','modules/operations-v76.js','modules/audio-v76.js']:check(f'首頁載入 {n}',n in idx)
+ for n in ['modules/epic-chapters-v77.js','modules/roguelike-v77.js','modules/balance-v77.js','modules/operations-v77.js','modules/audio-v76.js']:check(f'首頁載入 {n}',n in idx)
  z=dist/f'Liangshan_v{VERSION}_Windows.zip';h=dist/f'Liangshan_v{VERSION}_Standalone.html';sha=dist/f'Liangshan_v{VERSION}_Windows.sha256.txt'
  for n,x in [('ZIP',z),('Standalone',h),('SHA',sha)]:check(f'{n} 存在',x.exists())
  if z.exists():
