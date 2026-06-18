@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="420" viewBox="0 0 320 420" role="img" aria-label="金毛犬 段景住 水墨角色卡">
+  <defs><radialGradient id="g" cx="50%" cy="28%" r="70%"><stop offset="0" stop-color="#fff8ec"/><stop offset="1" stop-color="#f5ead3"/></radialGradient><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="108"/><feDisplacementMap in="SourceGraphic" scale="1.5"/></filter></defs>
+  <rect width="320" height="420" rx="26" fill="url(#g)"/>
+  <path d="M45 124 C95 84, 185 54, 260 129 C228 142, 212 166, 207 205 C179 184, 134 184, 105 208 C101 169, 82 142,45 124Z" fill="#2b2119" opacity=".92" filter="url(#rough)"/>
+  <circle cx="160" cy="174" r="62" fill="#f2cfad" stroke="#2b2119" stroke-width="6"/>
+  <path d="M119 164 q17 -16 37 0 M164 164 q21 -15 39 2" stroke="#2b2119" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M137 211 q24 18 51 0" stroke="#2b2119" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M88 282 C112 235, 205 232, 236 284 L256 390 L66 390Z" fill="#61462f" opacity=".95"/>
+  <path d="M91 300 C133 324, 191 324, 234 300" stroke="#f4dfb8" stroke-width="7" opacity=".75" fill="none"/>
+  <rect x="230" y="32" width="54" height="54" rx="8" fill="#9b2d1d" opacity=".95"/>
+  <text x="257" y="68" text-anchor="middle" font-size="25" font-family="serif" fill="#fff7e6">108</text>
+  <text x="160" y="354" text-anchor="middle" font-size="36" font-family="serif" fill="#f9e6c4" font-weight="700">段</text>
+  <text x="160" y="397" text-anchor="middle" font-size="20" font-family="serif" fill="#2b2119">金毛犬・段景住</text>
+</svg>
