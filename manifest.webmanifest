@@ -1,7 +1,7 @@
 {
-  "name": "水滸英雄傳：梁山風雲 v7.9.1",
-  "short_name": "梁山v7.9",
-  "description": "安全更新與正式營運穩定版",
+  "name": "水滸英雄傳：梁山風雲 v7.9.2",
+  "short_name": "梁山v7.9.2",
+  "description": "資料驗證與回歸測試強化版",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -22,5 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "id": "./?v=7.9.1"
+  "id": "./?v=7.9.2"
 }

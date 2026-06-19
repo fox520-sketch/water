@@ -1,0 +1,11 @@
+index.html
+game.js
+styles.css
+manifest.webmanifest
+service-worker.js
+update.html
+modules/validation-v792.js
+README.md
+CHANGELOG.md
+TEST_REPORT.md
+PATCH_README_v7.9.2.txt

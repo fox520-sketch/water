@@ -162,3 +162,7 @@ kbd{display:inline-grid;place-items:center;min-width:21px;padding:1px 5px;border
 .update-check-page{max-width:1100px;margin:auto;padding:24px}.update-check-page .status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.update-check-card{border:1px solid rgba(80,60,40,.22);border-radius:16px;padding:14px;background:rgba(255,255,255,.82)}
 .update-check-card.ok{border-color:#5a8f47}.update-check-card.bad{border-color:#b65b4b;background:rgba(255,232,228,.85)}
 .report-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ops-warning{background:#fff2d1;border-left:4px solid #b78020;padding:12px;border-radius:12px}
+
+
+/* v7.9.2 資料驗證與回歸測試強化版 */
+.success{margin:8px 0;padding:10px 12px;border:1px solid var(--good);border-radius:12px;background:color-mix(in srgb,var(--paper) 88%,var(--good) 12%);color:var(--good);font-weight:800}.validation-summary{border-left:4px solid var(--accent);padding:12px;border-radius:12px;background:var(--paper-2)}.update-check-page textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}.update-check-card p{overflow-wrap:anywhere}.chain-result-list{line-height:1.8}.chain-result-list li{margin:.35em 0}
